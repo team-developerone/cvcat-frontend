@@ -6,6 +6,8 @@ import { useCV } from "@/lib/context";
 import { CV } from "@/lib/types";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import pdfService from "@/services/pdf-service";
+import { toast } from "@/hooks/use-toast";
 
 export default function CVManagement() {
   const { mainCV, tailoredCVs } = useCV();
@@ -31,6 +33,32 @@ export default function CVManagement() {
     if (diffInDays < 7) return `${diffInDays}d ago`;
     if (diffInDays < 30) return `${Math.floor(diffInDays / 7)}w ago`;
     return `${Math.floor(diffInDays / 30)}mo ago`;
+  };
+  
+  // Handle CV download
+  const handleDownloadCV = async (cv: CV, layoutStyle: string) => {
+    try {
+      toast({
+        title: "Generating PDF...",
+        description: "Your CV is being processed. Please wait.",
+      });
+      
+      await pdfService.downloadPDF(cv, layoutStyle as any);
+      
+      toast({
+        title: "PDF generated!",
+        description: "Your CV has been downloaded successfully.",
+        variant: "default",
+      });
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+      
+      toast({
+        title: "Download failed",
+        description: error instanceof Error ? error.message : "There was a problem generating your PDF.",
+        variant: "destructive",
+      });
+    }
   };
   
   const containerAnimation = {
@@ -195,7 +223,10 @@ export default function CVManagement() {
                                   Edit
                                 </a>
                               </Link>
-                              <button className="text-[10px] font-medium text-gray-500 hover:text-[#DAA520] flex items-center">
+                              <button 
+                                onClick={() => handleDownloadCV(mainCV, 'modern')}
+                                className="text-[10px] font-medium text-gray-500 hover:text-[#DAA520] flex items-center"
+                              >
                                 <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                 </svg>
@@ -273,7 +304,10 @@ export default function CVManagement() {
                                 Edit
                               </a>
                             </Link>
-                            <button className="text-[10px] font-medium text-gray-500 hover:text-[#DAA520] flex items-center">
+                            <button 
+                              onClick={() => handleDownloadCV(cv, 'modern')}
+                              className="text-[10px] font-medium text-gray-500 hover:text-[#DAA520] flex items-center"
+                            >
                               <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                               </svg>
