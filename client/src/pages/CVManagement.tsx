@@ -51,11 +51,11 @@ export default function CVManagement() {
   return (
     <Layout isAuthenticated={true}>
       <div className="flex-1 min-h-screen bg-white">
-        {/* Background patterns - more minimal */}
+        {/* Background patterns - more minimal with sharper contrast */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
-          <div className="absolute top-0 left-0 w-full h-full bg-gray-50/50"></div>
-          <div className="absolute -top-20 left-[20%] w-64 h-64 bg-[#DAA520]/3 rounded-full blur-3xl"></div>
-          <div className="absolute -bottom-32 right-[10%] w-64 h-64 bg-[#DAA520]/3 rounded-full blur-3xl"></div>
+          <div className="absolute top-0 left-0 w-full h-full bg-gray-50/80"></div>
+          <div className="absolute -top-20 left-[20%] w-64 h-64 bg-[#DAA520]/5 rounded-full blur-3xl"></div>
+          <div className="absolute -bottom-32 right-[10%] w-64 h-64 bg-[#DAA520]/5 rounded-full blur-3xl"></div>
         </div>
         
         <div className="max-w-5xl mx-auto px-4 py-6 md:py-8">
@@ -66,8 +66,8 @@ export default function CVManagement() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
             >
-              <h1 className="text-2xl font-medium tracking-tight">My CVs</h1>
-              <p className="text-xs text-gray-500 mt-1">Manage your professional profiles</p>
+              <h1 className="text-2xl font-semibold tracking-tight text-gray-900">My CVs</h1>
+              <p className="text-xs text-gray-600 mt-1">Manage your professional profiles</p>
             </motion.div>
             
             <motion.div 
@@ -96,7 +96,7 @@ export default function CVManagement() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3, delay: 0.1 }}
-            className="flex border-b border-gray-100 mb-6"
+            className="flex border-b border-gray-200 mb-6"
           >
             <button 
               className={`pb-2 px-3 text-xs font-medium relative ${activeTab === 'all' ? 'text-black' : 'text-gray-400'}`}
@@ -142,12 +142,12 @@ export default function CVManagement() {
               
               {mainCV && (
                 <motion.div whileHover={{ y: -2 }} transition={{ type: "spring", stiffness: 400 }}>
-                  <Card className="bg-white rounded-md shadow-sm border border-gray-100 overflow-hidden">
+                  <Card className="bg-white rounded-md shadow-sm border border-gray-200 overflow-hidden">
                     <CardContent className="p-4">
                       <div className="flex items-start">
                         {/* Preview thumbnail - simplified */}
-                        <div className="hidden md:block w-20 h-28 bg-gray-50 rounded border border-gray-100 flex-shrink-0 flex items-center justify-center overflow-hidden mr-4">
-                          <svg className="text-gray-200 w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                        <div className="hidden md:block w-20 h-28 bg-gray-50 rounded border border-gray-200 flex-shrink-0 flex items-center justify-center overflow-hidden mr-4">
+                          <svg className="text-gray-300 w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
                         </div>
@@ -156,13 +156,13 @@ export default function CVManagement() {
                           <div className="flex justify-between items-start mb-1.5">
                             <div>
                               <div className="flex items-center">
-                                <span className="text-[10px] bg-[#DAA520]/5 text-[#DAA520] px-1.5 py-0.5 rounded-full">Core</span>
-                                <h3 className="text-sm font-medium ml-2 truncate">{mainCV.title}</h3>
+                                <span className="text-[10px] bg-[#DAA520]/10 text-[#DAA520] font-medium px-1.5 py-0.5 rounded-full">Core</span>
+                                <h3 className="text-sm font-semibold ml-2 truncate text-gray-900">{mainCV.title}</h3>
                               </div>
                             </div>
                             
                             <div className="flex">
-                              <button className="text-gray-400 hover:text-gray-700 h-6 w-6 flex items-center justify-center">
+                              <button className="text-gray-500 hover:text-gray-700 h-6 w-6 flex items-center justify-center">
                                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
                                 </svg>
@@ -171,15 +171,15 @@ export default function CVManagement() {
                           </div>
                           
                           <div className="flex flex-wrap gap-1 mb-2">
-                            <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded-full">{mainCV.personalInfo.title}</span>
+                            <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600 font-medium rounded-full">{mainCV.personalInfo.title}</span>
                           </div>
                           
-                          <p className="text-xs text-gray-500 mb-2 line-clamp-1">
+                          <p className="text-xs text-gray-600 mb-2 line-clamp-1">
                             {mainCV.personalInfo.summary || "Your comprehensive professional profile"}
                           </p>
                           
                           <div className="flex justify-between items-center">
-                            <div className="flex items-center text-[10px] text-gray-400">
+                            <div className="flex items-center text-[10px] text-gray-500">
                               <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
@@ -188,14 +188,14 @@ export default function CVManagement() {
                             
                             <div className="flex gap-2">
                               <Link href="/cv-builder">
-                                <a className="text-[10px] text-[#DAA520] hover:underline flex items-center">
+                                <a className="text-[10px] font-medium text-[#DAA520] hover:underline flex items-center">
                                   <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                   </svg>
                                   Edit
                                 </a>
                               </Link>
-                              <button className="text-[10px] text-gray-400 hover:text-[#DAA520] flex items-center">
+                              <button className="text-[10px] font-medium text-gray-500 hover:text-[#DAA520] flex items-center">
                                 <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                 </svg>
@@ -235,27 +235,27 @@ export default function CVManagement() {
                     whileHover={{ y: -2 }}
                     transition={{ type: "spring", stiffness: 400 }}
                   >
-                    <Card className="bg-white rounded-md shadow-sm border border-gray-100 overflow-hidden h-full">
+                    <Card className="bg-white rounded-md shadow-sm border border-gray-200 overflow-hidden h-full">
                       <CardContent className="p-4">
                         <div className="flex justify-between items-start mb-1.5">
                           <div>
                             <div className="flex items-center">
-                              <span className="text-[10px] bg-blue-50 text-blue-500 px-1.5 py-0.5 rounded-full">Tailored</span>
-                              <h3 className="text-sm font-medium ml-2 truncate">{cv.title}</h3>
+                              <span className="text-[10px] bg-blue-50 text-blue-600 font-medium px-1.5 py-0.5 rounded-full">Tailored</span>
+                              <h3 className="text-sm font-semibold ml-2 truncate text-gray-900">{cv.title}</h3>
                             </div>
-                            <p className="text-[10px] text-gray-400 mt-0.5">For: {cv.forJob}</p>
+                            <p className="text-[10px] text-gray-500 mt-0.5">For: {cv.forJob}</p>
                           </div>
-                          <button className="text-gray-400 hover:text-gray-700 h-6 w-6 flex items-center justify-center">
+                          <button className="text-gray-500 hover:text-gray-700 h-6 w-6 flex items-center justify-center">
                             <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
                             </svg>
                           </button>
                         </div>
                         
-                        <p className="text-xs text-gray-500 mb-3 line-clamp-2">{cv.description}</p>
+                        <p className="text-xs text-gray-600 mb-3 line-clamp-2">{cv.description}</p>
                         
                         <div className="flex justify-between items-center text-[10px]">
-                          <div className="flex items-center text-gray-400">
+                          <div className="flex items-center text-gray-500">
                             <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
@@ -264,14 +264,14 @@ export default function CVManagement() {
                           
                           <div className="flex gap-2">
                             <Link href="/cv-builder">
-                              <a className="text-[10px] text-[#DAA520] hover:underline flex items-center">
+                              <a className="text-[10px] font-medium text-[#DAA520] hover:underline flex items-center">
                                 <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                 </svg>
                                 Edit
                               </a>
                             </Link>
-                            <button className="text-[10px] text-gray-400 hover:text-[#DAA520] flex items-center">
+                            <button className="text-[10px] font-medium text-gray-500 hover:text-[#DAA520] flex items-center">
                               <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                               </svg>
@@ -290,15 +290,15 @@ export default function CVManagement() {
                   whileHover={{ y: -2 }}
                   transition={{ type: "spring", stiffness: 400 }}
                 >
-                  <Card className="border border-dashed border-gray-200 rounded-md bg-white/50 p-4 flex flex-col items-center justify-center text-center h-full">
-                    <div className="w-10 h-10 rounded-full bg-[#DAA520]/5 flex items-center justify-center mb-3">
+                  <Card className="border-2 border-dashed border-gray-200 rounded-md bg-white p-4 flex flex-col items-center justify-center text-center h-full">
+                    <div className="w-10 h-10 rounded-full bg-[#DAA520]/10 flex items-center justify-center mb-3">
                       <svg className="w-5 h-5 text-[#DAA520]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                       </svg>
                     </div>
-                    <h3 className="font-medium text-sm mb-1">Create Tailored CV</h3>
-                    <p className="text-xs text-gray-500 mb-3 max-w-[180px]">Customize for specific job applications</p>
-                    <Button className="bg-black hover:bg-[#DAA520] text-white text-xs rounded px-3 py-1 shadow-sm transition-all">
+                    <h3 className="font-semibold text-sm mb-1 text-gray-900">Create Tailored CV</h3>
+                    <p className="text-xs text-gray-600 mb-3 max-w-[180px]">Customize for specific job applications</p>
+                    <Button className="bg-black hover:bg-[#DAA520] text-white text-xs rounded px-3.5 py-1.5 shadow-sm transition-all font-medium">
                       Create
                     </Button>
                   </Card>
