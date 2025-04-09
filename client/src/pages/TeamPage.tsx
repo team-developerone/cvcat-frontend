@@ -46,7 +46,7 @@ export default function TeamPage() {
     {
       name: "Debojyoti Saha",
       role: "Co-founder & Frontend Specialist",
-      image: debojyotiImg,
+      image: sayanImg, // Flipped the images as requested
       experience: "8+ years",
       bio: "Passionate frontend developer with expertise in creating intuitive user interfaces and seamless experiences. Specializes in React, TypeScript, and modern web frameworks.",
       skills: ["React", "TypeScript", "UI/UX Design", "CSS/SASS", "Frontend Architecture", "Mobile Responsive Design"],
@@ -59,7 +59,7 @@ export default function TeamPage() {
       name: "Sayan Chakrabarti",
       nickname: "Riju",
       role: "Co-founder & Backend Developer",
-      image: sayanImg,
+      image: debojyotiImg, // Flipped the images as requested
       experience: "12+ years",
       bio: "Veteran backend developer with extensive experience in building scalable systems and APIs. Expert in database design, system architecture, and performance optimization.",
       skills: ["Node.js", "Python", "Database Design", "API Development", "System Architecture", "Cloud Infrastructure"],
