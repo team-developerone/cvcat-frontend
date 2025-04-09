@@ -6,12 +6,15 @@ import { useCV } from "@/lib/context";
 import { CV } from "@/lib/types";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import pdfService from "@/services/pdf-service";
+import PDFDownloadModal from "@/components/PDFDownloadModal";
 import { toast } from "@/hooks/use-toast";
+import pdfService from "@/services/pdf-service";
 
 export default function CVManagement() {
   const { mainCV, tailoredCVs } = useCV();
   const [activeTab, setActiveTab] = useState<'all' | 'recent'>('all');
+  const [pdfModalOpen, setPdfModalOpen] = useState(false);
+  const [selectedCV, setSelectedCV] = useState<CV | null>(null);
   
   // Format date for display
   const formatDate = (date: Date) => {
@@ -35,30 +38,10 @@ export default function CVManagement() {
     return `${Math.floor(diffInDays / 30)}mo ago`;
   };
   
-  // Handle CV download
-  const handleDownloadCV = async (cv: CV, layoutStyle: string) => {
-    try {
-      toast({
-        title: "Generating PDF...",
-        description: "Your CV is being processed. Please wait.",
-      });
-      
-      await pdfService.downloadPDF(cv, layoutStyle as any);
-      
-      toast({
-        title: "PDF generated!",
-        description: "Your CV has been downloaded successfully.",
-        variant: "default",
-      });
-    } catch (error) {
-      console.error("Error downloading PDF:", error);
-      
-      toast({
-        title: "Download failed",
-        description: error instanceof Error ? error.message : "There was a problem generating your PDF.",
-        variant: "destructive",
-      });
-    }
+  // Handle opening the PDF download modal
+  const handleOpenPDFModal = (cv: CV) => {
+    setSelectedCV(cv);
+    setPdfModalOpen(true);
   };
   
   const containerAnimation = {
@@ -224,7 +207,7 @@ export default function CVManagement() {
                                 </a>
                               </Link>
                               <button 
-                                onClick={() => handleDownloadCV(mainCV, 'modern')}
+                                onClick={() => handleOpenPDFModal(mainCV)}
                                 className="text-[10px] font-medium text-gray-500 hover:text-[#DAA520] flex items-center"
                               >
                                 <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -305,7 +288,7 @@ export default function CVManagement() {
                               </a>
                             </Link>
                             <button 
-                              onClick={() => handleDownloadCV(cv, 'modern')}
+                              onClick={() => handleOpenPDFModal(cv)}
                               className="text-[10px] font-medium text-gray-500 hover:text-[#DAA520] flex items-center"
                             >
                               <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -346,6 +329,13 @@ export default function CVManagement() {
           </motion.div>
         </div>
       </div>
+      
+      {/* PDF Download Modal */}
+      <PDFDownloadModal 
+        isOpen={pdfModalOpen}
+        onClose={() => setPdfModalOpen(false)}
+        cv={selectedCV}
+      />
     </Layout>
   );
 }
