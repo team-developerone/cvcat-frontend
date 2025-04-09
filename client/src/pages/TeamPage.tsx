@@ -22,18 +22,6 @@ interface TeamMember {
 export default function TeamPage() {
   const teamMembers: TeamMember[] = [
     {
-      name: "Debojyoti Saha",
-      role: "Co-founder & Frontend Specialist",
-      image: sayanImg, // Flipped as requested
-      experience: "8+ years",
-      bio: "Passionate frontend developer with expertise in creating intuitive user interfaces and seamless experiences. Specializes in React, TypeScript, and modern web frameworks.",
-      skills: ["React", "TypeScript", "UI/UX Design", "CSS/SASS", "Frontend Architecture", "Mobile Responsive Design"],
-      social: {
-        github: "https://github.com/debojyoti",
-        linkedin: "https://linkedin.com/in/debojyoti",
-      }
-    },
-    {
       name: "Sayan Chakrabarti",
       nickname: "Riju",
       role: "Co-founder & Backend Developer",
@@ -44,6 +32,18 @@ export default function TeamPage() {
       social: {
         github: "https://github.com/sayan",
         linkedin: "https://linkedin.com/in/sayan",
+      }
+    },
+    {
+      name: "Debojyoti Saha",
+      role: "Co-founder & Frontend Specialist",
+      image: sayanImg, // Flipped as requested
+      experience: "8+ years",
+      bio: "Passionate frontend developer with expertise in creating intuitive user interfaces and seamless experiences. Specializes in React, TypeScript, and modern web frameworks.",
+      skills: ["React", "TypeScript", "UI/UX Design", "CSS/SASS", "Frontend Architecture", "Mobile Responsive Design"],
+      social: {
+        github: "https://github.com/debojyoti",
+        linkedin: "https://linkedin.com/in/debojyoti",
       }
     }
   ];
