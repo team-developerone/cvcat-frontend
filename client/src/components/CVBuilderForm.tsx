@@ -1891,31 +1891,382 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
           </motion.div>
         )}
 
-        {/* Placeholder for other sections */}
-        {(activeSection === "references" || 
-          activeSection === "publications") && (
+        {/* References Section */}
+        {activeSection === "references" && (
           <motion.div
-            key={activeSection}
+            key="references"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="flex flex-col items-center justify-center py-10"
           >
-            <h2 className="text-lg font-medium mb-3 capitalize">{activeSection}</h2>
-            <p className="text-gray-500 text-sm mb-5">This section is ready to be customized</p>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="text-xs"
-              onClick={() => {
-                if (activeSection === "references") toggleAddReferenceForm();
-                if (activeSection === "publications") toggleAddPublicationForm();
-              }}
-            >
-              <LucidePlus className="w-3.5 h-3.5 mr-1" />
-              Add {activeSection}
-            </Button>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-medium">References</h2>
+              <Button 
+                variant="ghost"
+                size="sm"
+                className="flex items-center gap-1 text-xs text-[#DAA520] hover:text-[#DAA520]/80 hover:bg-[#DAA520]/5"
+                onClick={toggleAddReferenceForm}
+              >
+                <LucidePlus className="w-3 h-3 mr-1" />
+                Add Reference
+              </Button>
+            </div>
+            
+            {/* Add Reference Form */}
+            {showAddReferenceForm && (
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-sm font-medium">Add Reference</h3>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-gray-400 hover:text-gray-600 hover:bg-gray-100/70 h-7 w-7 p-0"
+                    onClick={toggleAddReferenceForm}
+                  >
+                    <LucideX className="w-4 h-4" />
+                  </Button>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Full Name</label>
+                    <Input
+                      type="text"
+                      name="name"
+                      value={newReference.name}
+                      onChange={handleReferenceChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                      placeholder="e.g. John Smith"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Position/Title</label>
+                    <Input
+                      type="text"
+                      name="position"
+                      value={newReference.position}
+                      onChange={handleReferenceChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                      placeholder="e.g. Senior Manager"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Company/Organization</label>
+                    <Input
+                      type="text"
+                      name="company"
+                      value={newReference.company}
+                      onChange={handleReferenceChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                      placeholder="e.g. ABC Corporation"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Relationship</label>
+                    <Input
+                      type="text"
+                      name="relationship"
+                      value={newReference.relationship}
+                      onChange={handleReferenceChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                      placeholder="e.g. Direct Supervisor, Colleague"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Email (Optional)</label>
+                    <Input
+                      type="email"
+                      name="email"
+                      value={newReference.email}
+                      onChange={handleReferenceChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                      placeholder="e.g. john.smith@example.com"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Phone (Optional)</label>
+                    <Input
+                      type="tel"
+                      name="phone"
+                      value={newReference.phone}
+                      onChange={handleReferenceChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                      placeholder="e.g. +1 123 456 7890"
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex justify-end mt-4 gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={toggleAddReferenceForm}
+                    className="text-xs h-8"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={addReference}
+                    className="text-xs h-8 bg-black hover:bg-black/80"
+                    disabled={!newReference.name || !newReference.position || !newReference.company || !newReference.relationship}
+                  >
+                    <LucideCheck className="w-3 h-3 mr-1" />
+                    Save Reference
+                  </Button>
+                </div>
+              </div>
+            )}
+            
+            {/* Reference Items */}
+            {mainCV.references && mainCV.references.length > 0 ? (
+              <div className="space-y-3">
+                {mainCV.references.map((reference) => (
+                  <div 
+                    key={reference.id} 
+                    className="p-3 border border-gray-100 rounded-lg hover:border-[#DAA520]/40 transition-all bg-white"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-medium text-sm">{reference.name}</h3>
+                        <p className="text-gray-500 text-xs mt-0.5">
+                          {reference.position} at {reference.company}
+                        </p>
+                        <p className="text-gray-500 text-xs">
+                          {reference.relationship}
+                        </p>
+                        {(reference.email || reference.phone) && (
+                          <div className="mt-1 flex flex-wrap gap-x-3 text-xs text-gray-500">
+                            {reference.email && (
+                              <span className="inline-flex items-center">
+                                <i className="fas fa-envelope text-[#DAA520] mr-1 text-[10px]"></i>
+                                {reference.email}
+                              </span>
+                            )}
+                            {reference.phone && (
+                              <span className="inline-flex items-center">
+                                <i className="fas fa-phone text-[#DAA520] mr-1 text-[10px]"></i>
+                                {reference.phone}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex space-x-1">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-7 w-7 p-0 text-gray-400 hover:text-red-500 hover:bg-gray-50"
+                          onClick={() => removeReference(reference.id)}
+                        >
+                          <LucideTrash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-10 border border-dashed border-gray-200 rounded-lg bg-gray-50/50">
+                <p className="text-gray-500 text-sm mb-3">No references added yet</p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={toggleAddReferenceForm} 
+                  className="text-xs"
+                >
+                  <LucidePlus className="w-3.5 h-3.5 mr-1" />
+                  Add Your First Reference
+                </Button>
+              </div>
+            )}
+          </motion.div>
+        )}
+
+        {/* Publications Section */}
+        {activeSection === "publications" && (
+          <motion.div
+            key="publications"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-medium">Publications</h2>
+              <Button 
+                variant="ghost"
+                size="sm"
+                className="flex items-center gap-1 text-xs text-[#DAA520] hover:text-[#DAA520]/80 hover:bg-[#DAA520]/5"
+                onClick={toggleAddPublicationForm}
+              >
+                <LucidePlus className="w-3 h-3 mr-1" />
+                Add Publication
+              </Button>
+            </div>
+            
+            {/* Add Publication Form */}
+            {showAddPublicationForm && (
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-sm font-medium">Add Publication</h3>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-gray-400 hover:text-gray-600 hover:bg-gray-100/70 h-7 w-7 p-0"
+                    onClick={toggleAddPublicationForm}
+                  >
+                    <LucideX className="w-4 h-4" />
+                  </Button>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Title</label>
+                    <Input
+                      type="text"
+                      name="title"
+                      value={newPublication.title}
+                      onChange={handlePublicationChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                      placeholder="e.g. The Impact of AI on Modern Business"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Publisher/Journal</label>
+                    <Input
+                      type="text"
+                      name="publisher"
+                      value={newPublication.publisher}
+                      onChange={handlePublicationChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                      placeholder="e.g. Journal of Technology Innovation"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Publication Date</label>
+                    <Input
+                      type="date"
+                      name="date"
+                      value={newPublication.date}
+                      onChange={handlePublicationChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                    />
+                  </div>
+                  
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-medium text-gray-600 mb-1">URL (Optional)</label>
+                    <Input
+                      type="url"
+                      name="url"
+                      value={newPublication.url}
+                      onChange={handlePublicationChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                      placeholder="https://..."
+                    />
+                  </div>
+                  
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Description (Optional)</label>
+                    <Textarea
+                      name="description"
+                      value={newPublication.description}
+                      onChange={handlePublicationChange}
+                      className="w-full min-h-[80px] focus-visible:ring-[#DAA520]"
+                      placeholder="Brief description or abstract of the publication"
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex justify-end mt-4 gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={toggleAddPublicationForm}
+                    className="text-xs h-8"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={addPublication}
+                    className="text-xs h-8 bg-black hover:bg-black/80"
+                    disabled={!newPublication.title || !newPublication.publisher || !newPublication.date}
+                  >
+                    <LucideCheck className="w-3 h-3 mr-1" />
+                    Save Publication
+                  </Button>
+                </div>
+              </div>
+            )}
+            
+            {/* Publication Items */}
+            {mainCV.publications && mainCV.publications.length > 0 ? (
+              <div className="space-y-3">
+                {mainCV.publications.map((publication) => (
+                  <div 
+                    key={publication.id} 
+                    className="p-3 border border-gray-100 rounded-lg hover:border-[#DAA520]/40 transition-all bg-white"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-medium text-sm">{publication.title}</h3>
+                        <p className="text-gray-500 text-xs mt-0.5">
+                          {publication.publisher} • Published {publication.date}
+                        </p>
+                      </div>
+                      <div className="flex space-x-1">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-7 w-7 p-0 text-gray-400 hover:text-red-500 hover:bg-gray-50"
+                          onClick={() => removePublication(publication.id)}
+                        >
+                          <LucideTrash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    {publication.description && (
+                      <p className="mt-2 text-xs text-gray-600">{publication.description}</p>
+                    )}
+                    
+                    {publication.url && (
+                      <a 
+                        href={publication.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="mt-2 inline-flex items-center text-xs text-[#DAA520] hover:underline"
+                      >
+                        <LucideChevronRight className="w-3 h-3 mr-0.5" />
+                        View Publication
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-10 border border-dashed border-gray-200 rounded-lg bg-gray-50/50">
+                <p className="text-gray-500 text-sm mb-3">No publications added yet</p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={toggleAddPublicationForm} 
+                  className="text-xs"
+                >
+                  <LucidePlus className="w-3.5 h-3.5 mr-1" />
+                  Add Your First Publication
+                </Button>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
