@@ -23,77 +23,38 @@ export default function Logo({ className = "", size = "md", showText = true, dar
   };
 
   const primaryColor = "#DAA520"; // Gold
-  const accentColor = darkMode ? "#FFFFFF" : "#111111";
+  const secondaryColor = darkMode ? "#FFD966" : "#C19015"; // Lighter/darker gold
+  const tertiaryColor = darkMode ? "#FFF2CC" : "#8C6B0B"; // Even lighter/darker gold
   const textColorClass = darkMode ? "text-white" : "text-black";
 
   return (
     <div className={`flex items-center ${className}`}>
       <div className={`${sizeMap[size]} mr-2`}>
         <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-          {/* Modern, striking cat design */}
+          {/* GitLab-inspired minimal cat logo */}
           
-          {/* Hexagonal cat face */}
+          {/* Top triangular ear section */}
           <path 
-            d="M10 25L18 10H32L40 25L32 40H18L10 25Z" 
+            d="M15 15L25 5L35 15H15Z" 
             fill={primaryColor}
-            strokeWidth="1.5"
-            stroke={primaryColor}
           />
           
-          {/* Angular cat ears */}
+          {/* Right triangle section */}
           <path 
-            d="M18 10L13 3L23 5L18 10Z" 
-            fill={primaryColor}
-            strokeWidth="1"
-            stroke={primaryColor}
-          />
-          <path 
-            d="M32 10L37 3L27 5L32 10Z" 
-            fill={primaryColor}
-            strokeWidth="1"
-            stroke={primaryColor}
+            d="M35 15L25 42L25 25L35 15Z" 
+            fill={secondaryColor}
           />
           
-          {/* Striking cat eyes - slanted slits */}
+          {/* Left triangle section */}
           <path 
-            d="M18 22L24 26L18 30Z" 
-            fill={accentColor}
-          />
-          <path 
-            d="M32 22L26 26L32 30Z" 
-            fill={accentColor}
+            d="M15 15L25 42L25 25L15 15Z" 
+            fill={secondaryColor}
           />
           
-          {/* Central diamond nose */}
+          {/* Bottom triangle section */}
           <path 
-            d="M23 26L25 24L27 26L25 28Z" 
-            fill={accentColor}
-          />
-          
-          {/* Geometric whiskers */}
-          <line 
-            x1="15" y1="27" x2="5" y2="25" 
-            stroke={accentColor} 
-            strokeWidth="1" 
-            strokeLinecap="round"
-          />
-          <line 
-            x1="15" y1="29" x2="5" y2="31" 
-            stroke={accentColor} 
-            strokeWidth="1" 
-            strokeLinecap="round"
-          />
-          <line 
-            x1="35" y1="27" x2="45" y2="25" 
-            stroke={accentColor} 
-            strokeWidth="1" 
-            strokeLinecap="round"
-          />
-          <line 
-            x1="35" y1="29" x2="45" y2="31" 
-            stroke={accentColor} 
-            strokeWidth="1" 
-            strokeLinecap="round"
+            d="M15 15L35 15L25 25L15 15Z" 
+            fill={tertiaryColor}
           />
         </svg>
       </div>
