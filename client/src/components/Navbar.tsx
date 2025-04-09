@@ -1,5 +1,6 @@
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
+import LogoSleek from "./LogoSleek";
 
 interface NavbarProps {
   isAuthenticated?: boolean;
@@ -26,18 +27,7 @@ export default function Navbar({ isAuthenticated = false }: NavbarProps) {
           onClick={() => goTo('/')}
           className="flex items-center cursor-pointer"
         >
-          {/* Cat Logo */}
-          <div className="w-8 h-8 mr-2">
-            <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M25 5C25 5 27.5 12.5 22.5 20C19 25 12.5 30 15 40C15 40 22.5 37.5 25 25C25 25 27.5 37.5 37.5 45C37.5 45 45 35 37.5 27.5C30 20 32.5 12.5 32.5 12.5C32.5 12.5 30 14 27.5 14C25 14 25 12.5 25 12.5C25 12.5 25 14 22.5 14C20 14 17.5 12.5 17.5 12.5C17.5 12.5 20 20 12.5 27.5C5 35 12.5 45 12.5 45C22.5 37.5 25 25 25 25C27.5 37.5 35 40 35 40C37.5 30 31 25 27.5 20C22.5 12.5 25 5 25 5Z" fill="#DAA520"/>
-              <circle cx="20" cy="17.5" r="1" fill="black"/>
-              <circle cx="30" cy="17.5" r="1" fill="black"/>
-              <path d="M22.5 22.5C22.5 22.5 25 23 27.5 22.5" stroke="black" strokeWidth="1" strokeLinecap="round"/>
-            </svg>
-          </div>
-          <span className="text-xl font-bold cursor-pointer">
-            <span className="text-black">CV</span><span className="text-[#DAA520]">Cat</span>
-          </span>
+          <LogoSleek size="small" animated={true} />
         </div>
       </div>
       
@@ -62,6 +52,12 @@ export default function Navbar({ isAuthenticated = false }: NavbarProps) {
               className="text-sm text-gray-700 hover:text-[#DAA520] transition-all cursor-pointer"
             >
               Team
+            </div>
+            <div
+              onClick={() => goTo('/logo')}
+              className="text-sm text-gray-700 hover:text-[#DAA520] transition-all cursor-pointer"
+            >
+              Logo
             </div>
             <div
               className="text-sm text-gray-700 hover:text-[#DAA520] transition-all cursor-pointer"
