@@ -215,15 +215,17 @@ export default function CVManagement() {
             <motion.section variants={itemAnimation}>
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-sm font-bold text-black">Tailored CVs</h2>
-                <Button
-                  variant="ghost"
-                  className="text-xs font-medium text-[#DAA520] hover:bg-[#DAA520]/5 rounded transition-all h-7 px-2"
-                >
-                  <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                  </svg>
-                  Create Tailored
-                </Button>
+                <Link href="/tailor-cv">
+                  <Button
+                    variant="ghost"
+                    className="text-xs font-medium text-[#DAA520] hover:bg-[#DAA520]/5 rounded transition-all h-7 px-2"
+                  >
+                    <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Create Tailored
+                  </Button>
+                </Link>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -298,9 +300,11 @@ export default function CVManagement() {
                     </div>
                     <h3 className="font-semibold text-sm mb-1 text-gray-900">Create Tailored CV</h3>
                     <p className="text-xs text-gray-600 mb-3 max-w-[180px]">Customize for specific job applications</p>
-                    <Button className="bg-black hover:bg-[#DAA520] text-white text-xs rounded px-3.5 py-1.5 shadow-sm transition-all font-medium">
-                      Create
-                    </Button>
+                    <Link href="/tailor-cv">
+                      <Button className="bg-black hover:bg-[#DAA520] text-white text-xs rounded px-3.5 py-1.5 shadow-sm transition-all font-medium">
+                        Create
+                      </Button>
+                    </Link>
                   </Card>
                 </motion.div>
               </div>

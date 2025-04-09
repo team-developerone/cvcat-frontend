@@ -8,6 +8,7 @@ import AuthPage from "@/pages/AuthPage";
 import ImportSelection from "@/pages/ImportSelection";
 import CVBuilder from "@/pages/CVBuilder";
 import CVManagement from "@/pages/CVManagement";
+import TailorCVWizard from "@/pages/TailorCVWizard";
 import TeamPage from "@/pages/TeamPage";
 import LogoPage from "@/pages/LogoPage";
 import ChatBot from "@/components/ChatBot";
@@ -34,6 +35,11 @@ function Router() {
         <Route path="/cv-management">
           <CVProvider>
             <CVManagement />
+          </CVProvider>
+        </Route>
+        <Route path="/tailor-cv">
+          <CVProvider>
+            <TailorCVWizard />
           </CVProvider>
         </Route>
         <Route component={NotFound} />
