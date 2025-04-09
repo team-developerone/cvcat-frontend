@@ -780,20 +780,45 @@ export default function ChatBot({ isEmbedded = false }: ChatBotProps) {
                 <div>
                   <div className="flex items-center">
                     <h4 className="font-medium text-xs">CVCat</h4>
-                    {/* AI 3-star icon */}
+                    {/* AI sparkle icon */}
                     <div className="ml-2 bg-[#DAA520]/10 rounded-sm px-1.5 py-0.5 flex items-center">
                       <span className="text-[8px] font-medium text-[#DAA520] mr-1">AI</span>
-                      <div className="flex">
-                        {[...Array(3)].map((_, i) => (
-                          <svg 
-                            key={i} 
-                            className="w-1.5 h-1.5 text-[#DAA520]" 
-                            fill="currentColor" 
-                            viewBox="0 0 24 24"
-                          >
-                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                          </svg>
-                        ))}
+                      <div className="flex relative h-4 w-8">
+                        {/* Main sparkle */}
+                        <svg 
+                          className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-4 text-black" 
+                          viewBox="0 0 24 24" 
+                          fill="currentColor"
+                        >
+                          <path d="M12 2L14 10L22 12L14 14L12 22L10 14L2 12L10 10L12 2Z" />
+                        </svg>
+                        
+                        {/* Top right sparkle */}
+                        <svg 
+                          className="absolute top-0 right-0 w-2.5 h-2.5 text-gray-500" 
+                          viewBox="0 0 24 24" 
+                          fill="currentColor"
+                        >
+                          <path d="M12 2L14 10L22 12L14 14L12 22L10 14L2 12L10 10L12 2Z" />
+                        </svg>
+                        
+                        {/* Bottom left sparkle */}
+                        <svg 
+                          className="absolute bottom-0 left-0 w-2.5 h-2.5 text-gray-500" 
+                          viewBox="0 0 24 24" 
+                          fill="currentColor"
+                        >
+                          <path d="M12 2L14 10L22 12L14 14L12 22L10 14L2 12L10 10L12 2Z" />
+                        </svg>
+                        
+                        {/* Bottom right tiny sparkle */}
+                        <svg 
+                          className="absolute bottom-1 right-2 w-1.5 h-1.5 text-gray-300" 
+                          viewBox="0 0 24 24" 
+                          fill="currentColor"
+                        >
+                          <path d="M12 2L14 10L22 12L14 14L12 22L10 14L2 12L10 10L12 2Z" />
+                        </svg>
                       </div>
                     </div>
                   </div>
