@@ -589,11 +589,7 @@ export default function LandingPage() {
       <Features />
       
       {/* Cat-themed Testimonials */}
-      <section className="py-10 px-4 bg-gradient-to-b from-[#111111] to-black text-white relative">
-        {/* Gold accent lines */}
-        <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#DAA520] to-transparent opacity-50"></div>
-        <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-[#DAA520] to-transparent opacity-30"></div>
-        
+      <section className="py-10 px-4 bg-gray-50 relative">
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-[0.02] pointer-events-none">
           <motion.div 
@@ -609,7 +605,7 @@ export default function LandingPage() {
             }}
           >
             <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M50 10C50 10 55 25 45 40C38 50 25 60 30 80C30 80 45 75 50 50C50 50 55 75 75 90C75 90 90 70 75 55C60 40 65 25 65 25C65 25 60 28 55 28C50 28 50 25 50 25C50 25 50 28 45 28C40 28 35 25 35 25C35 25 40 40 25 55C10 70 25 90 25 90C45 75 50 50 50 50C55 75 70 80 70 80C75 60 62 50 55 40C45 25 50 10 50 10Z" fill="#FFFFFF"/>
+              <path d="M50 10C50 10 55 25 45 40C38 50 25 60 30 80C30 80 45 75 50 50C50 50 55 75 75 90C75 90 90 70 75 55C60 40 65 25 65 25C65 25 60 28 55 28C50 28 50 25 50 25C50 25 50 28 45 28C40 28 35 25 35 25C35 25 40 40 25 55C10 70 25 90 25 90C45 75 50 50 50 50C55 75 70 80 70 80C75 60 62 50 55 40C45 25 50 10 50 10Z" fill="#000000" fillOpacity="0.05"/>
             </svg>
           </motion.div>
         </div>
@@ -621,12 +617,12 @@ export default function LandingPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-lg font-medium mb-2 text-white">What Our Users Say</h2>
-            <p className="text-xs text-gray-400 max-w-lg mx-auto">
+            <h2 className="text-lg font-medium mb-2">What Our Users Say</h2>
+            <p className="text-xs text-gray-500 max-w-lg mx-auto">
               Success stories from professionals who found their dream jobs
             </p>
             
-            {/* Cat ears decoration - golden */}
+            {/* Cat ears decoration */}
             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
               <svg width="20" height="10" viewBox="0 0 20 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M5 10C5 10 0 7 0 0C0 0 3 5 5 5C7 5 10 0 10 0C10 0 13 5 15 5C17 5 20 0 20 0C20 7 15 10 15 10H5Z" fill="#DAA520" fillOpacity="0.3"/>
@@ -651,24 +647,25 @@ export default function LandingPage() {
             ].map((testimonial, index) => (
               <motion.div 
                 key={index}
-                className="bg-[#1a1a1a] border border-gray-800 hover:border-[#DAA520]/30 p-4 relative"
+                className="bg-white border border-gray-100 hover:border-[#DAA520]/50 p-4 relative shadow-sm"
                 initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 whileHover={{ 
                   y: -3,
+                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
                   borderColor: "rgba(218, 165, 32, 0.5)"
                 }}
               >
                 <div className="flex">
-                  <div className="w-8 h-8 bg-[#DAA520]/20 flex items-center justify-center text-xs font-medium text-[#DAA520] mr-3">
+                  <div className="w-8 h-8 bg-[#DAA520]/10 flex items-center justify-center text-xs font-medium text-[#DAA520] mr-3">
                     {testimonial.image}
                   </div>
                   <div>
-                    <p className="text-xs mb-2 text-gray-300 italic">"{testimonial.text}"</p>
-                    <p className="text-xs font-medium text-white">{testimonial.name}</p>
-                    <p className="text-[10px] text-gray-400">{testimonial.role}</p>
+                    <p className="text-xs mb-2 text-gray-600 italic">"{testimonial.text}"</p>
+                    <p className="text-xs font-medium">{testimonial.name}</p>
+                    <p className="text-[10px] text-gray-500">{testimonial.role}</p>
                   </div>
                 </div>
                 
@@ -689,7 +686,7 @@ export default function LandingPage() {
       </section>
       
       {/* Companies Section */}
-      <section className="py-8 px-4 bg-gray-50">
+      <section className="py-8 px-4 bg-white border-t border-gray-100">
         <div className="max-w-5xl mx-auto">
           <motion.div 
             className="text-center mb-6"

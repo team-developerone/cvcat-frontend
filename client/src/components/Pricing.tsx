@@ -49,7 +49,7 @@ const pricingTiers: PricingTier[] = [
 
 export default function Pricing() {
   return (
-    <section id="pricing" className="py-12 px-4 md:px-6 bg-gray-50">
+    <section id="pricing" className="py-12 px-4 md:px-6 bg-white">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-8">
           <h2 className="text-xl font-medium mb-2">Pricing</h2>
@@ -73,11 +73,11 @@ export default function Pricing() {
           {pricingTiers.map((tier, index) => (
             <div 
               key={index} 
-              className={`card-flat ${
+              className={`bg-white shadow-sm ${
                 tier.isPopular 
                   ? 'border-[#DAA520]' 
                   : 'border-gray-100'
-              } p-5 relative`}
+              } p-5 relative hover:shadow-md transition-all`}
             >
               {tier.isPopular && (
                 <div className="absolute top-0 right-0 bg-[#DAA520] text-white text-[10px] px-2 py-0.5">

@@ -36,20 +36,20 @@ const features: Feature[] = [
 
 export default function Features() {
   return (
-    <section id="features" className="py-12 px-4 md:px-6 bg-black relative overflow-hidden">
+    <section id="features" className="py-12 px-4 md:px-6 bg-white relative overflow-hidden">
       {/* Background pattern */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+      <div className="absolute inset-0 opacity-[0.02] pointer-events-none">
         <div className="absolute -top-10 right-10 w-40 h-40">
           <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M50 10C50 10 55 25 45 40C38 50 25 60 30 80C30 80 45 75 50 50C50 50 55 75 75 90C75 90 90 70 75 55C60 40 65 25 65 25C65 25 60 28 55 28C50 28 50 25 50 25C50 25 50 28 45 28C40 28 35 25 35 25C35 25 40 40 25 55C10 70 25 90 25 90C45 75 50 50 50 50C55 75 70 80 70 80C75 60 62 50 55 40C45 25 50 10 50 10Z" fill="#FFFFFF"/>
+            <path d="M50 10C50 10 55 25 45 40C38 50 25 60 30 80C30 80 45 75 50 50C50 50 55 75 75 90C75 90 90 70 75 55C60 40 65 25 65 25C65 25 60 28 55 28C50 28 50 25 50 25C50 25 50 28 45 28C40 28 35 25 35 25C35 25 40 40 25 55C10 70 25 90 25 90C45 75 50 50 50 50C55 75 70 80 70 80C75 60 62 50 55 40C45 25 50 10 50 10Z" fill="#000000" fillOpacity="0.05"/>
           </svg>
         </div>
       </div>
       
       <div className="max-w-6xl mx-auto relative z-10">
         <div className="text-center mb-10">
-          <h2 className="text-xl font-medium mb-2 text-white">Why <span className="text-[#DAA520]">CVCat</span></h2>
-          <p className="text-gray-400 text-sm max-w-lg mx-auto">
+          <h2 className="text-xl font-medium mb-2">Why <span className="text-[#DAA520]">CVCat</span></h2>
+          <p className="text-gray-600 text-sm max-w-lg mx-auto">
             Simple tools to build effective CVs for your job search
           </p>
           
@@ -67,14 +67,14 @@ export default function Features() {
         
         <div className="grid md:grid-cols-3 gap-6">
           {features.map((feature, index) => (
-            <div key={index} className="bg-[#111111] hover:bg-[#1a1a1a] border border-gray-800 hover:border-[#DAA520]/50 p-4 transition-all">
+            <div key={index} className="card-flat bg-white hover:bg-gray-50 p-4 transition-all">
               <div className="flex items-start mb-2">
                 <div className="mr-3 text-[#DAA520]">
                   <i className={`fas ${feature.icon} text-sm`}></i>
                 </div>
                 <div>
-                  <h3 className="text-base font-medium mb-1 text-white">{feature.title}</h3>
-                  <p className="text-xs text-gray-400">{feature.description}</p>
+                  <h3 className="text-base font-medium mb-1">{feature.title}</h3>
+                  <p className="text-xs text-gray-500">{feature.description}</p>
                 </div>
               </div>
             </div>
