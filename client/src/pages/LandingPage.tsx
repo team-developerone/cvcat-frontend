@@ -1167,56 +1167,62 @@ export default function LandingPage() {
                 </div>
               </motion.div>
               
-              {/* AI Writing In Progress */}
-              <motion.div
-                className="absolute top-[160px] left-[30px]"
-                initial={{ opacity: 0 }}
-                animate={{
-                  opacity: [0, 0.9, 0.9, 0]
-                }}
-                transition={{
-                  duration: 6,
-                  times: [0, 0.2, 0.8, 1],
-                  repeat: Infinity,
-                  repeatDelay: 6
-                }}
-              >
-                <div className="relative">
-                  <svg className="w-36 h-4" viewBox="0 0 120 12" fill="none">
-                    <rect width="120" height="12" fill="#111111" rx="2"/>
-                    
-                    <motion.rect 
-                      x="4" 
-                      y="4" 
-                      width="0" 
-                      height="4" 
-                      fill="#DAA520"
-                      animate={{
-                        width: [0, 112, 0]
-                      }}
-                      transition={{
-                        duration: 6,
-                        times: [0, 0.8, 1],
-                        repeat: Infinity,
-                        repeatDelay: 6
-                      }}
-                    />
-                    
-                    <motion.text 
-                      x="60" 
-                      y="8" 
-                      fontSize="6" 
-                      fontFamily="sans-serif" 
-                      fill="white" 
-                      textAnchor="middle" 
-                      dominantBaseline="middle"
-                      opacity="0.8"
-                    >
-                      AI generating work experience...
-                    </motion.text>
-                  </svg>
-                </div>
-              </motion.div>
+              {/* AI Writing In Progress - Three rotating messages */}
+              {['work', 'skills', 'achievements'].map((content, index) => (
+                <motion.div
+                  key={`generating-${content}`}
+                  className="absolute top-[160px] left-[30px]"
+                  initial={{ opacity: 0 }}
+                  animate={{
+                    opacity: [0, 0.9, 0.9, 0]
+                  }}
+                  transition={{
+                    duration: 5,
+                    times: [0, 0.2, 0.8, 1],
+                    repeat: Infinity,
+                    repeatDelay: 12, // Long enough for all three
+                    delay: index * 5.5 // Staggered to show one after another
+                  }}
+                >
+                  <div className="relative">
+                    <svg className="w-36 h-4" viewBox="0 0 120 12" fill="none">
+                      <rect width="120" height="12" fill="#111111" rx="2"/>
+                      
+                      <motion.rect 
+                        x="4" 
+                        y="4" 
+                        width="0" 
+                        height="4" 
+                        fill="#DAA520"
+                        animate={{
+                          width: [0, 112, 0]
+                        }}
+                        transition={{
+                          duration: 5,
+                          times: [0, 0.8, 1],
+                          repeat: Infinity,
+                          repeatDelay: 12
+                        }}
+                      />
+                      
+                      <motion.text 
+                        x="60" 
+                        y="8" 
+                        fontSize="6" 
+                        fontFamily="sans-serif" 
+                        fill="white" 
+                        textAnchor="middle" 
+                        dominantBaseline="middle"
+                        opacity="0.8"
+                      >
+                        {index === 0 && "AI generating work experience..."}
+                        {index === 1 && "AI enhancing skills section..."}
+                        {index === 2 && "AI adding quantifiable achievements..."}
+                      </motion.text>
+                    </svg>
+                  </div>
+                </motion.div>
+              ))}
               
               {/* Main AI pointer */}
               <motion.div
