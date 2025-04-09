@@ -35,6 +35,7 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
   const [showAddReferenceForm, setShowAddReferenceForm] = useState(false);
   const [showAddPublicationForm, setShowAddPublicationForm] = useState(false);
   const [showAddCustomSectionForm, setShowAddCustomSectionForm] = useState(false);
+  const [showAddCustomSectionItemForm, setShowAddCustomSectionItemForm] = useState<string | null>(null);
   const [newSkill, setNewSkill] = useState("");
   
   // Reset all form states when active section changes
@@ -117,6 +118,14 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
     title: ""
   });
   
+  // Form state for new custom section item
+  const { formData: newCustomSectionItem, handleChange: handleCustomSectionItemChange, resetForm: resetCustomSectionItemForm } = useFormState({
+    title: "",
+    subtitle: "",
+    date: "",
+    description: ""
+  });
+  
   // Toggle add experience form
   const toggleAddExperienceForm = () => {
     setShowAddExperienceForm(!showAddExperienceForm);
@@ -186,6 +195,14 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
     setShowAddCustomSectionForm(!showAddCustomSectionForm);
     if (!showAddCustomSectionForm) {
       resetCustomSectionForm();
+    }
+  };
+  
+  // Toggle add custom section item form
+  const toggleAddCustomSectionItemForm = (sectionId: string | null) => {
+    setShowAddCustomSectionItemForm(sectionId);
+    if (sectionId === null) {
+      resetCustomSectionItemForm();
     }
   };
   
@@ -486,6 +503,58 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
     setMainCV({
       ...mainCV,
       customSections: mainCV.customSections.filter(section => section.id !== id),
+      lastUpdated: new Date()
+    });
+  };
+  
+  // Add custom section item
+  const addCustomSectionItem = (sectionId: string) => {
+    if (!mainCV || !mainCV.customSections) return;
+    
+    const newItem: CustomSectionItem = {
+      id: Date.now().toString(),
+      title: newCustomSectionItem.title,
+      subtitle: newCustomSectionItem.subtitle || undefined,
+      date: newCustomSectionItem.date || undefined,
+      description: newCustomSectionItem.description || undefined
+    };
+    
+    const updatedSections = mainCV.customSections.map(section => {
+      if (section.id === sectionId) {
+        return {
+          ...section,
+          items: [newItem, ...section.items]
+        };
+      }
+      return section;
+    });
+    
+    setMainCV({
+      ...mainCV,
+      customSections: updatedSections,
+      lastUpdated: new Date()
+    });
+    
+    toggleAddCustomSectionItemForm(null);
+  };
+  
+  // Remove custom section item
+  const removeCustomSectionItem = (sectionId: string, itemId: string) => {
+    if (!mainCV || !mainCV.customSections) return;
+    
+    const updatedSections = mainCV.customSections.map(section => {
+      if (section.id === sectionId) {
+        return {
+          ...section,
+          items: section.items.filter(item => item.id !== itemId)
+        };
+      }
+      return section;
+    });
+    
+    setMainCV({
+      ...mainCV,
+      customSections: updatedSections,
       lastUpdated: new Date()
     });
   };
@@ -1310,7 +1379,17 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
                           <div key={item.id} className="p-2 bg-gray-50 rounded-md text-sm">
                             <div className="flex justify-between">
                               <span className="font-medium">{item.title}</span>
-                              {item.date && <span className="text-gray-500 text-xs">{item.date}</span>}
+                              <div className="flex space-x-1">
+                                {item.date && <span className="text-gray-500 text-xs mr-2 self-center">{item.date}</span>}
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  className="h-6 w-6 p-0 text-gray-400 hover:text-red-500 hover:bg-gray-100"
+                                  onClick={() => removeCustomSectionItem(section.id, item.id)}
+                                >
+                                  <LucideTrash2 className="w-3 h-3" />
+                                </Button>
+                              </div>
                             </div>
                             {item.subtitle && <p className="text-gray-600 text-xs">{item.subtitle}</p>}
                             {item.description && <p className="text-gray-600 text-xs mt-1">{item.description}</p>}
@@ -1325,10 +1404,94 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
                       variant="outline"
                       size="sm"
                       className="mt-3 text-xs h-7 w-full"
+                      onClick={() => toggleAddCustomSectionItemForm(section.id)}
                     >
                       <LucidePlus className="w-3 h-3 mr-1" />
                       Add Item to {section.title}
                     </Button>
+                    
+                    {/* Add Custom Section Item Form */}
+                    {showAddCustomSectionItemForm === section.id && (
+                      <div className="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                        <div className="flex justify-between items-center mb-3">
+                          <h3 className="text-xs font-medium">Add Item to {section.title}</h3>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="text-gray-400 hover:text-gray-600 hover:bg-gray-100/70 h-6 w-6 p-0"
+                            onClick={() => toggleAddCustomSectionItemForm(null)}
+                          >
+                            <LucideX className="w-3.5 h-3.5" />
+                          </Button>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 gap-3">
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Title</label>
+                            <Input
+                              type="text"
+                              name="title"
+                              value={newCustomSectionItem.title}
+                              onChange={handleCustomSectionItemChange}
+                              className="w-full h-8 text-sm focus-visible:ring-[#DAA520]"
+                            />
+                          </div>
+                          
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Subtitle (Optional)</label>
+                            <Input
+                              type="text"
+                              name="subtitle"
+                              value={newCustomSectionItem.subtitle}
+                              onChange={handleCustomSectionItemChange}
+                              className="w-full h-8 text-sm focus-visible:ring-[#DAA520]"
+                            />
+                          </div>
+                          
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Date (Optional)</label>
+                            <Input
+                              type="text"
+                              name="date"
+                              value={newCustomSectionItem.date}
+                              onChange={handleCustomSectionItemChange}
+                              className="w-full h-8 text-sm focus-visible:ring-[#DAA520]"
+                              placeholder="e.g. 2021 - 2023 or January 2023"
+                            />
+                          </div>
+                          
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Description (Optional)</label>
+                            <Textarea
+                              name="description"
+                              value={newCustomSectionItem.description}
+                              onChange={handleCustomSectionItemChange}
+                              className="w-full min-h-[70px] text-sm focus-visible:ring-[#DAA520]"
+                            />
+                          </div>
+                          
+                          <div className="flex justify-end mt-2 gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => toggleAddCustomSectionItemForm(null)}
+                              className="text-xs h-8"
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={() => addCustomSectionItem(section.id)}
+                              className="text-xs h-8 bg-black hover:bg-black/80"
+                              disabled={!newCustomSectionItem.title.trim()}
+                            >
+                              <LucideCheck className="w-3 h-3 mr-1" />
+                              Add Item
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
