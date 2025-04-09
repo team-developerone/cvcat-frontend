@@ -89,11 +89,11 @@ export default function TailorCVWizard() {
   
   return (
     <Layout isAuthenticated={true}>
-      <div className="container max-w-4xl py-8">
-        <h1 className="text-2xl font-bold mb-6 text-center">Create Tailored CV</h1>
+      <div className="container max-w-3xl mx-auto py-10 px-4 sm:px-6">
+        <h1 className="text-2xl font-bold mb-8 text-center">Create Tailored CV</h1>
         
         {/* Progress Bar */}
-        <div className="w-full bg-gray-100 h-2 rounded-full mb-8 overflow-hidden">
+        <div className="w-full max-w-xl mx-auto bg-gray-100 h-2.5 rounded-full mb-10 overflow-hidden">
           <motion.div 
             className="h-full bg-[#DAA520]"
             initial={{ width: `${(step / 5) * 100 - 5}%` }}
@@ -102,13 +102,13 @@ export default function TailorCVWizard() {
           />
         </div>
         
-        <Card className="border-2 shadow-md">
+        <Card className="border-2 border-gray-300 shadow-md overflow-hidden">
           {/* Step 1: Select CV to Tailor */}
           {step === 1 && (
             <>
-              <CardHeader>
-                <CardTitle className="text-xl">Choose Your Base CV</CardTitle>
-                <CardDescription>
+              <CardHeader className="bg-gray-50 border-b">
+                <CardTitle className="text-xl font-bold">Choose Your Base CV</CardTitle>
+                <CardDescription className="text-gray-600">
                   Select the CV you want to tailor for this job application
                 </CardDescription>
               </CardHeader>
@@ -171,13 +171,14 @@ export default function TailorCVWizard() {
                 <Button
                   variant="outline"
                   onClick={() => navigate("/cv-management")}
+                  className="border-2 border-gray-300 hover:border-red-500 hover:text-red-500 shadow-sm"
                 >
                   Cancel
                 </Button>
                 <Button 
                   onClick={handleNext}
                   disabled={!cvToTailor}
-                  className="bg-black text-white hover:bg-black/80"
+                  className="bg-black text-white hover:bg-[#DAA520] border-2 border-transparent shadow-md transition-colors"
                 >
                   Next <LucideArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -188,9 +189,9 @@ export default function TailorCVWizard() {
           {/* Step 2: Job Details */}
           {step === 2 && (
             <>
-              <CardHeader>
-                <CardTitle className="text-xl">Job Details</CardTitle>
-                <CardDescription>
+              <CardHeader className="bg-gray-50 border-b">
+                <CardTitle className="text-xl font-bold">Job Details</CardTitle>
+                <CardDescription className="text-gray-600">
                   Enter information about the position you're applying for
                 </CardDescription>
               </CardHeader>
@@ -224,13 +225,13 @@ export default function TailorCVWizard() {
                 </div>
               </CardContent>
               <CardFooter className="flex justify-between border-t pt-4">
-                <Button variant="outline" onClick={handlePrevious}>
+                <Button variant="outline" className="border-2 border-gray-300 hover:border-[#DAA520] hover:text-[#DAA520] shadow-sm" onClick={handlePrevious}>
                   <LucideArrowLeft className="mr-2 h-4 w-4" /> Back
                 </Button>
                 <Button 
                   onClick={handleNext}
                   disabled={!jobTitle || !jobDescription}
-                  className="bg-black text-white hover:bg-black/80"
+                  className="bg-black text-white hover:bg-[#DAA520] border-2 border-transparent shadow-md transition-colors"
                 >
                   Next <LucideArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -241,9 +242,9 @@ export default function TailorCVWizard() {
           {/* Step 3: Company Information */}
           {step === 3 && (
             <>
-              <CardHeader>
-                <CardTitle className="text-xl">Company Information</CardTitle>
-                <CardDescription>
+              <CardHeader className="bg-gray-50 border-b">
+                <CardTitle className="text-xl font-bold">Company Information</CardTitle>
+                <CardDescription className="text-gray-600">
                   Tell us about the company you're applying to
                 </CardDescription>
               </CardHeader>
@@ -277,13 +278,13 @@ export default function TailorCVWizard() {
                 </div>
               </CardContent>
               <CardFooter className="flex justify-between border-t pt-4">
-                <Button variant="outline" onClick={handlePrevious}>
+                <Button variant="outline" className="border-2 border-gray-300 hover:border-[#DAA520] hover:text-[#DAA520] shadow-sm" onClick={handlePrevious}>
                   <LucideArrowLeft className="mr-2 h-4 w-4" /> Back
                 </Button>
                 <Button 
                   onClick={handleNext}
                   disabled={!companyName}
-                  className="bg-black text-white hover:bg-black/80"
+                  className="bg-black text-white hover:bg-[#DAA520] border-2 border-transparent shadow-md transition-colors"
                 >
                   Next <LucideArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -294,9 +295,9 @@ export default function TailorCVWizard() {
           {/* Step 4: Key Skills & Experience */}
           {step === 4 && (
             <>
-              <CardHeader>
-                <CardTitle className="text-xl">Key Skills & Strengths</CardTitle>
-                <CardDescription>
+              <CardHeader className="bg-gray-50 border-b">
+                <CardTitle className="text-xl font-bold">Key Skills & Strengths</CardTitle>
+                <CardDescription className="text-gray-600">
                   Highlight specific skills and strengths for this role
                 </CardDescription>
               </CardHeader>
@@ -334,12 +335,12 @@ export default function TailorCVWizard() {
                 </div>
               </CardContent>
               <CardFooter className="flex justify-between border-t pt-4">
-                <Button variant="outline" onClick={handlePrevious}>
+                <Button variant="outline" className="border-2 border-gray-300 hover:border-[#DAA520] hover:text-[#DAA520] shadow-sm" onClick={handlePrevious}>
                   <LucideArrowLeft className="mr-2 h-4 w-4" /> Back
                 </Button>
                 <Button 
                   onClick={handleNext}
-                  className="bg-black text-white hover:bg-black/80"
+                  className="bg-black text-white hover:bg-[#DAA520] border-2 border-transparent shadow-md transition-colors"
                 >
                   Next <LucideArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -350,9 +351,9 @@ export default function TailorCVWizard() {
           {/* Step 5: Customization Options */}
           {step === 5 && (
             <>
-              <CardHeader>
-                <CardTitle className="text-xl">Customization Options</CardTitle>
-                <CardDescription>
+              <CardHeader className="bg-gray-50 border-b">
+                <CardTitle className="text-xl font-bold">Customization Options</CardTitle>
+                <CardDescription className="text-gray-600">
                   Select which parts of your CV you want to tailor
                 </CardDescription>
               </CardHeader>
@@ -416,13 +417,13 @@ export default function TailorCVWizard() {
                 </div>
               </CardContent>
               <CardFooter className="flex justify-between border-t pt-4">
-                <Button variant="outline" onClick={handlePrevious}>
+                <Button variant="outline" className="border-2 border-gray-300 hover:border-[#DAA520] hover:text-[#DAA520] shadow-sm" onClick={handlePrevious}>
                   <LucideArrowLeft className="mr-2 h-4 w-4" /> Back
                 </Button>
                 <Button 
                   onClick={handleGenerateTailoredCV}
                   disabled={isProcessing}
-                  className="bg-black text-white hover:bg-black/80"
+                  className="bg-black text-white hover:bg-[#DAA520] border-2 border-transparent shadow-md transition-colors"
                 >
                   {isProcessing ? (
                     <>
