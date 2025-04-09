@@ -10,7 +10,6 @@ import CVBuilder from "@/pages/CVBuilder";
 import CVManagement from "@/pages/CVManagement";
 import TeamPage from "@/pages/TeamPage";
 import LogoPage from "@/pages/LogoPage";
-import LogoExamplesPage from "@/pages/LogoExamplesPage";
 import ChatBot from "@/components/ChatBot";
 import { CVProvider } from "@/lib/context";
 
@@ -22,7 +21,6 @@ function Router() {
         <Route path="/auth" component={AuthPage} />
         <Route path="/team" component={TeamPage} />
         <Route path="/logo" component={LogoPage} />
-        <Route path="/logo-examples" component={LogoExamplesPage} />
         <Route path="/import-selection">
           <CVProvider>
             <ImportSelection />
