@@ -10,7 +10,7 @@ import CVBuilder from "@/pages/CVBuilder";
 import CVManagement from "@/pages/CVManagement";
 import { useLocation } from "wouter";
 import ChatBot from "@/components/ChatBot";
-import { useEffect } from "react";
+import { CVProvider } from "@/lib/context";
 
 function Router() {
   const [location] = useLocation();
@@ -23,9 +23,21 @@ function Router() {
       <Switch>
         <Route path="/" component={LandingPage} />
         <Route path="/auth" component={AuthPage} />
-        <Route path="/import-selection" component={ImportSelection} />
-        <Route path="/cv-builder" component={CVBuilder} />
-        <Route path="/cv-management" component={CVManagement} />
+        <Route path="/import-selection">
+          <CVProvider>
+            <ImportSelection />
+          </CVProvider>
+        </Route>
+        <Route path="/cv-builder">
+          <CVProvider>
+            <CVBuilder />
+          </CVProvider>
+        </Route>
+        <Route path="/cv-management">
+          <CVProvider>
+            <CVManagement />
+          </CVProvider>
+        </Route>
         <Route component={NotFound} />
       </Switch>
       
