@@ -31,29 +31,29 @@ export default function Logo({ className = "", size = "md", showText = true, dar
     <div className={`flex items-center ${className}`}>
       <div className={`${sizeMap[size]} mr-2`}>
         <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-          {/* GitLab-inspired minimal cat logo */}
+          {/* Wider, more balanced fox-inspired logo */}
           
           {/* Top triangular ear section */}
           <path 
-            d="M15 15L25 5L35 15H15Z" 
+            d="M10 18L25 5L40 18H10Z" 
             fill={primaryColor}
           />
           
           {/* Right triangle section */}
           <path 
-            d="M35 15L25 42L25 25L35 15Z" 
+            d="M40 18L25 40L25 28L40 18Z" 
             fill={secondaryColor}
           />
           
           {/* Left triangle section */}
           <path 
-            d="M15 15L25 42L25 25L15 15Z" 
+            d="M10 18L25 40L25 28L10 18Z" 
             fill={secondaryColor}
           />
           
-          {/* Bottom triangle section */}
+          {/* Bottom triangle section connecting the face */}
           <path 
-            d="M15 15L35 15L25 25L15 15Z" 
+            d="M10 18L40 18L25 28L10 18Z" 
             fill={tertiaryColor}
           />
         </svg>
