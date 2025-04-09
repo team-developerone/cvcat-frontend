@@ -1,16 +1,42 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useCV } from "@/lib/context";
+
+// Define message type
+interface Message {
+  id: string;
+  text: string;
+  isBot: boolean;
+  timestamp: Date;
+}
 
 export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
-  const { messages, addMessage } = useCV();
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: "welcome",
+      text: "Hi there! I'm your resume assistant. How can I help you today?",
+      isBot: true,
+      timestamp: new Date()
+    }
+  ]);
   const [inputText, setInputText] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   const toggleChat = () => {
     setIsOpen(!isOpen);
+  };
+  
+  // Add a message to the chat
+  const addMessage = (text: string, isBot: boolean) => {
+    const newMessage: Message = {
+      id: Date.now().toString(),
+      text,
+      isBot,
+      timestamp: new Date()
+    };
+    
+    setMessages(prev => [...prev, newMessage]);
   };
   
   // Handle sending a new message
@@ -23,9 +49,9 @@ export default function ChatBot() {
     // Simulate bot response (in a real app, this would call an API)
     setTimeout(() => {
       const botResponses = [
-        "Meow! That's a great question about your CV. I'd recommend focusing on quantifiable achievements.",
-        "Purr-fect! For your resume, make sure to tailor it to each job application.",
-        "A well-structured CV should highlight your most relevant experience first. Meow!",
+        "That's a great question about your resume. I'd recommend focusing on quantifiable achievements.",
+        "For your resume, make sure to tailor it to each job application.",
+        "A well-structured resume should highlight your most relevant experience first.",
         "Have you considered adding a skills section? It's a great way to showcase your abilities!"
       ];
       
@@ -52,7 +78,7 @@ export default function ChatBot() {
   
   // Common chat suggestions
   const suggestions = [
-    "How to improve my CV?",
+    "How to improve my resume?",
     "Resume vs. CV?",
     "Tips for job applications"
   ];
@@ -67,17 +93,17 @@ export default function ChatBot() {
       let response = "";
       
       switch(text) {
-        case "How to improve my CV?":
-          response = "Meow! To improve your CV: 1) Quantify achievements, 2) Tailor it to each job, 3) Use action verbs, 4) Keep it concise, and 5) Proofread carefully!";
+        case "How to improve my resume?":
+          response = "To improve your resume: 1) Quantify achievements, 2) Tailor it to each job, 3) Use action verbs, 4) Keep it concise, and 5) Proofread carefully!";
           break;
         case "Resume vs. CV?":
-          response = "Purr! A resume is typically 1-2 pages summarizing relevant experience for a specific job. A CV (Curriculum Vitae) is longer and details your entire career, including publications, awards, etc. In the US, CVs are mainly used in academia.";
+          response = "A resume is typically 1-2 pages summarizing relevant experience for a specific job. A CV (Curriculum Vitae) is longer and details your entire career, including publications, awards, etc. In the US, CVs are mainly used in academia.";
           break;
         case "Tips for job applications":
-          response = "Meowsome question! For job applications: 1) Research the company, 2) Tailor your CV and cover letter, 3) Prepare for common interview questions, 4) Follow up after applying, and 5) Keep track of all applications in a spreadsheet.";
+          response = "For job applications: 1) Research the company, 2) Tailor your resume and cover letter, 3) Prepare for common interview questions, 4) Follow up after applying, and 5) Keep track of all applications in a spreadsheet.";
           break;
         default:
-          response = "Meow! I'm not sure about that. Can you ask something else about CVs?";
+          response = "I'm not sure about that. Can you ask something else about resumes?";
       }
       
       addMessage(response, true);
@@ -88,54 +114,65 @@ export default function ChatBot() {
     <>
       {/* Chat Button */}
       <button 
-        className="fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full bg-black text-white flex items-center justify-center shadow-lg hover:bg-[#DAA520] transition-all relative"
+        className="fixed bottom-6 right-6 z-50 h-12 w-12 rounded-full bg-[#0d6efd] text-white flex items-center justify-center shadow-lg hover:bg-[#0b5ed7] transition-all"
         onClick={toggleChat}
+        aria-label="Open chat assistant"
       >
-        <div className="absolute top-[-10px] left-[7px] w-[15px] h-[15px] bg-[#DAA520] rounded-t-full transform -rotate-30"></div>
-        <div className="absolute top-[-10px] right-[7px] w-[15px] h-[15px] bg-[#DAA520] rounded-t-full transform rotate-30"></div>
-        <i className="fas fa-comment-dots text-xl"></i>
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+        </svg>
       </button>
       
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-[5.5rem] right-6 z-50 bg-white rounded-lg shadow-lg w-80 md:w-96 overflow-hidden flex flex-col" style={{ height: "400px" }}>
+        <div className="fixed bottom-[5.5rem] right-6 z-50 bg-white rounded-lg shadow-lg w-80 md:w-96 overflow-hidden flex flex-col border border-gray-200" style={{ height: "450px" }}>
           {/* Chat Header */}
-          <div className="bg-black text-white p-4 flex justify-between items-center">
+          <div className="bg-[#0d6efd] text-white p-3 flex justify-between items-center">
             <div className="flex items-center">
-              <div className="w-8 h-8 rounded-full bg-[#DAA520] flex items-center justify-center mr-3 relative">
-                <div className="absolute top-[-4px] left-[7px] w-[8px] h-[8px] bg-[#DAA520] rounded-t-full transform -rotate-30"></div>
-                <div className="absolute top-[-4px] right-[7px] w-[8px] h-[8px] bg-[#DAA520] rounded-t-full transform rotate-30"></div>
-                <i className="fas fa-cat text-black text-sm"></i>
+              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center mr-3">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
               </div>
               <div>
-                <h3 className="font-medium">CV Assistant</h3>
-                <p className="text-xs text-gray-300">Online</p>
+                <h3 className="font-medium text-sm">Resume Assistant</h3>
+                <p className="text-xs text-white/70">Online</p>
               </div>
             </div>
-            <button onClick={toggleChat}>
-              <i className="fas fa-times"></i>
+            <button 
+              onClick={toggleChat}
+              className="text-white/80 hover:text-white"
+              aria-label="Close chat"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
             </button>
           </div>
           
           {/* Chat Messages */}
-          <div className="flex-1 p-4 space-y-4 overflow-y-auto">
+          <div className="flex-1 p-4 space-y-4 overflow-y-auto bg-gray-50">
             {messages.map((message) => (
               <div key={message.id} className={`flex items-start mb-4 ${message.isBot ? "" : "justify-end"}`}>
                 {message.isBot && (
-                  <div className="w-8 h-8 rounded-full bg-[#DAA520] flex items-center justify-center flex-shrink-0">
-                    <i className="fas fa-cat text-black text-sm"></i>
+                  <div className="w-8 h-8 rounded-full bg-[#0d6efd] flex items-center justify-center flex-shrink-0">
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
                   </div>
                 )}
                 <div className={`${
                   message.isBot 
-                    ? "ml-3 bg-gray-100" 
-                    : "mr-3 bg-black text-white"
-                } rounded-lg py-2 px-3 max-w-[80%]`}>
-                  <p>{message.text}</p>
+                    ? "ml-3 bg-white border border-gray-200" 
+                    : "mr-3 bg-[#0d6efd] text-white"
+                } rounded-lg py-2 px-3 max-w-[80%] shadow-sm`}>
+                  <p className="text-sm">{message.text}</p>
                 </div>
                 {!message.isBot && (
                   <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-                    <i className="fas fa-user text-gray-600 text-sm"></i>
+                    <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
                   </div>
                 )}
               </div>
@@ -144,11 +181,11 @@ export default function ChatBot() {
             
             {/* Suggested Questions */}
             {messages.length === 1 && (
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 mt-4">
                 {suggestions.map((suggestion, index) => (
                   <button 
                     key={index}
-                    className="text-xs bg-[#DAA520]/10 hover:bg-[#DAA520]/20 text-black px-3 py-1 rounded-full transition-all"
+                    className="text-xs bg-white hover:bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full transition-all border border-gray-200"
                     onClick={() => handleSuggestionClick(suggestion)}
                   >
                     {suggestion}
@@ -159,21 +196,23 @@ export default function ChatBot() {
           </div>
           
           {/* Chat Input */}
-          <div className="p-3 border-t border-gray-200">
+          <div className="p-3 border-t border-gray-200 bg-white">
             <div className="flex items-center">
               <Input 
                 type="text" 
-                placeholder="Ask a question..." 
+                placeholder="Type your question..." 
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyPress={handleKeyPress}
-                className="w-full px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-1 focus:ring-[#DAA520] focus:border-[#DAA520]"
+                className="w-full px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-1 focus:ring-[#0d6efd] focus:border-[#0d6efd]"
               />
               <Button 
                 onClick={handleSendMessage}
-                className="bg-black text-white px-4 py-2 rounded-r-md hover:bg-[#DAA520] transition-all"
+                className="bg-[#0d6efd] text-white px-4 py-2 rounded-r-md hover:bg-[#0b5ed7] transition-all"
               >
-                <i className="fas fa-arrow-up"></i>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h14M12 5l7 7-7 7"></path>
+                </svg>
               </Button>
             </div>
           </div>
