@@ -589,23 +589,47 @@ export default function LandingPage() {
       <Features />
       
       {/* Cat-themed Testimonials */}
-      <section className="py-10 px-4 bg-white">
-        <div className="max-w-5xl mx-auto">
+      <section className="py-10 px-4 bg-gradient-to-b from-[#111111] to-black text-white relative">
+        {/* Gold accent lines */}
+        <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#DAA520] to-transparent opacity-50"></div>
+        <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-[#DAA520] to-transparent opacity-30"></div>
+        
+        {/* Background pattern */}
+        <div className="absolute inset-0 opacity-[0.02] pointer-events-none">
+          <motion.div 
+            className="absolute bottom-0 left-10 w-32 h-32"
+            animate={{ 
+              rotate: [0, 5, 0, -5, 0],
+              opacity: [0.05, 0.08, 0.05]
+            }}
+            transition={{ 
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          >
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M50 10C50 10 55 25 45 40C38 50 25 60 30 80C30 80 45 75 50 50C50 50 55 75 75 90C75 90 90 70 75 55C60 40 65 25 65 25C65 25 60 28 55 28C50 28 50 25 50 25C50 25 50 28 45 28C40 28 35 25 35 25C35 25 40 40 25 55C10 70 25 90 25 90C45 75 50 50 50 50C55 75 70 80 70 80C75 60 62 50 55 40C45 25 50 10 50 10Z" fill="#FFFFFF"/>
+            </svg>
+          </motion.div>
+        </div>
+        
+        <div className="max-w-5xl mx-auto relative z-10">
           <motion.div 
             className="text-center mb-8 relative"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-lg font-medium mb-2">What Our Users Say</h2>
-            <p className="text-xs text-gray-600 max-w-lg mx-auto">
+            <h2 className="text-lg font-medium mb-2 text-white">What Our Users Say</h2>
+            <p className="text-xs text-gray-400 max-w-lg mx-auto">
               Success stories from professionals who found their dream jobs
             </p>
             
-            {/* Cat ears decoration */}
+            {/* Cat ears decoration - golden */}
             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
               <svg width="20" height="10" viewBox="0 0 20 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M5 10C5 10 0 7 0 0C0 0 3 5 5 5C7 5 10 0 10 0C10 0 13 5 15 5C17 5 20 0 20 0C20 7 15 10 15 10H5Z" fill="#DAA520" fillOpacity="0.1"/>
+                <path d="M5 10C5 10 0 7 0 0C0 0 3 5 5 5C7 5 10 0 10 0C10 0 13 5 15 5C17 5 20 0 20 0C20 7 15 10 15 10H5Z" fill="#DAA520" fillOpacity="0.3"/>
               </svg>
             </div>
           </motion.div>
@@ -627,31 +651,35 @@ export default function LandingPage() {
             ].map((testimonial, index) => (
               <motion.div 
                 key={index}
-                className="card-flat p-4 relative"
+                className="bg-[#1a1a1a] border border-gray-800 hover:border-[#DAA520]/30 p-4 relative"
                 initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ 
+                  y: -3,
+                  borderColor: "rgba(218, 165, 32, 0.5)"
+                }}
               >
                 <div className="flex">
-                  <div className="w-8 h-8 bg-[#DAA520]/10 flex items-center justify-center text-xs font-medium text-[#DAA520] mr-3">
+                  <div className="w-8 h-8 bg-[#DAA520]/20 flex items-center justify-center text-xs font-medium text-[#DAA520] mr-3">
                     {testimonial.image}
                   </div>
                   <div>
-                    <p className="text-xs mb-2 text-gray-600 italic">"{testimonial.text}"</p>
-                    <p className="text-xs font-medium">{testimonial.name}</p>
-                    <p className="text-[10px] text-gray-500">{testimonial.role}</p>
+                    <p className="text-xs mb-2 text-gray-300 italic">"{testimonial.text}"</p>
+                    <p className="text-xs font-medium text-white">{testimonial.name}</p>
+                    <p className="text-[10px] text-gray-400">{testimonial.role}</p>
                   </div>
                 </div>
                 
                 {/* Paw mark */}
                 <div className="absolute bottom-2 right-2 opacity-20">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M8 9C9.10457 9 10 8.10457 10 7C10 5.89543 9.10457 5 8 5C6.89543 5 6 5.89543 6 7C6 8.10457 6.89543 9 8 9Z" fill="#000000"/>
-                    <path d="M16 9C17.1046 9 18 8.10457 18 7C18 5.89543 17.1046 5 16 5C14.8954 5 14 5.89543 14 7C14 8.10457 14.8954 9 16 9Z" fill="#000000"/>
-                    <path d="M12 12C13.1046 12 14 11.1046 14 10C14 8.89543 13.1046 8 12 8C10.8954 8 10 8.89543 10 10C10 11.1046 10.8954 12 12 12Z" fill="#000000"/>
-                    <path d="M5 15C6.10457 15 7 14.1046 7 13C7 11.8954 6.10457 11 5 11C3.89543 11 3 11.8954 3 13C3 14.1046 3.89543 15 5 15Z" fill="#000000"/>
-                    <path d="M19 15C20.1046 15 21 14.1046 21 13C21 11.8954 20.1046 11 19 11C17.8954 11 17 11.8954 17 13C17 14.1046 17.8954 15 19 15Z" fill="#000000"/>
+                    <path d="M8 9C9.10457 9 10 8.10457 10 7C10 5.89543 9.10457 5 8 5C6.89543 5 6 5.89543 6 7C6 8.10457 6.89543 9 8 9Z" fill="#DAA520"/>
+                    <path d="M16 9C17.1046 9 18 8.10457 18 7C18 5.89543 17.1046 5 16 5C14.8954 5 14 5.89543 14 7C14 8.10457 14.8954 9 16 9Z" fill="#DAA520"/>
+                    <path d="M12 12C13.1046 12 14 11.1046 14 10C14 8.89543 13.1046 8 12 8C10.8954 8 10 8.89543 10 10C10 11.1046 10.8954 12 12 12Z" fill="#DAA520"/>
+                    <path d="M5 15C6.10457 15 7 14.1046 7 13C7 11.8954 6.10457 11 5 11C3.89543 11 3 11.8954 3 13C3 14.1046 3.89543 15 5 15Z" fill="#DAA520"/>
+                    <path d="M19 15C20.1046 15 21 14.1046 21 13C21 11.8954 20.1046 11 19 11C17.8954 11 17 11.8954 17 13C17 14.1046 17.8954 15 19 15Z" fill="#DAA520"/>
                   </svg>
                 </div>
               </motion.div>
@@ -730,23 +758,69 @@ export default function LandingPage() {
       </section>
       
       {/* Cat-themed CTA */}
-      <section className="py-10 px-4 bg-white">
+      <section className="py-12 px-4 bg-gradient-to-b from-black to-[#111111] text-white relative">
+        {/* Gold diagonal line accent */}
+        <div className="absolute left-0 right-0 top-0 bottom-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-10 -left-10 w-40 h-40 rotate-45 bg-gradient-to-r from-[#DAA520]/5 to-[#DAA520]/10"></div>
+          <div className="absolute -bottom-10 -right-10 w-40 h-40 rotate-45 bg-gradient-to-r from-[#DAA520]/10 to-[#DAA520]/5"></div>
+        </div>
+        
         <motion.div 
-          className="max-w-4xl mx-auto bg-[#DAA520]/5 p-6 border border-[#DAA520]/20 relative overflow-hidden"
+          className="max-w-4xl mx-auto relative z-10 border border-[#DAA520]/30 p-6 bg-[#0A0A0A]/80 overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
+          {/* Animated gold accent line */}
+          <motion.div 
+            className="absolute inset-x-0 top-0 h-[1px]"
+            style={{ 
+              background: "linear-gradient(90deg, transparent, rgba(218, 165, 32, 0.7), transparent)" 
+            }}
+            animate={{
+              backgroundPosition: ["200% 0", "-200% 0"],
+            }}
+            transition={{ 
+              duration: 3, 
+              repeat: Infinity, 
+              ease: "linear" 
+            }}
+          />
+          
           {/* Cat silhouette */}
           <div className="absolute -right-10 -bottom-10 opacity-10">
-            <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M50 10C50 10 55 25 45 40C38 50 25 60 30 80C30 80 45 75 50 50C50 50 55 75 75 90C75 90 90 70 75 55C60 40 65 25 65 25C65 25 60 28 55 28C50 28 50 25 50 25C50 25 50 28 45 28C40 28 35 25 35 25C35 25 40 40 25 55C10 70 25 90 25 90C45 75 50 50 50 50C55 75 70 80 70 80C75 60 62 50 55 40C45 25 50 10 50 10Z" fill="#000000"/>
-            </svg>
+            <motion.div
+              animate={{
+                scale: [1, 1.05, 1],
+                rotate: [0, 2, 0, -2, 0]
+              }}
+              transition={{
+                duration: 8,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            >
+              <svg width="120" height="120" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 10C50 10 55 25 45 40C38 50 25 60 30 80C30 80 45 75 50 50C50 50 55 75 75 90C75 90 90 70 75 55C60 40 65 25 65 25C65 25 60 28 55 28C50 28 50 25 50 25C50 25 50 28 45 28C40 28 35 25 35 25C35 25 40 40 25 55C10 70 25 90 25 90C45 75 50 50 50 50C55 75 70 80 70 80C75 60 62 50 55 40C45 25 50 10 50 10Z" fill="#DAA520" fillOpacity="0.3"/>
+              </svg>
+            </motion.div>
           </div>
           
           <div className="text-center relative z-10">
-            <h2 className="text-lg font-medium mb-2">Ready to create a purrfect CV?</h2>
-            <p className="text-xs text-gray-600 max-w-md mx-auto mb-4">
+            <motion.h2 
+              className="text-lg font-medium mb-2 text-white"
+              animate={{
+                textShadow: ["0px 0px 0px rgba(218,165,32,0)", "0px 0px 8px rgba(218,165,32,0.5)", "0px 0px 0px rgba(218,165,32,0)"],
+              }}
+              transition={{ 
+                duration: 3, 
+                repeat: Infinity,
+                repeatType: "reverse" 
+              }}
+            >
+              Ready to create a <span className="text-[#DAA520]">purr</span>fect CV?
+            </motion.h2>
+            <p className="text-xs text-gray-300 max-w-md mx-auto mb-5">
               Join thousands of professionals who've boosted their careers with CVCat
             </p>
             
@@ -756,12 +830,29 @@ export default function LandingPage() {
               whileTap={{ scale: 0.95 }}
             >
               <Link href="/auth">
-                <Button className="btn-primary text-xs py-2 px-4">
+                <Button className="bg-[#DAA520] text-white hover:bg-[#DAA520]/80 text-xs font-medium py-2 px-6 border-0">
                   Get Started for Free
                 </Button>
               </Link>
             </motion.div>
           </div>
+          
+          {/* Animated gold accent line at bottom */}
+          <motion.div 
+            className="absolute inset-x-0 bottom-0 h-[1px]"
+            style={{ 
+              background: "linear-gradient(90deg, transparent, rgba(218, 165, 32, 0.7), transparent)" 
+            }}
+            animate={{
+              backgroundPosition: ["-200% 0", "200% 0"],
+            }}
+            transition={{ 
+              duration: 3, 
+              repeat: Infinity, 
+              ease: "linear",
+              delay: 1.5
+            }}
+          />
         </motion.div>
       </section>
       
