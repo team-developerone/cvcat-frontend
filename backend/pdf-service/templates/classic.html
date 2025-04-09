@@ -4,151 +4,130 @@
     <meta charset="utf-8">
     <title>{{title}} - CV</title>
     <style>
-      /* Classic Template Styling */
       body {
-        font-family: Georgia, 'Times New Roman', Times, serif;
+        font-family: 'Georgia', serif;
         margin: 0;
         padding: 0;
         color: #333;
         background-color: #fff;
-        line-height: 1.5;
+        line-height: 1.6;
       }
       
       .page {
-        padding: 40px;
+        padding: 32px;
         max-width: 800px;
         margin: 0 auto;
       }
       
       .header {
-        text-align: center;
-        border-bottom: 2px double #999;
-        padding-bottom: 25px;
-        margin-bottom: 30px;
+        margin-bottom: 16px;
       }
       
-      h1 {
-        margin: 0 0 10px 0;
+      .header h1 {
+        font-size: 28px;
+        font-weight: bold;
+        margin: 0 0 8px 0;
         color: #000;
-        font-size: 32px;
-        font-weight: normal;
-        letter-spacing: 1px;
-        text-transform: uppercase;
       }
       
-      .job-title {
+      .header .job-title {
         font-size: 18px;
-        color: #555;
-        margin: 0 0 15px 0;
+        font-weight: 600;
         font-style: italic;
+        color: #555;
+        margin: 0 0 8px 0;
       }
       
       .contact-details {
         font-size: 14px;
         color: #666;
-        margin: 15px 0;
+        line-height: 1.4;
       }
       
-      .summary {
-        margin-bottom: 30px;
-        font-size: 15px;
-        line-height: 1.6;
-        color: #444;
-        text-align: center;
-        font-style: italic;
+      .divider {
+        height: 1px;
+        background-color: #ddd;
+        margin: 16px 0;
       }
       
-      .section {
-        margin-bottom: 30px;
+      .sections {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
       }
       
       .section-title {
-        color: #000;
-        font-size: 18px;
-        font-weight: normal;
-        margin: 0 0 15px 0;
-        border-bottom: 1px solid #000;
-        padding-bottom: 5px;
+        font-size: 16px;
+        font-weight: bold;
         text-transform: uppercase;
-        letter-spacing: 2px;
+        letter-spacing: 1px;
+        color: #333;
+        margin-bottom: 12px;
       }
       
-      .experience-item, .education-item, .project-item, .cert-item {
-        margin-bottom: 20px;
+      .experience-item, 
+      .education-item, 
+      .project-item, 
+      .certification-item,
+      .language-item, 
+      .reference-item, 
+      .publication-item, 
+      .custom-item {
+        margin-bottom: 16px;
+      }
+      
+      .item-title {
+        font-size: 14px;
+        font-weight: bold;
+        color: #333;
+        margin: 0 0 4px 0;
+      }
+      
+      .item-subtitle {
+        font-size: 14px;
+        font-style: italic;
+        color: #555;
+        margin: 0 0 4px 0;
       }
       
       .item-header {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 8px;
-      }
-      
-      .item-title {
-        font-weight: 600;
-        font-size: 16px;
-        color: #333;
-      }
-      
-      .item-subtitle {
-        font-size: 15px;
-        color: #555;
-        font-style: italic;
+        margin-bottom: 4px;
       }
       
       .item-date {
         font-size: 14px;
-        color: #777;
+        font-style: italic;
+        color: #555;
       }
       
       .item-description {
         font-size: 14px;
-        color: #444;
-        text-align: justify;
+        color: #555;
+        margin-top: 4px;
       }
       
-      .skills-list {
-        padding-left: 0;
-        margin: 0;
-        list-style-type: none;
-        display: flex;
-        flex-wrap: wrap;
-      }
-      
-      .skill-item {
-        margin-right: 15px;
-        margin-bottom: 10px;
+      .skills-text {
         font-size: 14px;
+        color: #555;
       }
       
-      .languages-list, .references-list {
-        list-style-type: none;
-        padding: 0;
-      }
-      
-      .language-item, .reference-item {
-        margin-bottom: 10px;
-      }
-      
-      .language-name, .reference-name {
-        font-weight: 600;
-        font-size: 15px;
-      }
-      
-      .language-level, .reference-position {
-        font-size: 14px;
+      .technologies {
+        font-size: 12px;
         color: #666;
+        margin-top: 4px;
+      }
+      
+      .technologies strong {
+        font-weight: 600;
+      }
+      
+      .url {
+        font-size: 12px;
         font-style: italic;
-      }
-      
-      .reference-contact {
-        font-size: 13px;
-        color: #777;
-      }
-      
-      .divider {
-        width: 50px;
-        margin: 20px auto;
-        border-top: 1px solid #999;
+        color: #666;
+        margin-top: 2px;
       }
       
       @media print {
@@ -163,184 +142,173 @@
     <div class="page">
       <div class="header">
         <h1>{{personalInfo.fullName}}</h1>
-        <div class="job-title">{{personalInfo.title}}</div>
+        <p class="job-title">{{personalInfo.title}}</p>
         <div class="contact-details">
-          {{personalInfo.email}} | {{personalInfo.phone}} | {{personalInfo.location}}
+          <div>{{personalInfo.email}} • {{personalInfo.phone}}</div>
+          <div>{{personalInfo.location}}</div>
         </div>
-        <div class="summary">{{personalInfo.summary}}</div>
       </div>
       
-      <!-- Experience Section -->
-      {{#if experience.length}}
-      <div class="section experience-section">
-        <h2 class="section-title">Professional Experience</h2>
-        
-        {{#each experience}}
-        <div class="experience-item">
-          <div class="item-header">
-            <div class="item-title">{{position}}, {{company}}</div>
-            <div class="item-date">{{startDate}} - {{endDate}}</div>
-          </div>
-          <div class="item-description">{{description}}</div>
-        </div>
-        {{/each}}
-      </div>
-      {{/if}}
+      <div class="divider"></div>
       
-      <!-- Education Section -->
-      {{#if education.length}}
-      <div class="section education-section">
-        <h2 class="section-title">Education</h2>
+      <div class="sections">
+        <!-- Summary Section -->
+        <div class="section">
+          <h2 class="section-title">Summary</h2>
+          <p class="item-description">{{personalInfo.summary}}</p>
+        </div>
         
-        {{#each education}}
-        <div class="education-item">
-          <div class="item-header">
-            <div>
-              <div class="item-title">{{degree}}</div>
-              <div class="item-subtitle">{{institution}}</div>
+        <!-- Experience Section -->
+        <div class="section">
+          <h2 class="section-title">Experience</h2>
+          {{#each experience}}
+          <div class="experience-item">
+            <p class="item-title">{{position}}</p>
+            <div class="item-header">
+              <p class="item-subtitle">{{company}}</p>
+              <p class="item-date">{{startDate}} - {{endDate}}</p>
             </div>
-            <div class="item-date">{{period}}</div>
+            <p class="item-description">{{description}}</p>
           </div>
-          {{#if description}}
-          <div class="item-description">{{description}}</div>
-          {{/if}}
-        </div>
-        {{/each}}
-      </div>
-      {{/if}}
-      
-      <!-- Skills Section -->
-      {{#if skills.length}}
-      <div class="section skills-section">
-        <h2 class="section-title">Skills</h2>
-        <ul class="skills-list">
-          {{#each skills}}
-          <li class="skill-item">• {{this}}</li>
           {{/each}}
-        </ul>
-      </div>
-      {{/if}}
-      
-      <!-- Projects Section -->
-      {{#if projects.length}}
-      <div class="section projects-section">
-        <h2 class="section-title">Projects</h2>
+        </div>
         
-        {{#each projects}}
-        <div class="project-item">
-          <div class="item-header">
-            <div class="item-title">{{title}}</div>
-            {{#if startDate}}
-            <div class="item-date">{{startDate}}{{#if endDate}} - {{endDate}}{{/if}}</div>
+        <!-- Education Section -->
+        <div class="section">
+          <h2 class="section-title">Education</h2>
+          {{#each education}}
+          <div class="education-item">
+            <p class="item-title">{{degree}}</p>
+            <div class="item-header">
+              <p class="item-subtitle">{{institution}}</p>
+              <p class="item-date">{{period}}</p>
+            </div>
+            {{#if description}}
+            <p class="item-description">{{description}}</p>
             {{/if}}
           </div>
-          <div class="item-description">
-            <p>{{description}}</p>
+          {{/each}}
+        </div>
+        
+        <!-- Skills Section -->
+        <div class="section">
+          <h2 class="section-title">Skills</h2>
+          <p class="skills-text">{{join skills ', '}}</p>
+        </div>
+        
+        <!-- Projects Section -->
+        {{#if projects.length}}
+        <div class="section">
+          <h2 class="section-title">Projects</h2>
+          {{#each projects}}
+          <div class="project-item">
+            <div class="item-header">
+              <p class="item-title">{{title}}</p>
+              {{#if startDate}}
+              <p class="item-date">
+                {{startDate}}{{#if endDate}} - {{endDate}}{{/if}}
+              </p>
+              {{/if}}
+            </div>
+            <p class="item-description">{{description}}</p>
             {{#if technologies.length}}
-            <p><strong>Technologies:</strong> {{join technologies}}</p>
+            <p class="technologies">
+              <strong>Technologies:</strong> {{join technologies ', '}}
+            </p>
             {{/if}}
             {{#if url}}
-            <p><strong>URL:</strong> {{url}}</p>
+            <p class="url">{{url}}</p>
             {{/if}}
           </div>
-        </div>
-        {{/each}}
-      </div>
-      {{/if}}
-      
-      <!-- Certifications Section -->
-      {{#if certifications.length}}
-      <div class="section certifications-section">
-        <h2 class="section-title">Certifications</h2>
-        
-        {{#each certifications}}
-        <div class="cert-item">
-          <div class="item-header">
-            <div class="item-title">{{name}}, {{issuer}}</div>
-            <div class="item-date">{{date}}{{#if expiryDate}} - {{expiryDate}}{{/if}}</div>
-          </div>
-          {{#if description}}
-          <div class="item-description">{{description}}</div>
-          {{/if}}
-        </div>
-        {{/each}}
-      </div>
-      {{/if}}
-      
-      <!-- Languages Section -->
-      {{#if languages.length}}
-      <div class="section languages-section">
-        <h2 class="section-title">Languages</h2>
-        <ul class="languages-list">
-          {{#each languages}}
-          <li class="language-item">
-            <span class="language-name">{{name}}</span>
-            <span class="language-level"> - {{proficiency}}</span>
-          </li>
           {{/each}}
-        </ul>
-      </div>
-      {{/if}}
-      
-      <!-- References Section -->
-      {{#if references.length}}
-      <div class="section references-section">
-        <h2 class="section-title">References</h2>
-        <ul class="references-list">
-          {{#each references}}
-          <li class="reference-item">
-            <div class="reference-name">{{name}}</div>
-            <div class="reference-position">{{position}} at {{company}}</div>
-            <div class="reference-contact">
-              {{#if email}}Email: {{email}}{{/if}}
-              {{#if phone}}{{#if email}} | {{/if}}Phone: {{phone}}{{/if}}
+        </div>
+        {{/if}}
+        
+        <!-- Certifications Section -->
+        {{#if certifications.length}}
+        <div class="section">
+          <h2 class="section-title">Certifications</h2>
+          {{#each certifications}}
+          <div class="certification-item">
+            <div class="item-header">
+              <p class="item-title">{{name}}</p>
+              <p class="item-date">{{date}}</p>
             </div>
-            <div class="item-description">Relationship: {{relationship}}</div>
-          </li>
+            <p class="item-subtitle">{{issuer}}</p>
+            {{#if description}}
+            <p class="item-description">{{description}}</p>
+            {{/if}}
+          </div>
           {{/each}}
-        </ul>
-      </div>
-      {{/if}}
-      
-      <!-- Publications Section -->
-      {{#if publications.length}}
-      <div class="section publications-section">
-        <h2 class="section-title">Publications</h2>
+        </div>
+        {{/if}}
         
-        {{#each publications}}
-        <div class="project-item">
-          <div class="item-header">
-            <div class="item-title">{{title}}</div>
-            <div class="item-date">{{date}}</div>
+        <!-- Languages Section -->
+        {{#if languages.length}}
+        <div class="section">
+          <h2 class="section-title">Languages</h2>
+          <div class="languages-wrapper">
+            {{#each languages}}
+            <div class="language-item">
+              <span class="item-title">{{name}}:</span> {{proficiency}}
+            </div>
+            {{/each}}
           </div>
-          <div class="item-subtitle">{{publisher}}</div>
-          {{#if description}}
-          <div class="item-description">{{description}}</div>
-          {{/if}}
+        </div>
+        {{/if}}
+        
+        <!-- References Section -->
+        {{#if references.length}}
+        <div class="section">
+          <h2 class="section-title">References</h2>
+          {{#each references}}
+          <div class="reference-item">
+            <p class="item-title">{{name}}</p>
+            <p class="item-description">{{position}}, {{company}}</p>
+            <div class="contacts">
+              {{#if email}}<span>{{email}}</span>{{/if}}
+              {{#if phone}}{{#if email}} | {{/if}}{{phone}}{{/if}}
+            </div>
+          </div>
+          {{/each}}
+        </div>
+        {{/if}}
+        
+        <!-- Publications Section -->
+        {{#if publications.length}}
+        <div class="section">
+          <h2 class="section-title">Publications</h2>
+          {{#each publications}}
+          <div class="publication-item">
+            <div class="item-header">
+              <p class="item-title"><em>{{title}}</em></p>
+              <p class="item-date">{{date}}</p>
+            </div>
+            <p class="item-subtitle">{{publisher}}</p>
+          </div>
+          {{/each}}
+        </div>
+        {{/if}}
+        
+        <!-- Custom Sections -->
+        {{#if customSections.length}}
+        {{#each customSections}}
+        <div class="section">
+          <h2 class="section-title">{{title}}</h2>
+          {{#each items}}
+          <div class="custom-item">
+            <div class="item-header">
+              <p class="item-title">{{title}}</p>
+              {{#if date}}<p class="item-date">{{date}}</p>{{/if}}
+            </div>
+            {{#if subtitle}}<p class="item-subtitle">{{subtitle}}</p>{{/if}}
+            {{#if description}}<p class="item-description">{{description}}</p>{{/if}}
+          </div>
+          {{/each}}
         </div>
         {{/each}}
+        {{/if}}
       </div>
-      {{/if}}
-      
-      <!-- Custom Sections -->
-      {{#if customSections.length}}
-      {{#each customSections}}
-      <div class="section custom-section">
-        <h2 class="section-title">{{title}}</h2>
-        
-        {{#each items}}
-        <div class="custom-item">
-          <div class="item-header">
-            <div class="item-title">{{title}}</div>
-            {{#if date}}<div class="item-date">{{date}}</div>{{/if}}
-          </div>
-          {{#if subtitle}}<div class="item-subtitle">{{subtitle}}</div>{{/if}}
-          {{#if description}}<div class="item-description">{{description}}</div>{{/if}}
-        </div>
-        {{/each}}
-      </div>
-      {{/each}}
-      {{/if}}
     </div>
   </body>
 </html>

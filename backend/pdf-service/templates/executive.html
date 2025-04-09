@@ -4,9 +4,8 @@
     <meta charset="utf-8">
     <title>{{title}} - CV</title>
     <style>
-      /* Executive Template Styling */
       body {
-        font-family: 'Times New Roman', Times, serif;
+        font-family: 'Merriweather', 'Times New Roman', serif;
         margin: 0;
         padding: 0;
         color: #222;
@@ -21,12 +20,12 @@
       }
       
       .header {
-        margin-bottom: 30px;
         padding-bottom: 20px;
         border-bottom: 3px double #999;
+        margin-bottom: 30px;
       }
       
-      h1 {
+      .header h1 {
         margin: 0 0 5px 0;
         color: #1E3A8A;
         font-size: 28px;
@@ -50,12 +49,17 @@
         color: #444;
       }
       
-      .summary {
-        margin-bottom: 30px;
-        font-size: 15px;
-        line-height: 1.6;
-        color: #333;
-        text-align: justify;
+      .two-columns {
+        display: flex;
+        gap: 40px;
+      }
+      
+      .left-column {
+        flex: 3;
+      }
+      
+      .right-column {
+        flex: 2;
       }
       
       .section {
@@ -64,35 +68,44 @@
       
       .section-title {
         color: #1E3A8A;
-        font-size: 18px;
+        font-size: 16px;
         font-weight: bold;
-        margin: 0 0 15px 0;
-        border-bottom: 1px solid #999;
-        padding-bottom: 5px;
         text-transform: uppercase;
+        margin: 0 0 15px 0;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
         letter-spacing: 1px;
       }
       
-      .experience-item, .education-item, .project-item, .cert-item {
-        margin-bottom: 20px;
+      .experience-item, 
+      .education-item, 
+      .project-item, 
+      .certification-item,
+      .language-item, 
+      .reference-item, 
+      .publication-item, 
+      .custom-item {
+        margin-bottom: 16px;
       }
       
       .item-header {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 8px;
+        margin-bottom: 4px;
       }
       
       .item-title {
+        font-size: 15px;
         font-weight: bold;
-        font-size: 16px;
         color: #333;
+        margin: 0 0 4px 0;
       }
       
       .item-subtitle {
-        font-size: 15px;
-        color: #555;
+        font-size: 14px;
         font-style: italic;
+        color: #555;
+        margin: 0 0 4px 0;
       }
       
       .item-date {
@@ -105,55 +118,35 @@
         font-size: 14px;
         color: #444;
         text-align: justify;
+        margin-top: 6px;
       }
       
       .skills-list {
         columns: 2;
         padding-left: 20px;
         margin: 0;
+        line-height: 1.6;
       }
       
       .skill-item {
+        break-inside: avoid;
         margin-bottom: 5px;
       }
       
-      .languages-list, .references-list {
-        list-style-type: none;
-        padding: 0;
-      }
-      
-      .language-item, .reference-item {
-        margin-bottom: 10px;
-      }
-      
-      .language-name, .reference-name {
-        font-weight: bold;
+      .summary {
+        margin-bottom: 30px;
         font-size: 15px;
+        line-height: 1.6;
         color: #333;
+        text-align: justify;
       }
       
-      .language-level, .reference-position {
-        font-size: 14px;
-        color: #555;
-        font-style: italic;
+      .language-info {
+        margin-bottom: 5px;
       }
       
-      .reference-contact {
-        font-size: 13px;
-        color: #666;
-      }
-      
-      .two-columns {
-        display: flex;
-        gap: 30px;
-      }
-      
-      .left-column {
-        flex: 3;
-      }
-      
-      .right-column {
-        flex: 2;
+      .language-name {
+        font-weight: bold;
       }
       
       @media print {
@@ -168,8 +161,7 @@
     <div class="page">
       <div class="header">
         <h1>{{personalInfo.fullName}}</h1>
-        <div class="job-title">{{personalInfo.title}}</div>
-        
+        <p class="job-title">{{personalInfo.title}}</p>
         <div class="contact-details">
           <div>{{personalInfo.email}}</div>
           <div>{{personalInfo.phone}}</div>
@@ -177,15 +169,15 @@
         </div>
       </div>
       
-      <div class="summary">{{personalInfo.summary}}</div>
+      <div class="summary">
+        {{personalInfo.summary}}
+      </div>
       
       <div class="two-columns">
         <div class="left-column">
           <!-- Experience Section -->
-          {{#if experience.length}}
-          <div class="section experience-section">
+          <div class="section">
             <h2 class="section-title">Professional Experience</h2>
-            
             {{#each experience}}
             <div class="experience-item">
               <div class="item-header">
@@ -197,13 +189,10 @@
             </div>
             {{/each}}
           </div>
-          {{/if}}
           
           <!-- Education Section -->
-          {{#if education.length}}
-          <div class="section education-section">
+          <div class="section">
             <h2 class="section-title">Education</h2>
-            
             {{#each education}}
             <div class="education-item">
               <div class="item-header">
@@ -217,17 +206,15 @@
             </div>
             {{/each}}
           </div>
-          {{/if}}
           
           <!-- Publications Section -->
           {{#if publications.length}}
-          <div class="section publications-section">
+          <div class="section">
             <h2 class="section-title">Publications</h2>
-            
             {{#each publications}}
-            <div class="project-item">
+            <div class="publication-item">
               <div class="item-header">
-                <div class="item-title">{{title}}</div>
+                <div class="item-title" style="font-style: italic;">{{title}}</div>
                 <div class="item-date">{{date}}</div>
               </div>
               <div class="item-subtitle">{{publisher}}</div>
@@ -238,13 +225,11 @@
             {{/each}}
           </div>
           {{/if}}
-          
         </div>
         
         <div class="right-column">
           <!-- Skills Section -->
-          {{#if skills.length}}
-          <div class="section skills-section">
+          <div class="section">
             <h2 class="section-title">Skills</h2>
             <ul class="skills-list">
               {{#each skills}}
@@ -252,15 +237,13 @@
               {{/each}}
             </ul>
           </div>
-          {{/if}}
           
           <!-- Certifications Section -->
           {{#if certifications.length}}
-          <div class="section certifications-section">
+          <div class="section">
             <h2 class="section-title">Certifications</h2>
-            
             {{#each certifications}}
-            <div class="cert-item">
+            <div class="certification-item">
               <div class="item-title">{{name}}</div>
               <div class="item-subtitle">{{issuer}}</div>
               <div class="item-date">{{date}}{{#if expiryDate}} - {{expiryDate}}{{/if}}</div>
@@ -274,24 +257,20 @@
           
           <!-- Languages Section -->
           {{#if languages.length}}
-          <div class="section languages-section">
+          <div class="section">
             <h2 class="section-title">Languages</h2>
-            <ul class="languages-list">
-              {{#each languages}}
-              <li class="language-item">
-                <span class="language-name">{{name}}</span>
-                <span class="language-level"> - {{proficiency}}</span>
-              </li>
-              {{/each}}
-            </ul>
+            {{#each languages}}
+            <div class="language-info">
+              <span class="language-name">{{name}}</span> - {{proficiency}}
+            </div>
+            {{/each}}
           </div>
           {{/if}}
           
           <!-- Projects Section -->
           {{#if projects.length}}
-          <div class="section projects-section">
+          <div class="section">
             <h2 class="section-title">Projects</h2>
-            
             {{#each projects}}
             <div class="project-item">
               <div class="item-title">{{title}}</div>
@@ -299,9 +278,11 @@
               <div class="item-date">{{startDate}}{{#if endDate}} - {{endDate}}{{/if}}</div>
               {{/if}}
               <div class="item-description">
-                <p>{{description}}</p>
+                {{description}}
                 {{#if technologies.length}}
-                <p><strong>Technologies:</strong> {{join technologies}}</p>
+                <div style="margin-top: 5px;">
+                  <strong>Technologies:</strong> {{join technologies ', '}}
+                </div>
                 {{/if}}
               </div>
             </div>
@@ -311,29 +292,26 @@
           
           <!-- References Section -->
           {{#if references.length}}
-          <div class="section references-section">
+          <div class="section">
             <h2 class="section-title">References</h2>
-            <ul class="references-list">
-              {{#each references}}
-              <li class="reference-item">
-                <div class="reference-name">{{name}}</div>
-                <div class="reference-position">{{position}} at {{company}}</div>
-                <div class="reference-contact">
-                  {{#if email}}Email: {{email}}{{/if}}
-                  {{#if phone}}{{#if email}} | {{/if}}Phone: {{phone}}{{/if}}
-                </div>
-              </li>
-              {{/each}}
-            </ul>
+            {{#each references}}
+            <div class="reference-item">
+              <div class="item-title">{{name}}</div>
+              <div class="item-subtitle">{{position}} at {{company}}</div>
+              <div class="item-description">
+                {{#if email}}Email: {{email}}{{/if}}
+                {{#if phone}}{{#if email}} | {{/if}}Phone: {{phone}}{{/if}}
+              </div>
+            </div>
+            {{/each}}
           </div>
           {{/if}}
           
           <!-- Custom Sections -->
           {{#if customSections.length}}
           {{#each customSections}}
-          <div class="section custom-section">
+          <div class="section">
             <h2 class="section-title">{{title}}</h2>
-            
             {{#each items}}
             <div class="custom-item">
               <div class="item-title">{{title}}</div>
