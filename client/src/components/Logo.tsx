@@ -40,9 +40,9 @@ export default function Logo({ className = "", size = "md", showText = true, dar
             strokeWidth="6"
           />
           
-          {/* Cat head shape */}
+          {/* Cat head shape - straight bottom */}
           <path 
-            d="M25 75 C 30 85 70 85 75 75 C 78 55 75 40 50 40 C 25 40 22 55 25 75 Z" 
+            d="M25 75 L 75 75 C 78 55 75 40 50 40 C 25 40 22 55 25 75 Z" 
             fill={primaryColor}
           />
           
