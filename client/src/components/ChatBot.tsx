@@ -112,11 +112,12 @@ export default function ChatBot() {
   
   return (
     <>
-      {/* Chat Button */}
+      {/* Chat Button - Fixed at bottom right of the viewport */}
       <button 
-        className="fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full bg-black text-white flex items-center justify-center shadow-lg hover:bg-[#DAA520] transition-all relative"
+        className="fixed bottom-6 right-6 z-[1000] h-14 w-14 rounded-full bg-black text-white flex items-center justify-center shadow-lg hover:bg-[#DAA520] transition-all relative"
         onClick={toggleChat}
         aria-label="Open chat assistant"
+        style={{ position: 'fixed', bottom: '24px', right: '24px' }}
       >
         {/* Cat Ears */}
         <div className="absolute top-[-10px] left-[7px] w-[15px] h-[15px] bg-[#DAA520] rounded-t-full transform -rotate-30"></div>
@@ -128,9 +129,10 @@ export default function ChatBot() {
         </svg>
       </button>
       
-      {/* Chat Window */}
+      {/* Chat Window - Fixed position relative to viewport */}
       {isOpen && (
-        <div className="fixed bottom-[5.5rem] right-6 z-50 bg-white rounded-lg shadow-lg w-80 md:w-96 overflow-hidden flex flex-col border border-gray-200" style={{ height: "450px" }}>
+        <div className="fixed bottom-[5.5rem] right-6 z-[1000] bg-white rounded-lg shadow-lg w-80 md:w-96 overflow-hidden flex flex-col border border-gray-200" 
+          style={{ position: 'fixed', bottom: '90px', right: '24px', height: "450px" }}>
           {/* Chat Header */}
           <div className="bg-black text-white p-3 flex justify-between items-center">
             <div className="flex items-center">

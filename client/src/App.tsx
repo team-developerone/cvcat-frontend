@@ -8,16 +8,10 @@ import AuthPage from "@/pages/AuthPage";
 import ImportSelection from "@/pages/ImportSelection";
 import CVBuilder from "@/pages/CVBuilder";
 import CVManagement from "@/pages/CVManagement";
-import { useLocation } from "wouter";
 import ChatBot from "@/components/ChatBot";
 import { CVProvider } from "@/lib/context";
 
 function Router() {
-  const [location] = useLocation();
-  
-  // Determine if we should show the chatbot (only on authenticated routes)
-  const showChatBot = !['/', '/auth'].includes(location);
-  
   return (
     <>
       <Switch>
@@ -41,7 +35,8 @@ function Router() {
         <Route component={NotFound} />
       </Switch>
       
-      {showChatBot && <ChatBot />}
+      {/* Chat bot is now visible on all routes */}
+      <ChatBot />
     </>
   );
 }
