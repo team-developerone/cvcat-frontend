@@ -895,104 +895,144 @@ export default function LandingPage() {
                 </motion.div>
               </motion.div>
               
-              {/* Profile Summary Improvement Suggestion */}
-              <motion.div
-                className="absolute top-[120px] left-[80px] z-30"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{
-                  opacity: [0, 1, 1, 0],
-                  scale: [0.8, 1, 1, 0.8],
-                }}
-                transition={{
-                  duration: 8,
-                  times: [0, 0.1, 0.9, 1],
-                  repeat: Infinity,
-                  repeatDelay: 5,
-                  delay: 1.5
-                }}
-              >
-                <div className="relative">
-                  <motion.div 
-                    className="bg-black rounded-md p-1.5 shadow-lg"
-                    animate={{
-                      y: [0, -2, 0, -2, 0]
-                    }}
-                    transition={{
-                      duration: 2.5,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  >
-                    <div className="text-white text-[7px] max-w-[120px]">
-                      <div className="flex items-center mb-1">
-                        <svg className="w-2 h-2 mr-1 text-[#DAA520]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M15 16L11 12L15 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M11 12H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                          <path d="M19 4H5C3.89543 4 3 4.89543 3 6V18C3 19.1046 3.89543 20 5 20H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                        </svg>
-                        <span className="font-bold text-[#DAA520]">AI Improvement</span>
+              {/* Profile Summary Improvement Suggestions - Three rotating variants */}
+              {['first', 'second', 'third'].map((variant, index) => (
+                <motion.div
+                  key={variant}
+                  className="absolute top-[120px] left-[80px] z-30"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{
+                    opacity: [0, 1, 1, 0],
+                    scale: [0.8, 1, 1, 0.8],
+                  }}
+                  transition={{
+                    duration: 8,
+                    times: [0, 0.1, 0.9, 1],
+                    repeat: Infinity,
+                    repeatDelay: 12, // Long enough for all three to show
+                    delay: 1.5 + (index * 7) // Staggered delays
+                  }}
+                >
+                  <div className="relative">
+                    <motion.div 
+                      className="bg-black rounded-md p-1.5 shadow-lg"
+                      animate={{
+                        y: [0, -2, 0, -2, 0]
+                      }}
+                      transition={{
+                        duration: 2.5,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    >
+                      <div className="text-white text-[7px] max-w-[120px]">
+                        <div className="flex items-center mb-1">
+                          <svg className="w-2 h-2 mr-1 text-[#DAA520]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15 16L11 12L15 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M11 12H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                            <path d="M19 4H5C3.89543 4 3 4.89543 3 6V18C3 19.1046 3.89543 20 5 20H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                          </svg>
+                          <span className="font-bold text-[#DAA520]">AI Improvement</span>
+                        </div>
+                        
+                        {/* Three different improvement suggestions */}
+                        {index === 0 && (
+                          <>
+                            <div className="mb-1">Your summary needs more impact.</div>
+                            
+                            <div className="bg-[#111] p-1 rounded mb-1">
+                              <div className="mb-0.5 text-gray-400">Current:</div>
+                              <div className="text-[6px] text-gray-300">Experienced software developer with skills in React and Node.js.</div>
+                            </div>
+                            
+                            <div className="bg-[#1a1a1a] p-1 rounded">
+                              <div className="mb-0.5 text-[#DAA520]">Suggested:</div>
+                              <div className="text-[6px] text-white">Results-driven software developer who increased user engagement by 40% through innovative React and Node.js solutions.</div>
+                            </div>
+                          </>
+                        )}
+                        
+                        {index === 1 && (
+                          <>
+                            <div className="mb-1">Add measurable achievements.</div>
+                            
+                            <div className="bg-[#111] p-1 rounded mb-1">
+                              <div className="mb-0.5 text-gray-400">Current:</div>
+                              <div className="text-[6px] text-gray-300">Marketing specialist with experience in social media campaigns.</div>
+                            </div>
+                            
+                            <div className="bg-[#1a1a1a] p-1 rounded">
+                              <div className="mb-0.5 text-[#DAA520]">Suggested:</div>
+                              <div className="text-[6px] text-white">Strategic marketing specialist who grew Instagram following by 250% and generated $15K in attributable revenue through targeted campaigns.</div>
+                            </div>
+                          </>
+                        )}
+                        
+                        {index === 2 && (
+                          <>
+                            <div className="mb-1">Highlight leadership qualities.</div>
+                            
+                            <div className="bg-[#111] p-1 rounded mb-1">
+                              <div className="mb-0.5 text-gray-400">Current:</div>
+                              <div className="text-[6px] text-gray-300">Project manager with 5 years of experience.</div>
+                            </div>
+                            
+                            <div className="bg-[#1a1a1a] p-1 rounded">
+                              <div className="mb-0.5 text-[#DAA520]">Suggested:</div>
+                              <div className="text-[6px] text-white">Transformational project manager who led cross-functional teams of 15+ to deliver $2M in projects ahead of schedule and under budget.</div>
+                            </div>
+                          </>
+                        )}
                       </div>
                       
-                      <div className="mb-1">Your summary needs more impact.</div>
-                      
-                      <div className="bg-[#111] p-1 rounded mb-1">
-                        <div className="mb-0.5 text-gray-400">Current:</div>
-                        <div className="text-[6px] text-gray-300">Experienced software developer with skills in React and Node.js.</div>
+                      <div className="flex justify-between mt-1">
+                        <motion.button 
+                          className="text-[6px] text-gray-400 px-1 py-0.5 rounded bg-[#222]"
+                          whileHover={{ scale: 1.05, backgroundColor: "#333" }}
+                        >
+                          Skip
+                        </motion.button>
+                        <motion.button 
+                          className="text-[6px] text-black px-1 py-0.5 rounded bg-[#DAA520]"
+                          whileHover={{ scale: 1.05, backgroundColor: "#c99417" }}
+                          animate={{
+                            boxShadow: [
+                              "0 0 0 0 rgba(218, 165, 32, 0.2)",
+                              "0 0 0 2px rgba(218, 165, 32, 0.4)",
+                              "0 0 0 0 rgba(218, 165, 32, 0.2)"
+                            ]
+                          }}
+                          transition={{
+                            duration: 1.5,
+                            repeat: Infinity
+                          }}
+                        >
+                          Apply
+                        </motion.button>
                       </div>
-                      
-                      <div className="bg-[#1a1a1a] p-1 rounded">
-                        <div className="mb-0.5 text-[#DAA520]">Suggested:</div>
-                        <div className="text-[6px] text-white">Results-driven software developer who increased user engagement by 40% through innovative React and Node.js solutions.</div>
-                      </div>
-                    </div>
+                    </motion.div>
                     
-                    <div className="flex justify-between mt-1">
-                      <motion.button 
-                        className="text-[6px] text-gray-400 px-1 py-0.5 rounded bg-[#222]"
-                        whileHover={{ scale: 1.05, backgroundColor: "#333" }}
-                      >
-                        Skip
-                      </motion.button>
-                      <motion.button 
-                        className="text-[6px] text-black px-1 py-0.5 rounded bg-[#DAA520]"
-                        whileHover={{ scale: 1.05, backgroundColor: "#c99417" }}
-                        animate={{
-                          boxShadow: [
-                            "0 0 0 0 rgba(218, 165, 32, 0.2)",
-                            "0 0 0 2px rgba(218, 165, 32, 0.4)",
-                            "0 0 0 0 rgba(218, 165, 32, 0.2)"
-                          ]
-                        }}
-                        transition={{
-                          duration: 1.5,
-                          repeat: Infinity
-                        }}
-                      >
-                        Apply
-                      </motion.button>
-                    </div>
-                  </motion.div>
-                  
-                  {/* Connector line */}
-                  <motion.svg 
-                    width="30" 
-                    height="50" 
-                    viewBox="0 0 30 50" 
-                    fill="none" 
-                    className="absolute top-1/2 -right-[18px]"
-                    animate={{
-                      opacity: [0.5, 1, 0.5]
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity
-                    }}
-                  >
-                    <path d="M0 25C20 25 30 40 30 50" stroke="#DAA520" strokeDasharray="2 2" />
-                    <circle cx="0" cy="25" r="2" fill="#DAA520" />
-                  </motion.svg>
-                </div>
-              </motion.div>
+                    {/* Connector line */}
+                    <motion.svg 
+                      width="30" 
+                      height="50" 
+                      viewBox="0 0 30 50" 
+                      fill="none" 
+                      className="absolute top-1/2 -right-[18px]"
+                      animate={{
+                        opacity: [0.5, 1, 0.5]
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity
+                      }}
+                    >
+                      <path d="M0 25C20 25 30 40 30 50" stroke="#DAA520" strokeDasharray="2 2" />
+                      <circle cx="0" cy="25" r="2" fill="#DAA520" />
+                    </motion.svg>
+                  </div>
+                </motion.div>
+              ))}
               
               {/* Skills Enhancement Suggestion */}
               <motion.div
