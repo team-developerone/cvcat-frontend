@@ -32,9 +32,9 @@ export default function Logo({ className = "", size = "md", showText = true, dar
         <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           {/* Silhouette cat face based on the reference image */}
           
-          {/* Circular frame */}
+          {/* Semi-circular frame (top only) */}
           <path 
-            d="M10 50 A 40 40 0 1 0 90 50 A 40 40 0 1 1 10 50 Z" 
+            d="M10 50 A 40 40 0 1 0 90 50" 
             fill="none"
             stroke={primaryColor}
             strokeWidth="6"
