@@ -23,50 +23,97 @@ export default function Logo({ className = "", size = "md", showText = true, dar
   };
 
   const primaryColor = "#DAA520"; // Gold
-  const secondaryColor = darkMode ? "#FFD966" : "#C19015"; // Lighter/darker gold
-  const textColorClass = darkMode ? "text-white" : "text-black";
   const bgColor = darkMode ? "#222222" : "#FFFFFF";
+  const textColorClass = darkMode ? "text-white" : "text-black";
 
   return (
     <div className={`flex items-center ${className}`}>
       <div className={`${sizeMap[size]} mr-2`}>
-        <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-          {/* Clean cat face - modern flat design */}
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {/* Silhouette cat face based on the reference image */}
           
-          {/* Cat head base */}
+          {/* Circular frame */}
           <path 
-            d="M8 25L20 10H30L42 25L30 40H20L8 25Z" 
+            d="M10 50 A 40 40 0 1 0 90 50 A 40 40 0 1 1 10 50 Z" 
+            fill="none"
+            stroke={primaryColor}
+            strokeWidth="6"
+          />
+          
+          {/* Cat head shape */}
+          <path 
+            d="M25 75 C 30 85 70 85 75 75 C 78 55 75 40 50 40 C 25 40 22 55 25 75 Z" 
             fill={primaryColor}
           />
           
-          {/* Cat ears */}
+          {/* Left ear */}
           <path 
-            d="M20 10L14 3L25 6L20 10Z" 
-            fill={secondaryColor}
-          />
-          <path 
-            d="M30 10L36 3L25 6L30 10Z" 
-            fill={secondaryColor}
+            d="M30 42 L 15 20 L 45 30 Z" 
+            fill={primaryColor}
           />
           
-          {/* Cat eyes */}
-          <circle 
-            cx="19" 
-            cy="22" 
-            r="3" 
-            fill={bgColor}
+          {/* Right ear */}
+          <path 
+            d="M70 42 L 85 20 L 55 30 Z" 
+            fill={primaryColor}
           />
-          <circle 
-            cx="31" 
-            cy="22" 
-            r="3" 
+          
+          {/* Left eye */}
+          <ellipse 
+            cx="35" 
+            cy="55" 
+            rx="5" 
+            ry="7" 
             fill={bgColor}
           />
           
-          {/* Cat nose */}
-          <path 
-            d="M23 28L25 32L27 28Z" 
+          {/* Right eye */}
+          <ellipse 
+            cx="65" 
+            cy="55" 
+            rx="5" 
+            ry="7" 
             fill={bgColor}
+          />
+          
+          {/* Nose */}
+          <path 
+            d="M47 65 L 50 68 L 53 65 Z" 
+            fill={bgColor}
+          />
+          
+          {/* Left whiskers */}
+          <line 
+            x1="30" y1="65" x2="15" y2="60" 
+            stroke={bgColor} 
+            strokeWidth="1.5" 
+          />
+          <line 
+            x1="30" y1="68" x2="15" y2="68" 
+            stroke={bgColor} 
+            strokeWidth="1.5" 
+          />
+          <line 
+            x1="30" y1="71" x2="15" y2="76" 
+            stroke={bgColor} 
+            strokeWidth="1.5" 
+          />
+          
+          {/* Right whiskers */}
+          <line 
+            x1="70" y1="65" x2="85" y2="60" 
+            stroke={bgColor} 
+            strokeWidth="1.5" 
+          />
+          <line 
+            x1="70" y1="68" x2="85" y2="68" 
+            stroke={bgColor} 
+            strokeWidth="1.5" 
+          />
+          <line 
+            x1="70" y1="71" x2="85" y2="76" 
+            stroke={bgColor} 
+            strokeWidth="1.5" 
           />
         </svg>
       </div>
