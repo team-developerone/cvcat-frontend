@@ -23,32 +23,94 @@ export default function Logo({ className = "", size = "md", showText = true, dar
   };
 
   const primaryColor = "#DAA520";
+  const secondaryColor = darkMode ? "#FFFFFF" : "#333333";
   const textColorClass = darkMode ? "text-white" : "text-black";
+  const bgColor = darkMode ? "#222" : "#FFFFFF";
 
   return (
     <div className={`flex items-center ${className}`}>
       <div className={`${sizeMap[size]} mr-2`}>
         <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-          {/* Single abstract paw shape resembling "c" and cat */}
+          {/* Minimal but clearly recognizable cat face */}
+          
+          {/* Cat head */}
           <path 
-            d="M25 10L10 25L25 40L40 25L25 10Z" 
+            d="M15 15H35V35C35 40 30 45 25 45C20 45 15 40 15 35V15Z" 
             fill={primaryColor}
-            transform="rotate(45, 25, 25)"
           />
           
-          {/* Negative space cutout */}
+          {/* Cat ears */}
           <path 
-            d="M25 18L18 25L25 32L32 25L25 18Z" 
-            fill={darkMode ? "#222" : "#FFFFFF"}
-            transform="rotate(45, 25, 25)"
+            d="M15 15L8 5L15 12V15Z" 
+            fill={primaryColor}
+          />
+          <path 
+            d="M35 15L42 5L35 12V15Z" 
+            fill={primaryColor}
           />
           
-          {/* Simple dot accent */}
+          {/* Cat eyes */}
           <circle 
-            cx="25" 
+            cx="20" 
             cy="25" 
-            r="2" 
-            fill={darkMode ? "#FFFFFF" : "#333333"}
+            r="2.5" 
+            fill={bgColor}
+          />
+          <circle 
+            cx="30" 
+            cy="25" 
+            r="2.5" 
+            fill={bgColor}
+          />
+          
+          {/* Cat pupils */}
+          <circle 
+            cx="21" 
+            cy="24" 
+            r="1" 
+            fill={secondaryColor}
+          />
+          <circle 
+            cx="29" 
+            cy="24" 
+            r="1" 
+            fill={secondaryColor}
+          />
+          
+          {/* Cat nose */}
+          <path 
+            d="M23 31L25 33L27 31L25 35L23 31Z" 
+            fill={bgColor}
+          />
+          
+          {/* Cat whiskers - very minimal */}
+          <line 
+            x1="15" y1="30" x2="8" y2="28" 
+            stroke={secondaryColor} 
+            strokeWidth="0.8" 
+            opacity="0.6"
+            strokeLinecap="round"
+          />
+          <line 
+            x1="15" y1="32" x2="8" y2="34" 
+            stroke={secondaryColor} 
+            strokeWidth="0.8" 
+            opacity="0.6"
+            strokeLinecap="round"
+          />
+          <line 
+            x1="35" y1="30" x2="42" y2="28" 
+            stroke={secondaryColor} 
+            strokeWidth="0.8" 
+            opacity="0.6"
+            strokeLinecap="round"
+          />
+          <line 
+            x1="35" y1="32" x2="42" y2="34" 
+            stroke={secondaryColor} 
+            strokeWidth="0.8" 
+            opacity="0.6"
+            strokeLinecap="round"
           />
         </svg>
       </div>
