@@ -29,46 +29,60 @@ export default function Logo({ className = "", size = "md", showText = true, dar
     <div className={`flex items-center ${className}`}>
       <div className={`${sizeMap[size]} mr-2`}>
         <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-          {/* Sleek, flat cat design */}
+          {/* Ultra minimalist cat icon - line art only */}
           
-          {/* Main cat silhouette */}
+          {/* Cat face outline */}
           <path 
-            d="M5 35L15 13L25 5L35 13L45 35L25 40L5 35Z" 
+            d="M15 35C15 25 25 15 35 25C35 35 25 40 15 35Z" 
+            stroke={primaryColor}
+            strokeWidth="2"
+            fill="none"
+          />
+          
+          {/* Mirrored side */}
+          <path 
+            d="M35 35C35 25 25 15 15 25C15 35 25 40 35 35Z" 
+            stroke={primaryColor}
+            strokeWidth="2"
+            fill="none"
+          />
+          
+          {/* Ears */}
+          <path 
+            d="M15 25L10 10L20 20" 
+            stroke={primaryColor}
+            strokeWidth="2"
+            fill="none"
+            strokeLinejoin="round"
+            strokeLinecap="round"
+          />
+          <path 
+            d="M35 25L40 10L30 20" 
+            stroke={primaryColor}
+            strokeWidth="2"
+            fill="none"
+            strokeLinejoin="round"
+            strokeLinecap="round"
+          />
+          
+          {/* Eyes - simple dots */}
+          <circle 
+            cx="20" 
+            cy="28" 
+            r="1.5" 
+            fill={primaryColor}
+          />
+          <circle 
+            cx="30" 
+            cy="28" 
+            r="1.5" 
             fill={primaryColor}
           />
           
-          {/* Eyes - simple cutouts */}
-          <circle 
-            cx="18" 
-            cy="25" 
-            r="3" 
-            fill={darkMode ? "#222222" : "white"}
-          />
-          <circle 
-            cx="32" 
-            cy="25" 
-            r="3" 
-            fill={darkMode ? "#222222" : "white"}
-          />
-          
-          {/* Nose - minimalist triangle */}
+          {/* Nose - tiny triangle */}
           <path 
-            d="M22 30L25 33L28 30Z" 
-            fill={darkMode ? "#222222" : "white"}
-          />
-          
-          {/* Whisker accent marks - ultra minimal */}
-          <line 
-            x1="15" y1="30" x2="8" y2="28" 
-            stroke={darkMode ? "#222222" : "white"} 
-            strokeWidth="1.5" 
-            strokeLinecap="round"
-          />
-          <line 
-            x1="35" y1="30" x2="42" y2="28" 
-            stroke={darkMode ? "#222222" : "white"} 
-            strokeWidth="1.5" 
-            strokeLinecap="round"
+            d="M23 32L25 35L27 32Z" 
+            fill={primaryColor}
           />
         </svg>
       </div>
