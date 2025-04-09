@@ -593,7 +593,309 @@ export default function LandingPage() {
                 />
               </motion.div>
               
-              {/* AI assistance pointer */}
+              {/* Advanced AI assistance animations */}
+              
+              {/* AI Improvement Suggestions */}
+              <motion.div
+                className="absolute bottom-4 left-20 flex items-center"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{
+                  opacity: [0, 1, 1, 0],
+                  y: [10, 0, 0, -10],
+                }}
+                transition={{
+                  duration: 4,
+                  times: [0, 0.1, 0.9, 1],
+                  repeat: Infinity,
+                  repeatDelay: 3,
+                  ease: "easeInOut"
+                }}
+              >
+                <div className="bg-black/90 text-white text-xs py-1 px-2 rounded-md shadow-md flex items-center">
+                  <motion.div 
+                    className="w-2 h-2 bg-[#DAA520] rounded-full mr-1.5"
+                    animate={{
+                      scale: [1, 1.5, 1],
+                      opacity: [0.7, 1, 0.7]
+                    }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  />
+                  <span>Improve profile summary</span>
+                </div>
+              </motion.div>
+              
+              {/* AI Magic Wand Animation */}
+              <motion.div
+                className="absolute top-1/3 right-1/4"
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{
+                  opacity: [0, 1, 1, 0],
+                  scale: [0.5, 1.2, 1, 0.8],
+                  rotate: [0, 10, -5, 0]
+                }}
+                transition={{
+                  duration: 3,
+                  times: [0, 0.3, 0.7, 1],
+                  repeat: Infinity,
+                  repeatDelay: 6,
+                  ease: "easeInOut"
+                }}
+              >
+                <div className="relative">
+                  {/* Magic wand */}
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 4L18 7M8.5 19L3 13.5L13.5 3L20 9.5L8.5 19Z" stroke="#DAA520" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  
+                  {/* Sparkles */}
+                  <motion.div
+                    className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#DAA520]/60"
+                    animate={{
+                      scale: [0, 1, 0],
+                      opacity: [0, 1, 0]
+                    }}
+                    transition={{
+                      duration: 1,
+                      repeat: Infinity,
+                      repeatDelay: 0.5
+                    }}
+                  />
+                  <motion.div
+                    className="absolute -bottom-1 -left-1 w-1.5 h-1.5 rounded-full bg-[#DAA520]/60"
+                    animate={{
+                      scale: [0, 1, 0],
+                      opacity: [0, 1, 0]
+                    }}
+                    transition={{
+                      duration: 1,
+                      repeat: Infinity,
+                      repeatDelay: 0.7,
+                      delay: 0.3
+                    }}
+                  />
+                </div>
+              </motion.div>
+              
+              {/* AI Text Generation Effect */}
+              <motion.div
+                className="absolute top-[45%] right-[20%] bg-black/80 text-[9px] text-[#DAA520] py-0.5 px-1.5 rounded z-20"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{
+                  opacity: [0, 1, 1, 0],
+                  y: [5, 0, 0, -5],
+                }}
+                transition={{
+                  duration: 5,
+                  times: [0, 0.1, 0.9, 1],
+                  repeat: Infinity,
+                  repeatDelay: 4,
+                  ease: "easeInOut"
+                }}
+              >
+                <motion.span
+                  animate={{
+                    opacity: [0, 1]
+                  }}
+                  transition={{
+                    duration: 2,
+                    times: [0, 1],
+                    repeat: 0
+                  }}
+                >
+                  AI generating content...
+                </motion.span>
+              </motion.div>
+              
+              {/* Neural Network Animation */}
+              <motion.div 
+                className="absolute bottom-10 left-6 opacity-70"
+                initial={{ opacity: 0 }}
+                animate={{ 
+                  opacity: [0, 0.7, 0],
+                }}
+                transition={{
+                  duration: 5,
+                  times: [0, 0.2, 1],
+                  repeat: Infinity,
+                  repeatDelay: 5,
+                }}
+              >
+                <svg width="50" height="40" viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  {/* Neural network nodes */}
+                  {[...Array(3)].map((_, i) => (
+                    <g key={`layer1-${i}`}>
+                      <motion.circle 
+                        cx={30} 
+                        cy={25 + i * 25} 
+                        r={4} 
+                        fill="#DAA520" 
+                        fillOpacity={0.7}
+                        animate={{
+                          r: [4, 5, 4],
+                          fillOpacity: [0.5, 0.9, 0.5]
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          delay: i * 0.2
+                        }}
+                      />
+                    </g>
+                  ))}
+                  
+                  {[...Array(4)].map((_, i) => (
+                    <g key={`layer2-${i}`}>
+                      <motion.circle 
+                        cx={60} 
+                        cy={15 + i * 22} 
+                        r={4} 
+                        fill="#DAA520" 
+                        fillOpacity={0.7}
+                        animate={{
+                          r: [4, 5, 4],
+                          fillOpacity: [0.5, 0.9, 0.5]
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          delay: i * 0.15 + 0.5
+                        }}
+                      />
+                    </g>
+                  ))}
+                  
+                  {[...Array(2)].map((_, i) => (
+                    <g key={`layer3-${i}`}>
+                      <motion.circle 
+                        cx={90} 
+                        cy={35 + i * 30} 
+                        r={4} 
+                        fill="#DAA520" 
+                        fillOpacity={0.7}
+                        animate={{
+                          r: [4, 5, 4],
+                          fillOpacity: [0.5, 0.9, 0.5]
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          delay: i * 0.3 + 1
+                        }}
+                      />
+                    </g>
+                  ))}
+                  
+                  {/* Connection lines with animated pulses */}
+                  {[...Array(3)].map((_, i) => (
+                    [...Array(4)].map((_, j) => (
+                      <g key={`conn1-${i}-${j}`}>
+                        <line 
+                          x1={30} 
+                          y1={25 + i * 25} 
+                          x2={60} 
+                          y2={15 + j * 22} 
+                          stroke="#DAA520" 
+                          strokeOpacity={0.3} 
+                          strokeWidth={0.5}
+                        />
+                        <motion.circle
+                          cx={0}
+                          cy={0}
+                          r={1}
+                          fill="#DAA520"
+                          animate={{
+                            cx: [30, 60],
+                            cy: [25 + i * 25, 15 + j * 22],
+                            opacity: [0, 1, 0]
+                          }}
+                          transition={{
+                            duration: 1.5,
+                            times: [0, 0.5, 1],
+                            repeat: Infinity,
+                            repeatDelay: Math.random() * 5,
+                            ease: "easeInOut"
+                          }}
+                        />
+                      </g>
+                    ))
+                  ))}
+                  
+                  {[...Array(4)].map((_, i) => (
+                    [...Array(2)].map((_, j) => (
+                      <g key={`conn2-${i}-${j}`}>
+                        <line 
+                          x1={60} 
+                          y1={15 + i * 22} 
+                          x2={90} 
+                          y2={35 + j * 30} 
+                          stroke="#DAA520" 
+                          strokeOpacity={0.3} 
+                          strokeWidth={0.5}
+                        />
+                        <motion.circle
+                          cx={0}
+                          cy={0}
+                          r={1}
+                          fill="#DAA520"
+                          animate={{
+                            cx: [60, 90],
+                            cy: [15 + i * 22, 35 + j * 30],
+                            opacity: [0, 1, 0]
+                          }}
+                          transition={{
+                            duration: 1.5,
+                            times: [0, 0.5, 1],
+                            repeat: Infinity,
+                            repeatDelay: Math.random() * 5,
+                            ease: "easeInOut"
+                          }}
+                        />
+                      </g>
+                    ))
+                  ))}
+                </svg>
+              </motion.div>
+              
+              {/* Smart Grammar Suggestion */}
+              <motion.div
+                className="absolute bottom-28 right-10 flex items-center"
+                initial={{ opacity: 0, y: 5 }}
+                animate={{
+                  opacity: [0, 1, 1, 0],
+                  y: [5, 0, 0, -5],
+                }}
+                transition={{
+                  duration: 4,
+                  times: [0, 0.1, 0.9, 1],
+                  repeat: Infinity,
+                  repeatDelay: 7,
+                  delay: 2,
+                  ease: "easeInOut"
+                }}
+              >
+                <motion.div 
+                  className="bg-[#DAA520]/10 border border-[#DAA520]/30 text-black text-[8px] py-0.5 px-1 rounded"
+                  animate={{
+                    boxShadow: [
+                      "0 0 0 0 rgba(218, 165, 32, 0)", 
+                      "0 0 0 3px rgba(218, 165, 32, 0.2)",
+                      "0 0 0 0 rgba(218, 165, 32, 0)"
+                    ]
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                  }}
+                >
+                  "experienced" → "proficient"
+                </motion.div>
+              </motion.div>
+              
+              {/* Main AI pointer */}
               <motion.div
                 className="absolute bottom-4 right-12 flex items-center"
                 animate={{
@@ -605,7 +907,20 @@ export default function LandingPage() {
                   ease: "easeInOut"
                 }}
               >
-                <div className="bg-black/90 text-white text-xs py-1 px-2 rounded mr-2 shadow-md">
+                <div className="bg-black/90 text-white text-xs py-1 px-2 rounded mr-2 shadow-md flex items-center">
+                  <motion.div
+                    className="mr-1 w-3 h-3 relative"
+                    animate={{
+                      rotate: [0, 360]
+                    }}
+                    transition={{
+                      duration: 5,
+                      repeat: Infinity,
+                      ease: "linear"
+                    }}
+                  >
+                    <div className="absolute inset-0 rounded-full border-2 border-[#DAA520] border-t-transparent"></div>
+                  </motion.div>
                   AI Suggestion
                 </div>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
