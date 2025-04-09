@@ -230,9 +230,29 @@ export default function ChatBot({ isEmbedded = false }: ChatBotProps) {
           }}
         >
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-            {/* Cat face shape */}
+            {/* Cat face - silhouette style */}
             <path 
-              d="M12 5C12 5 13 9 10 12C9 13 7 14 7.5 18C7.5 18 11 17 12 12C12 12 13 17 17 19C17 19 19 15 17 13C15 11 16 9 16 9C16 9 15 10 14 10C13 10 13 9 13 9C13 9 13 10 12 10C11 10 10 9 10 9C10 9 11 11 9 13C7 15 9 19 9 19C13 17 14 12 14 12C15 17 18.5 18 18.5 18C19 14 17 13 16 12C13 9 14 5 14 5" 
+              d="M6 12 A 9 9 0 1 0 18 12" 
+              stroke="currentColor"
+              strokeWidth="1.5"
+              fill="none"
+            />
+            
+            {/* Cat head shape */}
+            <path 
+              d="M8 18 L 16 18 C 17 15 16.5 11 12 11 C 7.5 11 7 15 8 18 Z" 
+              fill="currentColor"
+            />
+            
+            {/* Left ear */}
+            <path 
+              d="M9 11 L 5 6 L 13 9 Z" 
+              fill="currentColor"
+            />
+            
+            {/* Right ear */}
+            <path 
+              d="M15 11 L 19 6 L 11 9 Z" 
               fill="currentColor"
             />
             
