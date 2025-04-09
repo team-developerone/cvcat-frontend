@@ -66,8 +66,8 @@ export default function CVManagement() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
             >
-              <h1 className="text-2xl font-semibold tracking-tight text-gray-900">My CVs</h1>
-              <p className="text-xs text-gray-600 mt-1">Manage your professional profiles</p>
+              <h1 className="text-2xl font-bold tracking-tight text-black">My CVs</h1>
+              <p className="text-xs text-gray-700 mt-1">Manage your professional profiles</p>
             </motion.div>
             
             <motion.div 
@@ -99,26 +99,26 @@ export default function CVManagement() {
             className="flex border-b border-gray-200 mb-6"
           >
             <button 
-              className={`pb-2 px-3 text-xs font-medium relative ${activeTab === 'all' ? 'text-black' : 'text-gray-400'}`}
+              className={`pb-2 px-3 text-xs font-semibold relative ${activeTab === 'all' ? 'text-black' : 'text-gray-500'}`}
               onClick={() => setActiveTab('all')}
             >
               All
               {activeTab === 'all' && (
                 <motion.div 
                   layoutId="activeTabIndicator"
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#DAA520]" 
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-[#DAA520]" 
                 />
               )}
             </button>
             <button 
-              className={`pb-2 px-3 text-xs font-medium relative ${activeTab === 'recent' ? 'text-black' : 'text-gray-400'}`}
+              className={`pb-2 px-3 text-xs font-semibold relative ${activeTab === 'recent' ? 'text-black' : 'text-gray-500'}`}
               onClick={() => setActiveTab('recent')}
             >
               Recent
               {activeTab === 'recent' && (
                 <motion.div 
                   layoutId="activeTabIndicator"
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#DAA520]" 
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-[#DAA520]" 
                 />
               )}
             </button>
@@ -136,13 +136,13 @@ export default function CVManagement() {
               className="mb-8"
             >
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-medium text-gray-900">Core CV</h2>
-                <p className="text-xs text-gray-400">Base template</p>
+                <h2 className="text-sm font-bold text-black">Core CV</h2>
+                <p className="text-xs text-gray-500">Base template</p>
               </div>
               
               {mainCV && (
                 <motion.div whileHover={{ y: -2 }} transition={{ type: "spring", stiffness: 400 }}>
-                  <Card className="bg-white rounded-md shadow-sm border border-gray-200 overflow-hidden">
+                  <Card className="bg-white rounded-md shadow-md border-2 border-gray-300 overflow-hidden">
                     <CardContent className="p-4">
                       <div className="flex items-start">
                         {/* Preview thumbnail - simplified */}
@@ -214,10 +214,10 @@ export default function CVManagement() {
             {/* Tailored CVs Section - simplified */}
             <motion.section variants={itemAnimation}>
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-medium text-gray-900">Tailored CVs</h2>
+                <h2 className="text-sm font-bold text-black">Tailored CVs</h2>
                 <Button
                   variant="ghost"
-                  className="text-xs text-[#DAA520] hover:bg-[#DAA520]/5 rounded transition-all h-7 px-2"
+                  className="text-xs font-medium text-[#DAA520] hover:bg-[#DAA520]/5 rounded transition-all h-7 px-2"
                 >
                   <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -235,7 +235,7 @@ export default function CVManagement() {
                     whileHover={{ y: -2 }}
                     transition={{ type: "spring", stiffness: 400 }}
                   >
-                    <Card className="bg-white rounded-md shadow-sm border border-gray-200 overflow-hidden h-full">
+                    <Card className="bg-white rounded-md shadow-md border-2 border-gray-300 overflow-hidden h-full">
                       <CardContent className="p-4">
                         <div className="flex justify-between items-start mb-1.5">
                           <div>
@@ -290,7 +290,7 @@ export default function CVManagement() {
                   whileHover={{ y: -2 }}
                   transition={{ type: "spring", stiffness: 400 }}
                 >
-                  <Card className="border-2 border-dashed border-gray-200 rounded-md bg-white p-4 flex flex-col items-center justify-center text-center h-full">
+                  <Card className="border-2 border-dashed border-gray-300 rounded-md bg-white p-4 flex flex-col items-center justify-center text-center h-full">
                     <div className="w-10 h-10 rounded-full bg-[#DAA520]/10 flex items-center justify-center mb-3">
                       <svg className="w-5 h-5 text-[#DAA520]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
