@@ -270,13 +270,19 @@ export default function LandingPage() {
                 }}
               >
                 <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  {/* Cat body */}
+                  {/* Modern Flat Cat */}
                   <g>
-                    <path d="M50 10C50 10 55 25 45 40C38 50 25 60 30 80C30 80 45 75 50 50C50 50 55 75 75 90C75 90 90 70 75 55C60 40 65 25 65 25C65 25 60 28 55 28C50 28 50 25 50 25C50 25 50 28 45 28C40 28 35 25 35 25C35 25 40 40 25 55C10 70 25 90 25 90C45 75 50 50 50 50C55 75 70 80 70 80C75 60 62 50 55 40C45 25 50 10 50 10Z" fill="#DAA520"/>
+                    {/* Cat body - simplified, more stylized, flat shape */}
+                    <path 
+                      d="M50 15C50 15 55 25 48 35C43 42 35 50 38 75C38 75 48 70 50 40C50 40 52 70 68 80C68 80 78 65 68 55C58 45 62 25 62 25L50 30L38 25C38 25 42 45 32 55C22 65 32 80 32 80C48 70 50 40 50 40C52 70 62 75 62 75C65 50 57 42 52 35C45 25 50 15 50 15Z" 
+                      fill="#DAA520"
+                    />
+                    
+                    {/* Animated outline glow */}
                     <motion.path 
-                      d="M50 10C50 10 55 25 45 40C38 50 25 60 30 80C30 80 45 75 50 50C50 50 55 75 75 90C75 90 90 70 75 55C60 40 65 25 65 25C65 25 60 28 55 28C50 28 50 25 50 25C50 25 50 28 45 28C40 28 35 25 35 25C35 25 40 40 25 55C10 70 25 90 25 90C45 75 50 50 50 50C55 75 70 80 70 80C75 60 62 50 55 40C45 25 50 10 50 10Z" 
-                      stroke="#B58800" 
-                      strokeWidth="0.5" 
+                      d="M50 15C50 15 55 25 48 35C43 42 35 50 38 75C38 75 48 70 50 40C50 40 52 70 68 80C68 80 78 65 68 55C58 45 62 25 62 25L50 30L38 25C38 25 42 45 32 55C22 65 32 80 32 80C48 70 50 40 50 40C52 70 62 75 62 75C65 50 57 42 52 35C45 25 50 15 50 15Z" 
+                      stroke="rgba(218, 165, 32, 0.4)" 
+                      strokeWidth="0.8" 
                       strokeOpacity="0.6"
                       animate={{
                         strokeOpacity: [0.2, 0.6, 0.2],
@@ -290,7 +296,7 @@ export default function LandingPage() {
                     />
                   </g>
                   
-                  {/* Cat eyes */}
+                  {/* Cat eyes - simplified, cleaner */}
                   <motion.g
                     animate={{
                       y: [0, 0.5, 0]
@@ -302,25 +308,25 @@ export default function LandingPage() {
                       delay: 1
                     }}
                   >
-                    <circle cx="40" cy="35" r="2.5" fill="#111111"/>
-                    <circle cx="40" cy="34" r="0.8" fill="white"/>
-                    <circle cx="60" cy="35" r="2.5" fill="#111111"/>
-                    <circle cx="60" cy="34" r="0.8" fill="white"/>
+                    <circle cx="42" cy="35" r="2" fill="#222222"/>
+                    <circle cx="42" cy="34.5" r="0.6" fill="white"/>
+                    <circle cx="58" cy="35" r="2" fill="#222222"/>
+                    <circle cx="58" cy="34.5" r="0.6" fill="white"/>
                   </motion.g>
                   
-                  {/* Cat mouth */}
+                  {/* Cat mouth - simpler, sleeker */}
                   <motion.path 
-                    d="M45 45C45 45 50 46 55 45" 
-                    stroke="#111111" 
-                    strokeWidth="1.5" 
+                    d="M45 45C46 46 49 46 52 45" 
+                    stroke="#222222" 
+                    strokeWidth="1" 
                     strokeLinecap="round"
                     animate={{ 
-                      d: ["M45 45C45 45 50 46 55 45", "M45 47C45 47 50 49 55 47", "M45 45C45 45 50 46 55 45"] 
+                      d: ["M45 45C46 46 49 46 52 45", "M45 47C46 48 49 48 52 47", "M45 45C46 46 49 46 52 45"] 
                     }}
                     transition={{ repeat: Infinity, duration: 2, repeatType: "reverse" }}
                   />
                   
-                  {/* Cat whiskers */}
+                  {/* Cat whiskers - minimal style */}
                   <motion.g
                     animate={{
                       x: [0, 0.3, 0, -0.3, 0]
@@ -331,13 +337,15 @@ export default function LandingPage() {
                       ease: "easeInOut"
                     }}
                   >
-                    <path d="M30 40L20 38" stroke="#111111" strokeWidth="0.5" strokeLinecap="round"/>
-                    <path d="M30 43L18 43" stroke="#111111" strokeWidth="0.5" strokeLinecap="round"/>
-                    <path d="M30 46L20 48" stroke="#111111" strokeWidth="0.5" strokeLinecap="round"/>
+                    {/* Left whiskers */}
+                    <path d="M35 40L28 38" stroke="#222222" strokeWidth="0.4" strokeLinecap="round"/>
+                    <path d="M35 43L27 43" stroke="#222222" strokeWidth="0.4" strokeLinecap="round"/>
+                    <path d="M35 46L28 48" stroke="#222222" strokeWidth="0.4" strokeLinecap="round"/>
                     
-                    <path d="M70 40L80 38" stroke="#111111" strokeWidth="0.5" strokeLinecap="round"/>
-                    <path d="M70 43L82 43" stroke="#111111" strokeWidth="0.5" strokeLinecap="round"/>
-                    <path d="M70 46L80 48" stroke="#111111" strokeWidth="0.5" strokeLinecap="round"/>
+                    {/* Right whiskers */}
+                    <path d="M65 40L72 38" stroke="#222222" strokeWidth="0.4" strokeLinecap="round"/>
+                    <path d="M65 43L73 43" stroke="#222222" strokeWidth="0.4" strokeLinecap="round"/>
+                    <path d="M65 46L72 48" stroke="#222222" strokeWidth="0.4" strokeLinecap="round"/>
                   </motion.g>
                 </svg>
               </motion.div>
