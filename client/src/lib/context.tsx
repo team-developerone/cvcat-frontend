@@ -53,7 +53,13 @@ const sampleCV: CV = {
   personalInfo: defaultPersonalInfo,
   experience: initialExperience,
   education: initialEducation,
-  skills: initialSkills
+  skills: initialSkills,
+  projects: [],
+  certifications: [],
+  languages: [],
+  references: [],
+  publications: [],
+  customSections: []
 };
 
 // Tailored CVs sample data
@@ -68,7 +74,13 @@ const tailoredCVs: CV[] = [
     personalInfo: defaultPersonalInfo,
     experience: initialExperience,
     education: initialEducation,
-    skills: initialSkills
+    skills: initialSkills,
+    projects: [],
+    certifications: [],
+    languages: [],
+    references: [],
+    publications: [],
+    customSections: []
   },
   {
     id: "fullstack",
@@ -80,7 +92,13 @@ const tailoredCVs: CV[] = [
     personalInfo: defaultPersonalInfo,
     experience: initialExperience,
     education: initialEducation,
-    skills: initialSkills
+    skills: initialSkills,
+    projects: [],
+    certifications: [],
+    languages: [],
+    references: [],
+    publications: [],
+    customSections: []
   }
 ];
 
