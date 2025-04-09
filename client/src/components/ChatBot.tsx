@@ -370,23 +370,51 @@ export default function ChatBot({ isEmbedded = false }: ChatBotProps) {
   // Typing indicator component
   const TypingIndicator = () => (
     <div className="flex items-start mb-2">
-      <div className="w-5 h-5 bg-[#DAA520] flex items-center justify-center flex-shrink-0 relative">
-        {renderCatAnimation("small")}
+      <div className="w-6 h-6 bg-[#DAA520] flex items-center justify-center flex-shrink-0 relative rounded-full">
+        <div className="text-white w-4 h-4">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+            {/* Semi-circular frame (top only) */}
+            <path 
+              d="M10 50 A 40 40 0 1 0 90 50" 
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="6"
+            />
+            
+            {/* Cat head shape - straight bottom */}
+            <path 
+              d="M25 75 L 75 75 C 78 55 75 40 50 40 C 25 40 22 55 25 75 Z" 
+              fill="currentColor"
+            />
+            
+            {/* Left ear */}
+            <path 
+              d="M30 42 L 15 20 L 45 30 Z" 
+              fill="currentColor"
+            />
+            
+            {/* Right ear */}
+            <path 
+              d="M70 42 L 85 20 L 55 30 Z" 
+              fill="currentColor"
+            />
+          </svg>
+        </div>
       </div>
-      <div className="ml-2 bg-white border border-gray-100 py-1.5 px-3">
+      <div className="ml-2 bg-white border border-gray-100 py-1.5 px-3 rounded-lg">
         <div className="flex space-x-1">
           <motion.div 
-            className="w-1 h-1 bg-gray-400 rounded-full"
+            className="w-1 h-1 bg-[#DAA520] rounded-full"
             animate={{ y: [0, -3, 0] }}
             transition={{ duration: 0.8, repeat: Infinity, repeatType: "loop" }}
           />
           <motion.div 
-            className="w-1 h-1 bg-gray-400 rounded-full"
+            className="w-1 h-1 bg-[#DAA520] rounded-full"
             animate={{ y: [0, -3, 0] }}
             transition={{ duration: 0.8, delay: 0.2, repeat: Infinity, repeatType: "loop" }}
           />
           <motion.div 
-            className="w-1 h-1 bg-gray-400 rounded-full"
+            className="w-1 h-1 bg-[#DAA520] rounded-full"
             animate={{ y: [0, -3, 0] }}
             transition={{ duration: 0.8, delay: 0.4, repeat: Infinity, repeatType: "loop" }}
           />
@@ -402,7 +430,35 @@ export default function ChatBot({ isEmbedded = false }: ChatBotProps) {
         {/* Chat Header */}
         <div className="bg-[#DAA520] text-white px-4 py-3 flex items-center justify-between">
           <div className="flex items-center">
-            {renderCatAnimation("medium")}
+            <div className="text-white w-7 h-7">
+              <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                {/* Semi-circular frame (top only) */}
+                <path 
+                  d="M10 50 A 40 40 0 1 0 90 50" 
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="6"
+                />
+                
+                {/* Cat head shape - straight bottom */}
+                <path 
+                  d="M25 75 L 75 75 C 78 55 75 40 50 40 C 25 40 22 55 25 75 Z" 
+                  fill="currentColor"
+                />
+                
+                {/* Left ear */}
+                <path 
+                  d="M30 42 L 15 20 L 45 30 Z" 
+                  fill="currentColor"
+                />
+                
+                {/* Right ear */}
+                <path 
+                  d="M70 42 L 85 20 L 55 30 Z" 
+                  fill="currentColor"
+                />
+              </svg>
+            </div>
             <h3 className="ml-2 font-medium">CV Assistant</h3>
           </div>
         </div>
@@ -415,8 +471,36 @@ export default function ChatBot({ isEmbedded = false }: ChatBotProps) {
               className={`flex ${message.isBot ? 'items-start' : 'items-start justify-end'}`}
             >
               {message.isBot && (
-                <div className="w-8 h-8 bg-[#DAA520] flex items-center justify-center flex-shrink-0">
-                  {renderCatAnimation("small")}
+                <div className="w-8 h-8 bg-[#DAA520] flex items-center justify-center flex-shrink-0 rounded-full">
+                  <div className="text-white w-5 h-5">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                      {/* Semi-circular frame (top only) */}
+                      <path 
+                        d="M10 50 A 40 40 0 1 0 90 50" 
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="6"
+                      />
+                      
+                      {/* Cat head shape - straight bottom */}
+                      <path 
+                        d="M25 75 L 75 75 C 78 55 75 40 50 40 C 25 40 22 55 25 75 Z" 
+                        fill="currentColor"
+                      />
+                      
+                      {/* Left ear */}
+                      <path 
+                        d="M30 42 L 15 20 L 45 30 Z" 
+                        fill="currentColor"
+                      />
+                      
+                      {/* Right ear */}
+                      <path 
+                        d="M70 42 L 85 20 L 55 30 Z" 
+                        fill="currentColor"
+                      />
+                    </svg>
+                  </div>
                 </div>
               )}
               <div 
@@ -488,9 +572,37 @@ export default function ChatBot({ isEmbedded = false }: ChatBotProps) {
         whileTap={{ scale: 0.95 }}
         style={{ position: 'fixed', bottom: '16px', right: '16px' }}
       >
-        {/* Cat Animation */}
+        {/* Cat Logo */}
         <div className="absolute inset-0 flex items-center justify-center">
-          {renderCatAnimation("medium")}
+          <div className="text-[#DAA520] w-7 h-7">
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+              {/* Semi-circular frame (top only) */}
+              <path 
+                d="M10 50 A 40 40 0 1 0 90 50" 
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="6"
+              />
+              
+              {/* Cat head shape - straight bottom */}
+              <path 
+                d="M25 75 L 75 75 C 78 55 75 40 50 40 C 25 40 22 55 25 75 Z" 
+                fill="currentColor"
+              />
+              
+              {/* Left ear */}
+              <path 
+                d="M30 42 L 15 20 L 45 30 Z" 
+                fill="currentColor"
+              />
+              
+              {/* Right ear */}
+              <path 
+                d="M70 42 L 85 20 L 55 30 Z" 
+                fill="currentColor"
+              />
+            </svg>
+          </div>
         </div>
         
         {/* Button background glow effect */}
@@ -557,7 +669,35 @@ export default function ChatBot({ isEmbedded = false }: ChatBotProps) {
             <div className="bg-black text-white p-3 flex justify-between items-center rounded-t-lg">
               <div className="flex items-center">
                 <div className="w-7 h-7 flex items-center justify-center mr-2 relative">
-                  {renderCatAnimation("medium")}
+                  <div className="text-[#DAA520]">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                      {/* Semi-circular frame (top only) */}
+                      <path 
+                        d="M10 50 A 40 40 0 1 0 90 50" 
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="6"
+                      />
+                      
+                      {/* Cat head shape - straight bottom */}
+                      <path 
+                        d="M25 75 L 75 75 C 78 55 75 40 50 40 C 25 40 22 55 25 75 Z" 
+                        fill="currentColor"
+                      />
+                      
+                      {/* Left ear */}
+                      <path 
+                        d="M30 42 L 15 20 L 45 30 Z" 
+                        fill="currentColor"
+                      />
+                      
+                      {/* Right ear */}
+                      <path 
+                        d="M70 42 L 85 20 L 55 30 Z" 
+                        fill="currentColor"
+                      />
+                    </svg>
+                  </div>
                 </div>
                 <div>
                   <h3 className="font-medium text-sm">CV Assistant</h3>
@@ -607,10 +747,56 @@ export default function ChatBot({ isEmbedded = false }: ChatBotProps) {
                   }}
                   transition={{ duration: 1.5, repeat: botState === "thinking" ? Infinity : 0 }}
                 >
-                  {renderCatAnimation("large")}
+                  <div className="text-[#DAA520]">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                      {/* Semi-circular frame (top only) */}
+                      <path 
+                        d="M10 50 A 40 40 0 1 0 90 50" 
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="6"
+                      />
+                      
+                      {/* Cat head shape - straight bottom */}
+                      <path 
+                        d="M25 75 L 75 75 C 78 55 75 40 50 40 C 25 40 22 55 25 75 Z" 
+                        fill="currentColor"
+                      />
+                      
+                      {/* Left ear */}
+                      <path 
+                        d="M30 42 L 15 20 L 45 30 Z" 
+                        fill="currentColor"
+                      />
+                      
+                      {/* Right ear */}
+                      <path 
+                        d="M70 42 L 85 20 L 55 30 Z" 
+                        fill="currentColor"
+                      />
+                    </svg>
+                  </div>
                 </motion.div>
                 <div>
-                  <h4 className="font-medium text-xs">CVCat</h4>
+                  <div className="flex items-center">
+                    <h4 className="font-medium text-xs">CVCat</h4>
+                    {/* AI 3-star icon */}
+                    <div className="ml-2 bg-[#DAA520]/10 rounded-sm px-1.5 py-0.5 flex items-center">
+                      <span className="text-[8px] font-medium text-[#DAA520] mr-1">AI</span>
+                      <div className="flex">
+                        {[...Array(3)].map((_, i) => (
+                          <svg 
+                            key={i} 
+                            className="w-1.5 h-1.5 text-[#DAA520]" 
+                            fill="currentColor" 
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                          </svg>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                   <p className="text-[10px] text-gray-500">AI-powered CV assistant</p>
                   {botState === "thinking" && (
                     <motion.p 
@@ -647,7 +833,35 @@ export default function ChatBot({ isEmbedded = false }: ChatBotProps) {
                   >
                     {message.isBot && (
                       <div className="w-6 h-6 bg-[#DAA520] flex items-center justify-center flex-shrink-0 relative rounded-full">
-                        {renderCatAnimation("small")}
+                        <div className="text-white w-4 h-4">
+                          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                            {/* Semi-circular frame (top only) */}
+                            <path 
+                              d="M10 50 A 40 40 0 1 0 90 50" 
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="6"
+                            />
+                            
+                            {/* Cat head shape - straight bottom */}
+                            <path 
+                              d="M25 75 L 75 75 C 78 55 75 40 50 40 C 25 40 22 55 25 75 Z" 
+                              fill="currentColor"
+                            />
+                            
+                            {/* Left ear */}
+                            <path 
+                              d="M30 42 L 15 20 L 45 30 Z" 
+                              fill="currentColor"
+                            />
+                            
+                            {/* Right ear */}
+                            <path 
+                              d="M70 42 L 85 20 L 55 30 Z" 
+                              fill="currentColor"
+                            />
+                          </svg>
+                        </div>
                       </div>
                     )}
                     <motion.div 
