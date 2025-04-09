@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>{{title}} - CV</title>
+    <style>
+      /* Creative Template Styling */
+      body {
+        font-family: 'Trebuchet MS', sans-serif;
+        margin: 0;
+        padding: 0;
+        color: #333;
+        background-color: #fff;
+        line-height: 1.5;
+      }
+      
+      .page {
+        padding: 0;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      
+      .header {
+        background-color: #9B59B6;
+        color: white;
+        padding: 30px;
+        position: relative;
+        margin-bottom: 40px;
+      }
+      
+      .header::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        height: 20px;
+        background-color: #fff;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        border-radius: 50%;
+      }
+      
+      h1 {
+        margin: 0 0 5px 0;
+        color: white;
+        font-size: 32px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      
+      .job-title {
+        font-size: 18px;
+        color: rgba(255,255,255,0.8);
+        margin: 0 0 15px 0;
+      }
+      
+      .contact-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-top: 20px;
+        font-size: 14px;
+        color: rgba(255,255,255,0.9);
+      }
+      
+      .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      
+      .summary {
+        background-color: #f8f4fc;
+        padding: 20px;
+        margin: 0 30px 30px 30px;
+        border-radius: 5px;
+        border-left: 5px solid #9B59B6;
+        font-size: 15px;
+        line-height: 1.6;
+        color: #444;
+      }
+      
+      .main {
+        padding: 0 30px 30px 30px;
+      }
+      
+      .section {
+        margin-bottom: 30px;
+      }
+      
+      .section-title {
+        color: #9B59B6;
+        font-size: 20px;
+        font-weight: bold;
+        margin: 0 0 15px 0;
+        position: relative;
+        padding-left: 20px;
+      }
+      
+      .section-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 12px;
+        height: 12px;
+        background-color: #9B59B6;
+        border-radius: 50%;
+      }
+      
+      .experience-item, .education-item, .project-item, .cert-item {
+        margin-bottom: 20px;
+        padding-left: 20px;
+        border-left: 2px dotted #ddd;
+      }
+      
+      .item-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+      
+      .item-title {
+        font-weight: bold;
+        font-size: 16px;
+        color: #333;
+      }
+      
+      .item-subtitle {
+        font-size: 15px;
+        color: #666;
+      }
+      
+      .item-date {
+        font-size: 14px;
+        color: #9B59B6;
+        font-weight: bold;
+      }
+      
+      .item-description {
+        font-size: 14px;
+        color: #555;
+        text-align: justify;
+      }
+      
+      .skills-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+      }
+      
+      .skill-item {
+        background-color: #f8f4fc;
+        border: 1px solid #e4d2f5;
+        border-radius: 20px;
+        padding: 5px 12px;
+        font-size: 13px;
+        color: #9B59B6;
+      }
+      
+      .languages-list, .references-list {
+        list-style-type: none;
+        padding: 0;
+      }
+      
+      .language-item, .reference-item {
+        margin-bottom: 10px;
+        background-color: #f8f4fc;
+        padding: 10px;
+        border-radius: 5px;
+      }
+      
+      .language-name, .reference-name {
+        font-weight: bold;
+        font-size: 15px;
+        color: #333;
+      }
+      
+      .language-level, .reference-position {
+        font-size: 14px;
+        color: #9B59B6;
+      }
+      
+      .reference-contact {
+        font-size: 13px;
+        color: #666;
+        margin-top: 5px;
+      }
+      
+      @media print {
+        body {
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="header">
+        <h1>{{personalInfo.fullName}}</h1>
+        <div class="job-title">{{personalInfo.title}}</div>
+        
+        <div class="contact-details">
+          <div class="contact-item">
+            <span>✉️</span>
+            <span>{{personalInfo.email}}</span>
+          </div>
+          <div class="contact-item">
+            <span>📱</span>
+            <span>{{personalInfo.phone}}</span>
+          </div>
+          <div class="contact-item">
+            <span>📍</span>
+            <span>{{personalInfo.location}}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="summary">{{personalInfo.summary}}</div>
+      
+      <div class="main">
+        <!-- Experience Section -->
+        {{#if experience.length}}
+        <div class="section experience-section">
+          <h2 class="section-title">Professional Experience</h2>
+          
+          {{#each experience}}
+          <div class="experience-item">
+            <div class="item-header">
+              <div>
+                <div class="item-title">{{position}}</div>
+                <div class="item-subtitle">{{company}}</div>
+              </div>
+              <div class="item-date">{{startDate}} - {{endDate}}</div>
+            </div>
+            <div class="item-description">{{description}}</div>
+          </div>
+          {{/each}}
+        </div>
+        {{/if}}
+        
+        <!-- Education Section -->
+        {{#if education.length}}
+        <div class="section education-section">
+          <h2 class="section-title">Education</h2>
+          
+          {{#each education}}
+          <div class="education-item">
+            <div class="item-header">
+              <div>
+                <div class="item-title">{{degree}}</div>
+                <div class="item-subtitle">{{institution}}</div>
+              </div>
+              <div class="item-date">{{period}}</div>
+            </div>
+            {{#if description}}
+            <div class="item-description">{{description}}</div>
+            {{/if}}
+          </div>
+          {{/each}}
+        </div>
+        {{/if}}
+        
+        <!-- Skills Section -->
+        {{#if skills.length}}
+        <div class="section skills-section">
+          <h2 class="section-title">Skills</h2>
+          <ul class="skills-list">
+            {{#each skills}}
+            <li class="skill-item">{{this}}</li>
+            {{/each}}
+          </ul>
+        </div>
+        {{/if}}
+        
+        <!-- Projects Section -->
+        {{#if projects.length}}
+        <div class="section projects-section">
+          <h2 class="section-title">Projects</h2>
+          
+          {{#each projects}}
+          <div class="project-item">
+            <div class="item-header">
+              <div class="item-title">{{title}}</div>
+              {{#if startDate}}
+              <div class="item-date">{{startDate}}{{#if endDate}} - {{endDate}}{{/if}}</div>
+              {{/if}}
+            </div>
+            <div class="item-description">
+              <p>{{description}}</p>
+              {{#if technologies.length}}
+              <p><strong>Technologies:</strong> {{join technologies}}</p>
+              {{/if}}
+              {{#if url}}
+              <p><strong>URL:</strong> {{url}}</p>
+              {{/if}}
+            </div>
+          </div>
+          {{/each}}
+        </div>
+        {{/if}}
+        
+        <!-- Certifications Section -->
+        {{#if certifications.length}}
+        <div class="section certifications-section">
+          <h2 class="section-title">Certifications</h2>
+          
+          {{#each certifications}}
+          <div class="cert-item">
+            <div class="item-header">
+              <div class="item-title">{{name}}</div>
+              <div class="item-date">{{date}}{{#if expiryDate}} - {{expiryDate}}{{/if}}</div>
+            </div>
+            <div class="item-subtitle">{{issuer}}</div>
+            {{#if description}}
+            <div class="item-description">{{description}}</div>
+            {{/if}}
+          </div>
+          {{/each}}
+        </div>
+        {{/if}}
+        
+        <!-- Languages Section -->
+        {{#if languages.length}}
+        <div class="section languages-section">
+          <h2 class="section-title">Languages</h2>
+          <ul class="languages-list">
+            {{#each languages}}
+            <li class="language-item">
+              <span class="language-name">{{name}}</span>
+              <span class="language-level"> - {{proficiency}}</span>
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+        {{/if}}
+        
+        <!-- References Section -->
+        {{#if references.length}}
+        <div class="section references-section">
+          <h2 class="section-title">References</h2>
+          <ul class="references-list">
+            {{#each references}}
+            <li class="reference-item">
+              <div class="reference-name">{{name}}</div>
+              <div class="reference-position">{{position}} at {{company}}</div>
+              <div class="reference-contact">
+                {{#if email}}Email: {{email}}{{/if}}
+                {{#if phone}}{{#if email}} | {{/if}}Phone: {{phone}}{{/if}}
+              </div>
+              <div class="item-description">Relationship: {{relationship}}</div>
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+        {{/if}}
+        
+        <!-- Publications Section -->
+        {{#if publications.length}}
+        <div class="section publications-section">
+          <h2 class="section-title">Publications</h2>
+          
+          {{#each publications}}
+          <div class="project-item">
+            <div class="item-header">
+              <div class="item-title">{{title}}</div>
+              <div class="item-date">{{date}}</div>
+            </div>
+            <div class="item-subtitle">{{publisher}}</div>
+            {{#if description}}
+            <div class="item-description">{{description}}</div>
+            {{/if}}
+          </div>
+          {{/each}}
+        </div>
+        {{/if}}
+        
+        <!-- Custom Sections -->
+        {{#if customSections.length}}
+        {{#each customSections}}
+        <div class="section custom-section">
+          <h2 class="section-title">{{title}}</h2>
+          
+          {{#each items}}
+          <div class="custom-item experience-item">
+            <div class="item-header">
+              <div class="item-title">{{title}}</div>
+              {{#if date}}<div class="item-date">{{date}}</div>{{/if}}
+            </div>
+            {{#if subtitle}}<div class="item-subtitle">{{subtitle}}</div>{{/if}}
+            {{#if description}}<div class="item-description">{{description}}</div>{{/if}}
+          </div>
+          {{/each}}
+        </div>
+        {{/each}}
+        {{/if}}
+      </div>
+    </div>
+  </body>
+</html>

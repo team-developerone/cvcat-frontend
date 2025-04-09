@@ -2,6 +2,7 @@ import { useState } from "react";
 import Layout from "@/components/Layout";
 import CVBuilderForm from "@/components/CVBuilderForm";
 import ChatBot from "@/components/ChatBot";
+import PDFDownloadModal from "@/components/PDFDownloadModal";
 import { Button } from "@/components/ui/button";
 import { useCV } from "@/lib/context";
 import { motion } from "framer-motion";
@@ -27,6 +28,7 @@ export default function CVBuilder() {
   const [activeColor, setActiveColor] = useState("golden");
   const [activeTab, setActiveTab] = useState<"edit" | "preview" | "chat">("edit");
   const [activeSection, setActiveSection] = useState<SectionType>("personal");
+  const [isPDFModalOpen, setIsPDFModalOpen] = useState(false);
   
   // Template options
   const templates = [
@@ -1480,6 +1482,7 @@ export default function CVBuilder() {
                           <div className="space-y-2">
                             <Button
                               className="w-full bg-black text-white hover:bg-black/90 text-xs py-2 h-9"
+                              onClick={() => setIsPDFModalOpen(true)}
                             >
                               <LucideDownload className="w-3.5 h-3.5 mr-2" />
                               Download as PDF
@@ -1502,6 +1505,14 @@ export default function CVBuilder() {
           </div>
         </div>
       </div>
+      {/* PDF Download Modal */}
+      {isPDFModalOpen && (
+        <PDFDownloadModal 
+          isOpen={isPDFModalOpen} 
+          onClose={() => setIsPDFModalOpen(false)}
+          cv={mainCV}
+        />
+      )}
     </Layout>
   );
 }
