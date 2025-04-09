@@ -391,8 +391,9 @@ export default function ChatBot() {
               position: 'fixed', 
               bottom: '60px', 
               right: '16px', 
-              height: "480px", 
-              width: isExpanded ? "400px" : "320px" 
+              height: isExpanded ? "calc(85vh - 80px)" : "560px", // Increased height, even more when expanded
+              width: isExpanded ? "min(70vw, 800px)" : "320px", // 70% of viewport width with a maximum of 800px
+              minWidth: isExpanded ? "350px" : "320px" // Minimum width when expanded
             }}
             initial={{ opacity: 0, y: 20, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
