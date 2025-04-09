@@ -72,13 +72,72 @@ export default function LandingPage() {
                 Your CV, <span className="text-[#DAA520]">Purr</span>fected
               </motion.h1>
               <motion.p 
-                className="text-sm mb-6 max-w-lg text-gray-700"
+                className="text-sm mb-3 max-w-lg text-gray-700"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
                 Create, manage, and tailor your CVs with feline precision. Let our AI assistant help you stand out in today's competitive job market.
               </motion.p>
+              
+              <motion.div
+                className="mb-6 relative z-10"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                <motion.div
+                  className="text-xs font-medium bg-[#DAA520]/10 border border-[#DAA520]/20 inline-flex items-center px-3 py-1.5 text-left relative overflow-hidden"
+                  whileHover={{ 
+                    scale: 1.03, 
+                    backgroundColor: "rgba(218, 165, 32, 0.2)" 
+                  }}
+                >
+                  <motion.div 
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-[#DAA520]/10 to-transparent"
+                    animate={{ 
+                      x: [-100, 200],
+                    }}
+                    transition={{ 
+                      repeat: Infinity, 
+                      duration: 2,
+                      ease: "linear"
+                    }}
+                  />
+                  <svg className="w-3 h-3 mr-1.5 text-[#DAA520] flex-shrink-0 relative z-10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 13L9 17L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <span className="relative z-10">Most features are <span className="text-[#DAA520] font-bold mx-0.5">100% FREE</span> — unlimited edits, exports with no watermarks!</span>
+                </motion.div>
+                
+                <motion.div
+                  className="text-xs font-medium bg-[#DAA520]/10 border border-[#DAA520]/20 inline-flex items-center px-3 py-1.5 text-left mt-1.5 relative overflow-hidden"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.6 }}
+                  whileHover={{ 
+                    scale: 1.03, 
+                    backgroundColor: "rgba(218, 165, 32, 0.2)" 
+                  }}
+                >
+                  <motion.div 
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-[#DAA520]/10 to-transparent"
+                    animate={{ 
+                      x: [-100, 200],
+                    }}
+                    transition={{ 
+                      repeat: Infinity, 
+                      duration: 2,
+                      ease: "linear",
+                      delay: 0.5
+                    }}
+                  />
+                  <svg className="w-3 h-3 mr-1.5 text-[#DAA520] flex-shrink-0 relative z-10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 5C12 5 13 9 10 12C9 13 7 14 7.5 18C7.5 18 11 17 12 12C12 12 13 17 17 19C17 19 19 15 17 13C15 11 16 9 16 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                  <span className="relative z-10">AI assistant <span className="text-[#DAA520] font-bold mx-0.5">included in free plan</span> — get expert help instantly!</span>
+                </motion.div>
+              </motion.div>
               
               <motion.div 
                 className="flex flex-col sm:flex-row gap-4 mb-6 md:justify-start justify-center"
@@ -337,22 +396,113 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-10 px-4 bg-white">
-        <div className="max-w-5xl mx-auto">
+      <section className="py-10 px-4 bg-white relative">
+        {/* Background animation */}
+        <div className="absolute inset-0 overflow-hidden opacity-5 pointer-events-none">
           <motion.div 
-            className="text-center mb-8"
+            className="absolute w-32 h-32"
+            style={{ bottom: "-5%", left: "15%" }}
+            animate={{ 
+              scale: [1, 1.1, 1],
+              rotate: [0, 10, 0]
+            }}
+            transition={{ 
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          >
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M50 10C50 10 55 25 45 40C38 50 25 60 30 80C30 80 45 75 50 50C50 50 55 75 75 90C75 90 90 70 75 55C60 40 65 25 65 25C65 25 60 28 55 28C50 28 50 25 50 25C50 25 50 28 45 28C40 28 35 25 35 25C35 25 40 40 25 55C10 70 25 90 25 90C45 75 50 50 50 50C55 75 70 80 70 80C75 60 62 50 55 40C45 25 50 10 50 10Z" fill="#000000"/>
+            </svg>
+          </motion.div>
+          <motion.div 
+            className="absolute w-24 h-24"
+            style={{ top: "10%", right: "10%" }}
+            animate={{ 
+              scale: [1, 0.9, 1],
+              rotate: [0, -5, 0]
+            }}
+            transition={{ 
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 1
+            }}
+          >
+            <svg width="100" height="100" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 9C9.10457 9 10 8.10457 10 7C10 5.89543 9.10457 5 8 5C6.89543 5 6 5.89543 6 7C6 8.10457 6.89543 9 8 9Z" fill="#000000"/>
+              <path d="M16 9C17.1046 9 18 8.10457 18 7C18 5.89543 17.1046 5 16 5C14.8954 5 14 5.89543 14 7C14 8.10457 14.8954 9 16 9Z" fill="#000000"/>
+              <path d="M12 12C13.1046 12 14 11.1046 14 10C14 8.89543 13.1046 8 12 8C10.8954 8 10 8.89543 10 10C10 11.1046 10.8954 12 12 12Z" fill="#000000"/>
+              <path d="M5 15C6.10457 15 7 14.1046 7 13C7 11.8954 6.10457 11 5 11C3.89543 11 3 11.8954 3 13C3 14.1046 3.89543 15 5 15Z" fill="#000000"/>
+              <path d="M19 15C20.1046 15 21 14.1046 21 13C21 11.8954 20.1046 11 19 11C17.8954 11 17 11.8954 17 13C17 14.1046 17.8954 15 19 15Z" fill="#000000"/>
+            </svg>
+          </motion.div>
+        </div>
+        
+        <div className="max-w-5xl mx-auto relative z-10">
+          <motion.div 
+            className="text-center mb-8 relative"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-lg font-medium mb-2">How <span className="text-[#DAA520]">CVCat</span> Works</h2>
+            <motion.h2 
+              className="text-lg font-medium mb-2"
+              whileInView={{
+                textShadow: ["0px 0px 0px rgba(218,165,32,0)", "0px 0px 5px rgba(218,165,32,0.3)", "0px 0px 0px rgba(218,165,32,0)"],
+              }}
+              transition={{ 
+                duration: 2, 
+                repeat: Infinity,
+                repeatType: "reverse" 
+              }}
+            >
+              How <span className="text-[#DAA520]">CVCat</span> Works
+            </motion.h2>
             <p className="text-xs text-gray-600 max-w-lg mx-auto">
               Three simple steps to create a professional CV that gets noticed
             </p>
+            
+            {/* Cat paw trace animation */}
+            <div className="absolute left-0 right-0 -bottom-12 h-8 pointer-events-none overflow-hidden">
+              <motion.div
+                className="flex space-x-6 justify-center"
+                animate={{ x: [0, -80] }}
+                transition={{ 
+                  repeat: Infinity,
+                  duration: 8,
+                  ease: "linear"
+                }}
+              >
+                {[...Array(8)].map((_, i) => (
+                  <svg key={i} width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#DAA520] opacity-30">
+                    <path d="M8 9C9.10457 9 10 8.10457 10 7C10 5.89543 9.10457 5 8 5C6.89543 5 6 5.89543 6 7C6 8.10457 6.89543 9 8 9Z" fill="currentColor"/>
+                    <path d="M16 9C17.1046 9 18 8.10457 18 7C18 5.89543 17.1046 5 16 5C14.8954 5 14 5.89543 14 7C14 8.10457 14.8954 9 16 9Z" fill="currentColor"/>
+                    <path d="M12 12C13.1046 12 14 11.1046 14 10C14 8.89543 13.1046 8 12 8C10.8954 8 10 8.89543 10 10C10 11.1046 10.8954 12 12 12Z" fill="currentColor"/>
+                    <path d="M5 15C6.10457 15 7 14.1046 7 13C7 11.8954 6.10457 11 5 11C3.89543 11 3 11.8954 3 13C3 14.1046 3.89543 15 5 15Z" fill="currentColor"/>
+                    <path d="M19 15C20.1046 15 21 14.1046 21 13C21 11.8954 20.1046 11 19 11C17.8954 11 17 11.8954 17 13C17 14.1046 17.8954 15 19 15Z" fill="currentColor"/>
+                  </svg>
+                ))}
+              </motion.div>
+            </div>
           </motion.div>
           
-          <div className="grid md:grid-cols-3 gap-6">
+          {/* Process steps with connecting lines */}
+          <div className="grid md:grid-cols-3 gap-6 relative">
+            {/* Connecting line animation */}
+            <div className="hidden md:block absolute top-1/2 left-0 right-0 -translate-y-1/2 h-0.5 bg-gray-100">
+              <motion.div 
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-[#DAA520] to-transparent"
+                animate={{ x: [-300, 300]}}
+                transition={{ 
+                  repeat: Infinity, 
+                  duration: 3,
+                  ease: "linear"
+                }}
+              />
+            </div>
             {[
               { 
                 icon: (
