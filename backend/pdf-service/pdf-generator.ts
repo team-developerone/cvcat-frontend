@@ -1,7 +1,8 @@
-import * as htmlPdf from 'html-pdf-node';
 import * as handlebars from 'handlebars';
 import fs from 'fs';
 import path from 'path';
+// Using the html-pdf library as a fallback since puppeteer has dependency issues
+import * as htmlPdf from 'html-pdf';
 import { CV, CVLayoutStyle } from '../types';
 
 interface PDFOptions {
@@ -136,11 +137,17 @@ export class PDFGenerator {
         printBackground: true
       };
       
-      // Generate the PDF
-      const file = { content: html };
-      const buffer = await htmlPdf.generatePdf(file, pdfOptions);
-      
-      return buffer;
+      // Generate the PDF using html-pdf
+      return new Promise<Buffer>((resolve, reject) => {
+        htmlPdf.create(html, pdfOptions).toBuffer((err, buffer) => {
+          if (err) {
+            console.error('PDF generation error:', err);
+            reject(new Error('Failed to generate PDF'));
+          } else {
+            resolve(buffer);
+          }
+        });
+      });
     } catch (error) {
       console.error('Error generating PDF:', error);
       throw new Error('Failed to generate PDF');

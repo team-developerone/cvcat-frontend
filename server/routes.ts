@@ -1,7 +1,8 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import pdfGenerator from "../backend/pdf-service/pdf-generator";
+import { PDFGenerator } from "../backend/pdf-service/pdf-generator";
+const pdfGenerator = new PDFGenerator();
 import { CV, CVLayoutStyle } from "../backend/types";
 
 export async function registerRoutes(app: Express): Promise<Server> {
