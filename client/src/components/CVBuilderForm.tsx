@@ -1556,10 +1556,343 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
           </motion.div>
         )}
 
+        {/* Certifications Section */}
+        {activeSection === "certifications" && (
+          <motion.div
+            key="certifications"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-medium">Certifications</h2>
+              <Button 
+                variant="ghost"
+                size="sm"
+                className="flex items-center gap-1 text-xs text-[#DAA520] hover:text-[#DAA520]/80 hover:bg-[#DAA520]/5"
+                onClick={toggleAddCertificationForm}
+              >
+                <LucidePlus className="w-3 h-3 mr-1" />
+                Add Certification
+              </Button>
+            </div>
+            
+            {/* Add Certification Form */}
+            {showAddCertificationForm && (
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-sm font-medium">Add Certification</h3>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-gray-400 hover:text-gray-600 hover:bg-gray-100/70 h-7 w-7 p-0"
+                    onClick={toggleAddCertificationForm}
+                  >
+                    <LucideX className="w-4 h-4" />
+                  </Button>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Certification Name</label>
+                    <Input
+                      type="text"
+                      name="name"
+                      value={newCertification.name}
+                      onChange={handleCertificationChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                      placeholder="e.g. AWS Certified Solutions Architect"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Issuing Organization</label>
+                    <Input
+                      type="text"
+                      name="issuer"
+                      value={newCertification.issuer}
+                      onChange={handleCertificationChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                      placeholder="e.g. Amazon Web Services"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Issue Date</label>
+                    <Input
+                      type="date"
+                      name="date"
+                      value={newCertification.date}
+                      onChange={handleCertificationChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Expiry Date (Optional)</label>
+                    <Input
+                      type="date"
+                      name="expiryDate"
+                      value={newCertification.expiryDate}
+                      onChange={handleCertificationChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Credential URL (Optional)</label>
+                    <Input
+                      type="url"
+                      name="url"
+                      value={newCertification.url}
+                      onChange={handleCertificationChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                      placeholder="https://..."
+                    />
+                  </div>
+                  
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Description (Optional)</label>
+                    <Textarea
+                      name="description"
+                      value={newCertification.description}
+                      onChange={handleCertificationChange}
+                      className="w-full min-h-[80px] focus-visible:ring-[#DAA520]"
+                      placeholder="Brief description of the certification or skills it validates"
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex justify-end mt-4 gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={toggleAddCertificationForm}
+                    className="text-xs h-8"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={addCertification}
+                    className="text-xs h-8 bg-black hover:bg-black/80"
+                    disabled={!newCertification.name || !newCertification.issuer || !newCertification.date}
+                  >
+                    <LucideCheck className="w-3 h-3 mr-1" />
+                    Save Certification
+                  </Button>
+                </div>
+              </div>
+            )}
+            
+            {/* Certification Items */}
+            {mainCV.certifications && mainCV.certifications.length > 0 ? (
+              <div className="space-y-3">
+                {mainCV.certifications.map((cert) => (
+                  <div 
+                    key={cert.id} 
+                    className="p-3 border border-gray-100 rounded-lg hover:border-[#DAA520]/40 transition-all bg-white"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-medium text-sm">{cert.name}</h3>
+                        <p className="text-gray-500 text-xs mt-0.5">
+                          {cert.issuer} • Issued {cert.date}
+                          {cert.expiryDate && ` • Expires ${cert.expiryDate}`}
+                        </p>
+                      </div>
+                      <div className="flex space-x-1">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-7 w-7 p-0 text-gray-400 hover:text-[#DAA520] hover:bg-gray-50"
+                        >
+                          <LucidePencil className="w-3.5 h-3.5" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-7 w-7 p-0 text-gray-400 hover:text-red-500 hover:bg-gray-50"
+                          onClick={() => removeCertification(cert.id)}
+                        >
+                          <LucideTrash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    {cert.description && (
+                      <p className="mt-2 text-xs text-gray-600">{cert.description}</p>
+                    )}
+                    
+                    {cert.url && (
+                      <a 
+                        href={cert.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="mt-2 inline-flex items-center text-xs text-[#DAA520] hover:underline"
+                      >
+                        <LucideChevronRight className="w-3 h-3 mr-0.5" />
+                        View Credential
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-10 border border-dashed border-gray-200 rounded-lg bg-gray-50/50">
+                <p className="text-gray-500 text-sm mb-3">No certifications added yet</p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={toggleAddCertificationForm} 
+                  className="text-xs"
+                >
+                  <LucidePlus className="w-3.5 h-3.5 mr-1" />
+                  Add Your First Certification
+                </Button>
+              </div>
+            )}
+          </motion.div>
+        )}
+
+        {/* Languages Section */}
+        {activeSection === "languages" && (
+          <motion.div
+            key="languages"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-medium">Languages</h2>
+              <Button 
+                variant="ghost"
+                size="sm"
+                className="flex items-center gap-1 text-xs text-[#DAA520] hover:text-[#DAA520]/80 hover:bg-[#DAA520]/5"
+                onClick={toggleAddLanguageForm}
+              >
+                <LucidePlus className="w-3 h-3 mr-1" />
+                Add Language
+              </Button>
+            </div>
+            
+            {/* Add Language Form */}
+            {showAddLanguageForm && (
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-sm font-medium">Add Language</h3>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-gray-400 hover:text-gray-600 hover:bg-gray-100/70 h-7 w-7 p-0"
+                    onClick={toggleAddLanguageForm}
+                  >
+                    <LucideX className="w-4 h-4" />
+                  </Button>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Language</label>
+                    <Input
+                      type="text"
+                      name="name"
+                      value={newLanguage.name}
+                      onChange={handleLanguageChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                      placeholder="e.g. English, Spanish, French"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Proficiency Level</label>
+                    <select
+                      name="proficiency"
+                      value={newLanguage.proficiency}
+                      onChange={handleLanguageChange}
+                      className="w-full h-9 rounded-md border border-gray-300 bg-white px-3 py-1 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#DAA520]"
+                    >
+                      <option value="Elementary">Elementary</option>
+                      <option value="Limited Working">Limited Working</option>
+                      <option value="Professional Working">Professional Working</option>
+                      <option value="Full Professional">Full Professional</option>
+                      <option value="Native/Bilingual">Native/Bilingual</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div className="flex justify-end mt-4 gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={toggleAddLanguageForm}
+                    className="text-xs h-8"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={addLanguage}
+                    className="text-xs h-8 bg-black hover:bg-black/80"
+                    disabled={!newLanguage.name}
+                  >
+                    <LucideCheck className="w-3 h-3 mr-1" />
+                    Save Language
+                  </Button>
+                </div>
+              </div>
+            )}
+            
+            {/* Language Items */}
+            {mainCV.languages && mainCV.languages.length > 0 ? (
+              <div className="space-y-3">
+                {mainCV.languages.map((language) => (
+                  <div 
+                    key={language.id} 
+                    className="p-3 border border-gray-100 rounded-lg hover:border-[#DAA520]/40 transition-all bg-white"
+                  >
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <div className="text-sm font-medium">{language.name}</div>
+                        <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-200 px-2 py-0.5 text-[10px]">
+                          {language.proficiency}
+                        </Badge>
+                      </div>
+                      <div className="flex space-x-1">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-7 w-7 p-0 text-gray-400 hover:text-red-500 hover:bg-gray-50"
+                          onClick={() => removeLanguage(language.id)}
+                        >
+                          <LucideTrash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-10 border border-dashed border-gray-200 rounded-lg bg-gray-50/50">
+                <p className="text-gray-500 text-sm mb-3">No languages added yet</p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={toggleAddLanguageForm} 
+                  className="text-xs"
+                >
+                  <LucidePlus className="w-3.5 h-3.5 mr-1" />
+                  Add Your First Language
+                </Button>
+              </div>
+            )}
+          </motion.div>
+        )}
+
         {/* Placeholder for other sections */}
-        {(activeSection === "certifications" || 
-          activeSection === "languages" || 
-          activeSection === "references" || 
+        {(activeSection === "references" || 
           activeSection === "publications") && (
           <motion.div
             key={activeSection}
@@ -1576,8 +1909,6 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
               size="sm" 
               className="text-xs"
               onClick={() => {
-                if (activeSection === "certifications") toggleAddCertificationForm();
-                if (activeSection === "languages") toggleAddLanguageForm();
                 if (activeSection === "references") toggleAddReferenceForm();
                 if (activeSection === "publications") toggleAddPublicationForm();
               }}
