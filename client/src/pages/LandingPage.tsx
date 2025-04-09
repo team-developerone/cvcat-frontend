@@ -270,66 +270,128 @@ export default function LandingPage() {
                 }}
               >
                 <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  {/* Modern Flat Cat */}
+                  {/* Modern Silhouette Cat - Animated */}
                   <g>
-                    {/* Cat body - simplified, more stylized, flat shape */}
-                    <path 
-                      d="M50 15C50 15 55 25 48 35C43 42 35 50 38 75C38 75 48 70 50 40C50 40 52 70 68 80C68 80 78 65 68 55C58 45 62 25 62 25L50 30L38 25C38 25 42 45 32 55C22 65 32 80 32 80C48 70 50 40 50 40C52 70 62 75 62 75C65 50 57 42 52 35C45 25 50 15 50 15Z" 
-                      fill="#DAA520"
-                    />
-                    
-                    {/* Animated outline glow */}
+                    {/* Semi-circular frame (top only) - animated */}
                     <motion.path 
-                      d="M50 15C50 15 55 25 48 35C43 42 35 50 38 75C38 75 48 70 50 40C50 40 52 70 68 80C68 80 78 65 68 55C58 45 62 25 62 25L50 30L38 25C38 25 42 45 32 55C22 65 32 80 32 80C48 70 50 40 50 40C52 70 62 75 62 75C65 50 57 42 52 35C45 25 50 15 50 15Z" 
-                      stroke="rgba(218, 165, 32, 0.4)" 
-                      strokeWidth="0.8" 
-                      strokeOpacity="0.6"
+                      d="M10 50 A 40 40 0 1 0 90 50" 
+                      fill="none"
+                      stroke="#DAA520"
+                      strokeWidth="4"
+                      strokeDasharray="250"
                       animate={{
-                        strokeOpacity: [0.2, 0.6, 0.2],
-                        strokeWidth: [0.5, 1, 0.5]
+                        strokeDashoffset: [250, 0],
+                        opacity: [0.4, 1]
                       }}
                       transition={{
                         duration: 3,
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                        ease: "easeInOut"
+                      }}
+                    />
+                    
+                    {/* Cat head shape - with animation */}
+                    <motion.path 
+                      d="M25 75 L 75 75 C 78 55 75 40 50 40 C 25 40 22 55 25 75 Z" 
+                      fill="#DAA520"
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ 
+                        opacity: 1, 
+                        scale: 1,
+                        y: [0, -2, 0]
+                      }}
+                      transition={{
+                        y: {
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        },
+                        opacity: { duration: 0.5 },
+                        scale: { duration: 0.5 }
+                      }}
+                    />
+                    
+                    {/* Left ear - with animation */}
+                    <motion.path 
+                      d="M30 42 L 15 20 L 45 30 Z" 
+                      fill="#DAA520"
+                      animate={{
+                        rotate: [-1, 1, -1],
+                        transformOrigin: "30px 42px"
+                      }}
+                      transition={{
+                        duration: 2.5,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                    
+                    {/* Right ear - with animation */}
+                    <motion.path 
+                      d="M70 42 L 85 20 L 55 30 Z" 
+                      fill="#DAA520"
+                      animate={{
+                        rotate: [1, -1, 1],
+                        transformOrigin: "70px 42px"
+                      }}
+                      transition={{
+                        duration: 2.5,
                         repeat: Infinity,
                         ease: "easeInOut"
                       }}
                     />
                   </g>
                   
-                  {/* Cat eyes - simplified, cleaner */}
+                  {/* Cat eyes - animated blinking */}
                   <motion.g
                     animate={{
-                      y: [0, 0.5, 0]
+                      scaleY: [1, 0.1, 1],
+                    }}
+                    transition={{
+                      duration: 0.3,
+                      repeat: Infinity,
+                      repeatDelay: 3,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    {/* Left eye */}
+                    <ellipse 
+                      cx="35" 
+                      cy="55" 
+                      rx="5" 
+                      ry="7" 
+                      fill="white"
+                    />
+                    
+                    {/* Right eye */}
+                    <ellipse 
+                      cx="65" 
+                      cy="55" 
+                      rx="5" 
+                      ry="7" 
+                      fill="white"
+                    />
+                  </motion.g>
+                  
+                  {/* Nose */}
+                  <motion.path 
+                    d="M47 65 L 50 68 L 53 65 Z" 
+                    fill="white"
+                    animate={{
+                      y: [0, 1, 0]
                     }}
                     transition={{
                       duration: 2,
                       repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: 1
+                      ease: "easeInOut"
                     }}
-                  >
-                    <circle cx="42" cy="35" r="2" fill="#222222"/>
-                    <circle cx="42" cy="34.5" r="0.6" fill="white"/>
-                    <circle cx="58" cy="35" r="2" fill="#222222"/>
-                    <circle cx="58" cy="34.5" r="0.6" fill="white"/>
-                  </motion.g>
-                  
-                  {/* Cat mouth - simpler, sleeker */}
-                  <motion.path 
-                    d="M45 45C46 46 49 46 52 45" 
-                    stroke="#222222" 
-                    strokeWidth="1" 
-                    strokeLinecap="round"
-                    animate={{ 
-                      d: ["M45 45C46 46 49 46 52 45", "M45 47C46 48 49 48 52 47", "M45 45C46 46 49 46 52 45"] 
-                    }}
-                    transition={{ repeat: Infinity, duration: 2, repeatType: "reverse" }}
                   />
                   
-                  {/* Cat whiskers - minimal style */}
+                  {/* Whiskers with animation */}
                   <motion.g
                     animate={{
-                      x: [0, 0.3, 0, -0.3, 0]
+                      x: [0, 0.5, 0, -0.5, 0]
                     }}
                     transition={{
                       duration: 3,
@@ -338,14 +400,38 @@ export default function LandingPage() {
                     }}
                   >
                     {/* Left whiskers */}
-                    <path d="M35 40L28 38" stroke="#222222" strokeWidth="0.4" strokeLinecap="round"/>
-                    <path d="M35 43L27 43" stroke="#222222" strokeWidth="0.4" strokeLinecap="round"/>
-                    <path d="M35 46L28 48" stroke="#222222" strokeWidth="0.4" strokeLinecap="round"/>
+                    <line 
+                      x1="30" y1="65" x2="15" y2="60" 
+                      stroke="white" 
+                      strokeWidth="1.5" 
+                    />
+                    <line 
+                      x1="30" y1="68" x2="15" y2="68" 
+                      stroke="white" 
+                      strokeWidth="1.5" 
+                    />
+                    <line 
+                      x1="30" y1="71" x2="15" y2="76" 
+                      stroke="white" 
+                      strokeWidth="1.5" 
+                    />
                     
                     {/* Right whiskers */}
-                    <path d="M65 40L72 38" stroke="#222222" strokeWidth="0.4" strokeLinecap="round"/>
-                    <path d="M65 43L73 43" stroke="#222222" strokeWidth="0.4" strokeLinecap="round"/>
-                    <path d="M65 46L72 48" stroke="#222222" strokeWidth="0.4" strokeLinecap="round"/>
+                    <line 
+                      x1="70" y1="65" x2="85" y2="60" 
+                      stroke="white" 
+                      strokeWidth="1.5" 
+                    />
+                    <line 
+                      x1="70" y1="68" x2="85" y2="68" 
+                      stroke="white" 
+                      strokeWidth="1.5" 
+                    />
+                    <line 
+                      x1="70" y1="71" x2="85" y2="76" 
+                      stroke="white" 
+                      strokeWidth="1.5" 
+                    />
                   </motion.g>
                 </svg>
               </motion.div>
