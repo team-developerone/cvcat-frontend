@@ -1,11 +1,12 @@
 import { useState } from "react";
 import Layout from "@/components/Layout";
 import CVBuilderForm from "@/components/CVBuilderForm";
+import ChatBot from "@/components/ChatBot";
 import { Button } from "@/components/ui/button";
 import { useCV } from "@/lib/context";
 import { motion } from "framer-motion";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { LucideFileText, LucideDownload, LucideShare2, LucideZap } from "lucide-react";
+import { LucideFileText, LucideDownload, LucideShare2, LucideZap, LucideMessageCircle } from "lucide-react";
 
 // Available section types
 export type SectionType = 
@@ -24,7 +25,7 @@ export default function CVBuilder() {
   const { mainCV } = useCV();
   const [activeTemplate, setActiveTemplate] = useState("modern");
   const [activeColor, setActiveColor] = useState("golden");
-  const [activeTab, setActiveTab] = useState<"edit" | "preview">("edit");
+  const [activeTab, setActiveTab] = useState<"edit" | "preview" | "chat">("edit");
   const [activeSection, setActiveSection] = useState<SectionType>("personal");
   
   // Template options
@@ -116,10 +117,10 @@ export default function CVBuilder() {
             <Tabs 
               defaultValue="edit" 
               value={activeTab} 
-              onValueChange={(value) => setActiveTab(value as "edit" | "preview")}
+              onValueChange={(value) => setActiveTab(value as "edit" | "preview" | "chat")}
               className="w-full mb-6"
             >
-              <TabsList className="grid w-full grid-cols-2 rounded-full h-12 p-1 bg-gray-100">
+              <TabsList className="grid w-full grid-cols-3 rounded-full h-12 p-1 bg-gray-100">
                 <TabsTrigger 
                   value="edit" 
                   className="rounded-full data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm h-10"
@@ -133,6 +134,13 @@ export default function CVBuilder() {
                 >
                   <LucideZap className="w-4 h-4 mr-2" />
                   Preview
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="chat" 
+                  className="rounded-full data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm h-10"
+                >
+                  <LucideMessageCircle className="w-4 h-4 mr-2" />
+                  CV Assistant
                 </TabsTrigger>
               </TabsList>
 
@@ -647,6 +655,20 @@ export default function CVBuilder() {
                               {/* Add Executive and Technical templates here */}
                             </div>
                           )}
+                        </div>
+                      </div>
+                    </TabsContent>
+                    
+                    <TabsContent value="chat" className="mt-0">
+                      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 h-[80vh]">
+                        <div className="flex justify-between items-center mb-4">
+                          <h2 className="text-xl font-bold">CV Assistant</h2>
+                          <p className="text-sm text-gray-500">
+                            Ask for advice or tips about your CV
+                          </p>
+                        </div>
+                        <div className="h-[calc(80vh-120px)]">
+                          <ChatBot />
                         </div>
                       </div>
                     </TabsContent>
