@@ -5,8 +5,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
-// CV Sample Layout Types
-type CVLayoutStyle = "professional" | "modern" | "creative" | "minimal";
+// CV Sample Layout Types - Using the exact templates from CV builder
+type CVLayoutStyle = "modern" | "classic" | "minimalist" | "creative" | "executive";
 
 interface CVSamplesModalProps {
   isOpen: boolean;
@@ -14,32 +14,59 @@ interface CVSamplesModalProps {
 }
 
 export default function CVSamplesModal({ isOpen, onClose }: CVSamplesModalProps) {
-  const [activeLayout, setActiveLayout] = useState<CVLayoutStyle>("professional");
+  const [activeLayout, setActiveLayout] = useState<CVLayoutStyle>("modern");
 
+  // These are the exact templates from the CV builder
   const layouts = [
-    {
-      id: "professional",
-      name: "Professional",
-      description: "Formal layout with traditional organization, perfect for corporate roles",
-      color: "#2C3E50"
-    },
-    {
-      id: "modern",
+    { 
+      id: "modern", 
       name: "Modern",
-      description: "Clean design with a contemporary feel, balanced for most industries",
+      description: "Clean and professional with a touch of elegance",
+      headerStyle: "centered",
+      accentStyle: "line",
+      fontFamily: "Inter, sans-serif",
+      spacing: "comfortable",
       color: "#3498DB"
     },
-    {
-      id: "creative",
+    { 
+      id: "classic", 
+      name: "Classic",
+      description: "Traditional layout with a timeless design",
+      headerStyle: "left-aligned",
+      accentStyle: "bold",
+      fontFamily: "Georgia, serif",
+      spacing: "compact",
+      color: "#2C3E50" 
+    },
+    { 
+      id: "minimalist", 
+      name: "Minimalist",
+      description: "Sleek and concise with minimal visual elements",
+      headerStyle: "side",
+      accentStyle: "subtle",
+      fontFamily: "Inter, sans-serif",
+      spacing: "airy",
+      color: "#34495E"
+    },
+    { 
+      id: "creative", 
       name: "Creative",
-      description: "Bold and unique presentation for design and artistic professions",
+      description: "Bold design with unique visual elements",
+      headerStyle: "banner",
+      accentStyle: "dots",
+      fontFamily: "Poppins, sans-serif",
+      spacing: "balanced",
       color: "#9B59B6"
     },
     {
-      id: "minimal",
-      name: "Minimal",
-      description: "Streamlined and simple design focusing on essential information",
-      color: "#34495E"
+      id: "executive",
+      name: "Executive",
+      description: "Sophisticated design for senior professionals",
+      headerStyle: "corporate",
+      accentStyle: "elegant",
+      fontFamily: "Merriweather, serif",
+      spacing: "formal",
+      color: "#1E3A8A"
     }
   ];
 
@@ -51,8 +78,8 @@ export default function CVSamplesModal({ isOpen, onClose }: CVSamplesModalProps)
         </DialogHeader>
         
         <div className="p-4">
-          <Tabs defaultValue="professional" className="w-full" onValueChange={(value) => setActiveLayout(value as CVLayoutStyle)}>
-            <TabsList className="grid grid-cols-4 mb-4">
+          <Tabs defaultValue="modern" className="w-full" onValueChange={(value) => setActiveLayout(value as CVLayoutStyle)}>
+            <TabsList className="grid grid-cols-5 mb-4">
               {layouts.map((layout) => (
                 <TabsTrigger 
                   key={layout.id} 
@@ -81,23 +108,23 @@ export default function CVSamplesModal({ isOpen, onClose }: CVSamplesModalProps)
                   <div className="col-span-2 md:col-span-1 bg-gray-50 p-4 rounded-md border-2 border-gray-200">
                     <h4 className="text-sm font-bold mb-2">Key Features:</h4>
                     <ul className="text-xs space-y-1.5">
-                      {layout.id === "professional" && (
+                      {layout.id === "classic" && (
                         <>
                           <li className="flex items-start">
                             <span className="text-[#DAA520] mr-1.5">•</span>
-                            <span>Traditional header with clear contact information</span>
+                            <span>Traditional left-aligned header with clear contact information</span>
                           </li>
                           <li className="flex items-start">
                             <span className="text-[#DAA520] mr-1.5">•</span>
-                            <span>Chronological experience and education sections</span>
+                            <span>Bold section titles with underlines for clear navigation</span>
                           </li>
                           <li className="flex items-start">
                             <span className="text-[#DAA520] mr-1.5">•</span>
-                            <span>Formal language and conservative spacing</span>
+                            <span>Formal language and compact spacing for maximum content</span>
                           </li>
                           <li className="flex items-start">
                             <span className="text-[#DAA520] mr-1.5">•</span>
-                            <span>Emphasis on work history and achievements</span>
+                            <span>Chronological presentation of experience and achievements</span>
                           </li>
                         </>
                       )}
@@ -105,19 +132,19 @@ export default function CVSamplesModal({ isOpen, onClose }: CVSamplesModalProps)
                         <>
                           <li className="flex items-start">
                             <span className="text-[#DAA520] mr-1.5">•</span>
-                            <span>Sidebar for contact details and skills</span>
+                            <span>Centered header layout with clean typography</span>
                           </li>
                           <li className="flex items-start">
                             <span className="text-[#DAA520] mr-1.5">•</span>
-                            <span>Clean typography with strategic white space</span>
+                            <span>Sidebar design for contact information and skills</span>
                           </li>
                           <li className="flex items-start">
                             <span className="text-[#DAA520] mr-1.5">•</span>
-                            <span>Visual elements to highlight key information</span>
+                            <span>Vertical accent lines highlight important sections</span>
                           </li>
                           <li className="flex items-start">
                             <span className="text-[#DAA520] mr-1.5">•</span>
-                            <span>Balance of traditional structure with fresh design</span>
+                            <span>Comfortable spacing for improved readability</span>
                           </li>
                         </>
                       )}
@@ -125,39 +152,59 @@ export default function CVSamplesModal({ isOpen, onClose }: CVSamplesModalProps)
                         <>
                           <li className="flex items-start">
                             <span className="text-[#DAA520] mr-1.5">•</span>
-                            <span>Bold colors and unique visual organization</span>
+                            <span>Banner-style header with personal branding elements</span>
                           </li>
                           <li className="flex items-start">
                             <span className="text-[#DAA520] mr-1.5">•</span>
-                            <span>Custom sections to showcase portfolio work</span>
+                            <span>Dot accents and visual elements for unique presentation</span>
                           </li>
                           <li className="flex items-start">
                             <span className="text-[#DAA520] mr-1.5">•</span>
-                            <span>Infographic elements for skills visualization</span>
+                            <span>Grid-based layout for dynamic content organization</span>
                           </li>
                           <li className="flex items-start">
                             <span className="text-[#DAA520] mr-1.5">•</span>
-                            <span>Distinctive typography and personal branding</span>
+                            <span>Bold colors and distinctive visual hierarchy</span>
                           </li>
                         </>
                       )}
-                      {layout.id === "minimal" && (
+                      {layout.id === "minimalist" && (
                         <>
                           <li className="flex items-start">
                             <span className="text-[#DAA520] mr-1.5">•</span>
-                            <span>Maximum white space with condensed content</span>
+                            <span>Side-by-side layout for concise information display</span>
                           </li>
                           <li className="flex items-start">
                             <span className="text-[#DAA520] mr-1.5">•</span>
-                            <span>Subtle design elements and clean typography</span>
+                            <span>Subtle design elements with clean, airy typography</span>
                           </li>
                           <li className="flex items-start">
                             <span className="text-[#DAA520] mr-1.5">•</span>
-                            <span>Focus on essential information only</span>
+                            <span>Ample white space with condensed, essential content</span>
                           </li>
                           <li className="flex items-start">
                             <span className="text-[#DAA520] mr-1.5">•</span>
-                            <span>Strategic use of negative space for readability</span>
+                            <span>Understated section headers for elegant simplicity</span>
+                          </li>
+                        </>
+                      )}
+                      {layout.id === "executive" && (
+                        <>
+                          <li className="flex items-start">
+                            <span className="text-[#DAA520] mr-1.5">•</span>
+                            <span>Corporate header style with professional color scheme</span>
+                          </li>
+                          <li className="flex items-start">
+                            <span className="text-[#DAA520] mr-1.5">•</span>
+                            <span>Elegant section separators with subtle accents</span>
+                          </li>
+                          <li className="flex items-start">
+                            <span className="text-[#DAA520] mr-1.5">•</span>
+                            <span>Formal spacing and sophisticated typography</span>
+                          </li>
+                          <li className="flex items-start">
+                            <span className="text-[#DAA520] mr-1.5">•</span>
+                            <span>Enhanced emphasis on leadership and achievements</span>
                           </li>
                         </>
                       )}
@@ -166,10 +213,11 @@ export default function CVSamplesModal({ isOpen, onClose }: CVSamplesModalProps)
                     <div className="mt-4 pt-4 border-t border-gray-200">
                       <h4 className="text-sm font-bold mb-2">Best For:</h4>
                       <p className="text-xs">
-                        {layout.id === "professional" && "Finance, Law, Executive Positions, Traditional Industries"}
+                        {layout.id === "classic" && "Finance, Law, Executive Positions, Traditional Industries"}
                         {layout.id === "modern" && "Tech, Marketing, Middle Management, Most Corporate Roles"}
                         {layout.id === "creative" && "Design, Arts, Media, Advertising, Entertainment"}
-                        {layout.id === "minimal" && "Experienced Professionals, Academia, Research, Technical Roles"}
+                        {layout.id === "minimalist" && "Experienced Professionals, Academia, Research, Technical Roles"}
+                        {layout.id === "executive" && "Senior Management, C-Suite Executives, Corporate Leadership"}
                       </p>
                     </div>
                   </div>
@@ -236,7 +284,7 @@ function CVTemplate({ layout }: { layout: CVLayoutStyle }) {
   // Dynamic styles based on layout type
   const getLayoutStyles = () => {
     switch(layout) {
-      case "professional":
+      case "classic":
         return {
           container: "bg-white border-2 border-gray-300 rounded-md overflow-hidden",
           header: "bg-[#2C3E50] text-white p-6",
@@ -266,7 +314,7 @@ function CVTemplate({ layout }: { layout: CVLayoutStyle }) {
           experienceItem: "mb-3 rounded bg-gray-50 p-2",
           skillItem: "bg-[#9B59B6]/10 text-[#9B59B6] rounded px-2 py-0.5 text-xs mr-1 mb-1 inline-block"
         };
-      case "minimal":
+      case "minimalist":
         return {
           container: "bg-white border-2 border-gray-300 rounded-md overflow-hidden",
           header: "border-b-2 border-black text-black p-4",
@@ -276,15 +324,25 @@ function CVTemplate({ layout }: { layout: CVLayoutStyle }) {
           experienceItem: "mb-3",
           skillItem: "border border-gray-300 rounded-none px-2 py-0.5 text-xs mr-1 mb-1 inline-block"
         };
+      case "executive":
+        return {
+          container: "bg-white border-2 border-gray-300 rounded-md overflow-hidden",
+          header: "bg-[#1E3A8A] text-white p-5",
+          nameStyle: "text-xl font-bold",
+          contentLayout: "p-4",
+          sectionTitle: "text-[#1E3A8A] font-bold text-sm border-b border-[#1E3A8A]/30 pb-1 mb-3",
+          experienceItem: "mb-3",
+          skillItem: "bg-[#1E3A8A]/10 text-[#1E3A8A] rounded px-2 py-0.5 text-xs mr-1 mb-1 inline-block"
+        };
       default:
         return {
           container: "bg-white border-2 border-gray-300 rounded-md overflow-hidden",
-          header: "bg-[#2C3E50] text-white p-6",
+          header: "bg-[#3498DB] text-white p-4",
           nameStyle: "text-xl font-bold",
-          contentLayout: "p-4",
-          sectionTitle: "text-[#2C3E50] font-bold text-sm border-b border-gray-300 pb-1 mb-3",
-          experienceItem: "mb-3",
-          skillItem: "bg-gray-100 text-[#2C3E50] rounded px-2 py-0.5 text-xs mr-1 mb-1 inline-block"
+          contentLayout: "flex p-4",
+          sectionTitle: "text-[#3498DB] font-bold text-sm mb-3",
+          experienceItem: "mb-3 pl-3 border-l-2 border-[#3498DB]",
+          skillItem: "bg-[#3498DB]/10 text-[#3498DB] rounded-full px-2 py-0.5 text-xs mr-1 mb-1 inline-block"
         };
     }
   };
@@ -449,7 +507,7 @@ function CVTemplate({ layout }: { layout: CVLayoutStyle }) {
     );
   }
   
-  else if (layout === "minimal") {
+  else if (layout === "minimalist") {
     return (
       <div className={styles.container} style={{ maxHeight: "500px", overflow: "auto" }}>
         <div className={styles.header}>
@@ -505,7 +563,128 @@ function CVTemplate({ layout }: { layout: CVLayoutStyle }) {
     );
   }
   
-  // Default Professional layout
+  else if (layout === "executive") {
+    return (
+      <div className={styles.container} style={{ maxHeight: "500px", overflow: "auto" }}>
+        <div className={styles.header}>
+          <div className={styles.nameStyle}>{personalInfo.name}</div>
+          <div className="text-sm mt-1">{personalInfo.title}</div>
+          
+          <div className="text-xs mt-3 flex flex-wrap">
+            <span className="mr-4">{personalInfo.email}</span>
+            <span className="mr-4">{personalInfo.phone}</span>
+            <span>{personalInfo.location}</span>
+          </div>
+        </div>
+        
+        <div className={styles.contentLayout}>
+          <div className="mb-6">
+            <div className={styles.sectionTitle}>Executive Profile</div>
+            <p className="text-xs">{personalInfo.summary}</p>
+          </div>
+          
+          <div className="mb-6">
+            <div className={styles.sectionTitle}>Professional Experience</div>
+            {experience.map((exp, index) => (
+              <div key={index} className={styles.experienceItem}>
+                <div className="flex justify-between items-center my-1">
+                  <div className="text-sm font-semibold">{exp.position}</div>
+                  <div className="text-xs font-medium text-[#1E3A8A]">{exp.period}</div>
+                </div>
+                <div className="text-xs font-medium mb-1">{exp.company}</div>
+                <p className="text-xs">{exp.description}</p>
+              </div>
+            ))}
+          </div>
+          
+          <div className="mb-6">
+            <div className={styles.sectionTitle}>Academic Background</div>
+            {education.map((edu, index) => (
+              <div key={index} className="mb-2">
+                <div className="flex justify-between items-center">
+                  <div className="text-xs font-semibold">{edu.degree}</div>
+                  <div className="text-xs font-medium text-[#1E3A8A]">{edu.period}</div>
+                </div>
+                <div className="text-xs">{edu.institution}</div>
+              </div>
+            ))}
+          </div>
+          
+          <div>
+            <div className={styles.sectionTitle}>Areas of Expertise</div>
+            <div>
+              {skills.map((skill, index) => (
+                <span key={index} className={styles.skillItem}>{skill}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  // Classic layout - Default fallback
+  else if (layout === "classic") {
+    return (
+      <div className={styles.container} style={{ maxHeight: "500px", overflow: "auto" }}>
+        <div className={styles.header}>
+          <div className={styles.nameStyle}>{personalInfo.name}</div>
+          <div className="text-sm mt-1">{personalInfo.title}</div>
+          
+          <div className="text-xs mt-3 flex flex-wrap">
+            <span className="mr-3">{personalInfo.email}</span>
+            <span className="mr-3">{personalInfo.phone}</span>
+            <span>{personalInfo.location}</span>
+          </div>
+        </div>
+        
+        <div className={styles.contentLayout}>
+          <div className="mb-4">
+            <div className={styles.sectionTitle}>Profile Summary</div>
+            <p className="text-xs">{personalInfo.summary}</p>
+          </div>
+          
+          <div className="mb-4">
+            <div className={styles.sectionTitle}>Professional Experience</div>
+            {experience.map((exp, index) => (
+              <div key={index} className={styles.experienceItem}>
+                <div className="text-xs font-semibold">{exp.position}</div>
+                <div className="text-xs flex justify-between">
+                  <span>{exp.company}</span>
+                  <span className="text-gray-500">{exp.period}</span>
+                </div>
+                <p className="text-xs mt-1">{exp.description}</p>
+              </div>
+            ))}
+          </div>
+          
+          <div className="mb-4">
+            <div className={styles.sectionTitle}>Education</div>
+            {education.map((edu, index) => (
+              <div key={index} className="mb-2">
+                <div className="text-xs font-semibold">{edu.degree}</div>
+                <div className="text-xs flex justify-between">
+                  <span>{edu.institution}</span>
+                  <span className="text-gray-500">{edu.period}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div>
+            <div className={styles.sectionTitle}>Technical Skills</div>
+            <div>
+              {skills.map((skill, index) => (
+                <span key={index} className={styles.skillItem}>{skill}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  // Default template (should not reach here since we handle all types above)
   return (
     <div className={styles.container} style={{ maxHeight: "500px", overflow: "auto" }}>
       <div className={styles.header}>
