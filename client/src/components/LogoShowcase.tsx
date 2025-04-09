@@ -29,35 +29,84 @@ export default function LogoShowcase({
     xl: "text-3xl"
   };
 
-  const accentColor = "#DAA520";
-  const fillColor = variant === "minimal" ? "none" : "white";
-  const strokeWidth = variant === "minimal" ? 2 : 0;
+  const primaryColor = "#DAA520";
+  const bgColor = "white";
 
   return (
     <div className={`flex flex-col items-center ${className}`}>
       <div className={`${sizeMap[size]} relative`}>
-        <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-          {variant !== "minimal" && <rect width="50" height="50" rx="10" fill={fillColor} />}
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {variant !== "minimal" && <rect width="100" height="100" rx="15" fill={bgColor} />}
           
+          {/* Semi-circular frame */}
           {variant === "minimal" ? (
             <path 
-              d="M25 10C25 10 28 16 24 22C21 26 16 30 18 38C18 38 24 36 25 26C25 26 27 36 35 42C35 42 41 34 35 28C29 22 31 16 31 16C31 16 28 17 25 17C22 17 19 16 19 16C19 16 21 22 15 28C9 34 15 42 15 42C23 36 25 26 25 26C26 36 32 38 32 38C34 30 29 26 26 22C22 16 25 10 25 10Z" 
-              stroke={accentColor} 
-              strokeWidth={strokeWidth}
-              fill={accentColor}
+              d="M10 50 A 40 40 0 1 0 90 50" 
+              stroke={primaryColor}
+              strokeWidth="6"
+              fill="none"
             />
           ) : (
             <path 
-              d="M25 10C25 10 28 16 24 22C21 26 16 30 18 38C18 38 24 36 25 26C25 26 27 36 35 42C35 42 41 34 35 28C29 22 31 16 31 16C31 16 28 17 25 17C22 17 19 16 19 16C19 16 21 22 15 28C9 34 15 42 15 42C23 36 25 26 25 26C26 36 32 38 32 38C34 30 29 26 26 22C22 16 25 10 25 10Z" 
-              fill={accentColor}
+              d="M15 50 A 35 35 0 1 0 85 50" 
+              stroke={primaryColor}
+              strokeWidth="5"
+              fill="none"
             />
           )}
           
+          {/* Cat head shape */}
+          <path 
+            d={variant === "minimal" ? 
+                "M25 75 L 75 75 C 78 55 75 40 50 40 C 25 40 22 55 25 75 Z" : 
+                "M30 75 L 70 75 C 73 55 70 40 50 40 C 30 40 27 55 30 75 Z"
+            }
+            fill={primaryColor}
+          />
+          
+          {/* Left ear */}
+          <path 
+            d={variant === "minimal" ? 
+                "M30 42 L 15 20 L 45 30 Z" : 
+                "M35 42 L 20 20 L 45 30 Z"
+            }
+            fill={primaryColor}
+          />
+          
+          {/* Right ear */}
+          <path 
+            d={variant === "minimal" ? 
+                "M70 42 L 85 20 L 55 30 Z" : 
+                "M65 42 L 80 20 L 55 30 Z"
+            }
+            fill={primaryColor}
+          />
+          
           {variant !== "minimal" && (
             <>
-              <rect x="20" y="18" width="2" height="2" rx="1" fill="#333"/>
-              <rect x="28" y="18" width="2" height="2" rx="1" fill="#333"/>
-              <path d="M23 24C24 25 26 25 27 24" stroke="#333" strokeWidth="1.5" strokeLinecap="round"/>
+              {/* Left eye */}
+              <ellipse 
+                cx="40" 
+                cy="55" 
+                rx="4" 
+                ry="5" 
+                fill={bgColor}
+              />
+              
+              {/* Right eye */}
+              <ellipse 
+                cx="60" 
+                cy="55" 
+                rx="4" 
+                ry="5" 
+                fill={bgColor}
+              />
+              
+              {/* Nose */}
+              <path 
+                d="M47 64 L 50 67 L 53 64 Z" 
+                fill={bgColor}
+              />
             </>
           )}
         </svg>
