@@ -24,91 +24,96 @@ export default function Logo({ className = "", size = "md", showText = true, dar
 
   const primaryColor = "#DAA520";
   const textColorClass = darkMode ? "text-white" : "text-black";
-  const accentColor = darkMode ? "#FFFFFF" : "#333333";
+  const accentColor = darkMode ? "#FFFFFF" : "#222222";
+  const bgColor = darkMode ? "#333" : "#FFFFFF";
 
   return (
     <div className={`flex items-center ${className}`}>
       <div className={`${sizeMap[size]} mr-2`}>
         <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-          {/* Completely new minimal cat logo using geometric shapes */}
+          {/* Alternative geometric cat logo design */}
           <g>
-            {/* Head - simple circle */}
-            <circle 
-              cx="25" 
-              cy="25" 
-              r="18" 
-              fill={darkMode ? "#333" : "#FFFFFF"} 
-              stroke={primaryColor}
+            {/* Base shape - rounded square */}
+            <rect 
+              x="10" 
+              y="10" 
+              width="30" 
+              height="30" 
+              rx="12" 
+              fill={bgColor}
+              stroke={primaryColor} 
               strokeWidth="1.5"
             />
             
-            {/* Cat ears - triangles */}
-            <polygon 
-              points="13,17 19,25 7,25" 
-              fill={primaryColor} 
-              transform="rotate(-10, 13, 17)"
-            />
-            <polygon 
-              points="37,17 43,25 31,25" 
-              fill={primaryColor} 
-              transform="rotate(10, 37, 17)"
-            />
-            
-            {/* Cat eyes - minimal slits */}
-            <line 
-              x1="18" y1="22" x2="22" y2="24" 
-              stroke={accentColor} 
-              strokeWidth="1.5" 
-              strokeLinecap="round"
-            />
-            <line 
-              x1="32" y1="22" x2="28" y2="24" 
-              stroke={accentColor} 
-              strokeWidth="1.5" 
-              strokeLinecap="round"
-            />
-            
-            {/* Whiskers - minimal horizontal lines */}
-            <line 
-              x1="10" y1="30" x2="18" y2="30" 
-              stroke={accentColor} 
-              strokeWidth="0.8" 
-              strokeLinecap="round"
-              opacity="0.6"
-            />
-            <line 
-              x1="10" y1="32" x2="16" y2="32" 
-              stroke={accentColor} 
-              strokeWidth="0.8" 
-              strokeLinecap="round"
-              opacity="0.6"
-            />
-            <line 
-              x1="40" y1="30" x2="32" y2="30" 
-              stroke={accentColor} 
-              strokeWidth="0.8" 
-              strokeLinecap="round"
-              opacity="0.6"
-            />
-            <line 
-              x1="40" y1="32" x2="34" y2="32" 
-              stroke={accentColor} 
-              strokeWidth="0.8" 
-              strokeLinecap="round"
-              opacity="0.6"
-            />
-            
-            {/* Nose - small triangle */}
-            <polygon 
-              points="25,28 23,30 27,30" 
-              fill={primaryColor} 
-            />
-            
-            {/* Mouth - simple line */}
+            {/* Cat ears */}
             <path 
-              d="M22,34 C24,36 26,36 28,34" 
+              d="M10 22L2 12L18 12Z" 
+              fill={primaryColor} 
+            />
+            <path 
+              d="M40 22L48 12L32 12Z" 
+              fill={primaryColor} 
+            />
+            
+            {/* Cat eyes - minimal circles */}
+            <circle 
+              cx="18" 
+              cy="25" 
+              r="2" 
+              fill={primaryColor} 
+              opacity="0.8"
+            />
+            <circle 
+              cx="32" 
+              cy="25" 
+              r="2" 
+              fill={primaryColor} 
+              opacity="0.8"
+            />
+            
+            {/* Simple dot for nose */}
+            <circle 
+              cx="25" 
+              cy="32" 
+              r="1.5" 
+              fill={accentColor} 
+            />
+            
+            {/* Whiskers - minimal diagonal strokes */}
+            <line 
+              x1="15" y1="32" x2="8" y2="30" 
               stroke={accentColor} 
-              strokeWidth="1" 
+              strokeWidth="0.8" 
+              strokeLinecap="round"
+              opacity="0.6"
+            />
+            <line 
+              x1="15" y1="34" x2="7" y2="35" 
+              stroke={accentColor} 
+              strokeWidth="0.8" 
+              strokeLinecap="round"
+              opacity="0.6"
+            />
+            <line 
+              x1="35" y1="32" x2="42" y2="30" 
+              stroke={accentColor} 
+              strokeWidth="0.8" 
+              strokeLinecap="round"
+              opacity="0.6"
+            />
+            <line 
+              x1="35" y1="34" x2="43" y2="35" 
+              stroke={accentColor} 
+              strokeWidth="0.8" 
+              strokeLinecap="round"
+              opacity="0.6"
+            />
+            
+            {/* Stylish accent */}
+            <path 
+              d="M20 36C21.5 38.5 28.5 38.5 30 36" 
+              stroke={primaryColor} 
+              strokeWidth="1.5" 
               strokeLinecap="round"
             />
           </g>
