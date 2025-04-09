@@ -118,6 +118,7 @@ export default function CVBuilder() {
                           <Button
                             variant="outline"
                             className="w-full flex items-center justify-center text-sm border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100"
+                            onClick={() => setActiveSection("custom")}
                           >
                             <i className="fas fa-plus-circle mr-2 text-[#DAA520]"></i>
                             Add Custom Section

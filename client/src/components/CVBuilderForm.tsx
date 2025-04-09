@@ -1214,12 +1214,353 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
           </motion.div>
         )}
         
+        {/* Custom Section Form */}
+        {activeSection === "custom" && (
+          <motion.div
+            key="custom"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-medium">Custom Sections</h2>
+              <Button 
+                variant="ghost"
+                size="sm"
+                className="flex items-center gap-1 text-xs text-[#DAA520] hover:text-[#DAA520]/80 hover:bg-[#DAA520]/5"
+                onClick={toggleAddCustomSectionForm}
+              >
+                <LucidePlus className="w-3 h-3 mr-1" />
+                Add Custom Section
+              </Button>
+            </div>
+            
+            {/* Add Custom Section Form */}
+            {showAddCustomSectionForm && (
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-sm font-medium">Create New Section</h3>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-gray-400 hover:text-gray-600 hover:bg-gray-100/70 h-7 w-7 p-0"
+                    onClick={toggleAddCustomSectionForm}
+                  >
+                    <LucideX className="w-4 h-4" />
+                  </Button>
+                </div>
+                
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Section Title</label>
+                  <Input
+                    type="text"
+                    name="title"
+                    value={newCustomSection.title}
+                    onChange={handleCustomSectionChange}
+                    className="w-full h-9 focus-visible:ring-[#DAA520]"
+                    placeholder="e.g. Volunteer Work, Awards, Interests, etc."
+                  />
+                </div>
+                
+                <div className="flex justify-end mt-4 gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={toggleAddCustomSectionForm}
+                    className="text-xs h-8"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={addCustomSection}
+                    className="text-xs h-8 bg-black hover:bg-black/80"
+                    disabled={!newCustomSection.title.trim()}
+                  >
+                    <LucideCheck className="w-3 h-3 mr-1" />
+                    Create Section
+                  </Button>
+                </div>
+              </div>
+            )}
+            
+            {/* Custom Sections List */}
+            {mainCV.customSections && mainCV.customSections.length > 0 ? (
+              <div className="space-y-4">
+                {mainCV.customSections.map((section) => (
+                  <div key={section.id} className="border border-gray-100 rounded-lg p-4">
+                    <div className="flex justify-between items-center mb-3">
+                      <h3 className="font-medium text-gray-800">{section.title}</h3>
+                      <div className="flex space-x-1">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-7 w-7 p-0 text-gray-400 hover:text-red-500 hover:bg-gray-50"
+                          onClick={() => removeCustomSection(section.id)}
+                        >
+                          <LucideTrash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    {section.items.length > 0 ? (
+                      <div className="space-y-2">
+                        {section.items.map((item) => (
+                          <div key={item.id} className="p-2 bg-gray-50 rounded-md text-sm">
+                            <div className="flex justify-between">
+                              <span className="font-medium">{item.title}</span>
+                              {item.date && <span className="text-gray-500 text-xs">{item.date}</span>}
+                            </div>
+                            {item.subtitle && <p className="text-gray-600 text-xs">{item.subtitle}</p>}
+                            {item.description && <p className="text-gray-600 text-xs mt-1">{item.description}</p>}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-500 text-sm">No items added yet</p>
+                    )}
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="mt-3 text-xs h-7 w-full"
+                    >
+                      <LucidePlus className="w-3 h-3 mr-1" />
+                      Add Item to {section.title}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-10 border border-dashed border-gray-200 rounded-lg bg-gray-50/50">
+                <p className="text-gray-500 text-sm mb-3">No custom sections added yet</p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={toggleAddCustomSectionForm} 
+                  className="text-xs"
+                >
+                  <LucidePlus className="w-3.5 h-3.5 mr-1" />
+                  Create Custom Section
+                </Button>
+              </div>
+            )}
+          </motion.div>
+        )}
+        
+        {/* Projects Section */}
+        {activeSection === "projects" && (
+          <motion.div
+            key="projects"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-medium">Projects</h2>
+              <Button 
+                variant="ghost"
+                size="sm"
+                className="flex items-center gap-1 text-xs text-[#DAA520] hover:text-[#DAA520]/80 hover:bg-[#DAA520]/5"
+                onClick={toggleAddProjectForm}
+              >
+                <LucidePlus className="w-3 h-3 mr-1" />
+                Add Project
+              </Button>
+            </div>
+            
+            {/* Add Project Form */}
+            {showAddProjectForm && (
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-sm font-medium">Add Project</h3>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-gray-400 hover:text-gray-600 hover:bg-gray-100/70 h-7 w-7 p-0"
+                    onClick={toggleAddProjectForm}
+                  >
+                    <LucideX className="w-4 h-4" />
+                  </Button>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Project Title</label>
+                    <Input
+                      type="text"
+                      name="title"
+                      value={newProject.title}
+                      onChange={handleProjectChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">URL (Optional)</label>
+                    <Input
+                      type="url"
+                      name="url"
+                      value={newProject.url}
+                      onChange={handleProjectChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                      placeholder="https://..."
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Start Date (Optional)</label>
+                    <Input
+                      type="month"
+                      name="startDate"
+                      value={newProject.startDate}
+                      onChange={handleProjectChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">End Date (Optional)</label>
+                    <Input
+                      type="month"
+                      name="endDate"
+                      value={newProject.endDate}
+                      onChange={handleProjectChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                    />
+                  </div>
+                  
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Technologies (comma separated)</label>
+                    <Input
+                      type="text"
+                      name="technologies"
+                      value={newProject.technologies}
+                      onChange={handleProjectChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                      placeholder="e.g. React, TypeScript, Node.js"
+                    />
+                  </div>
+                  
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Description</label>
+                    <Textarea
+                      name="description"
+                      value={newProject.description}
+                      onChange={handleProjectChange}
+                      className="w-full min-h-[80px] focus-visible:ring-[#DAA520]"
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex justify-end mt-4 gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={toggleAddProjectForm}
+                    className="text-xs h-8"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={addProject}
+                    className="text-xs h-8 bg-black hover:bg-black/80"
+                    disabled={!newProject.title || !newProject.description}
+                  >
+                    <LucideCheck className="w-3 h-3 mr-1" />
+                    Save
+                  </Button>
+                </div>
+              </div>
+            )}
+            
+            {/* Project Items */}
+            {mainCV.projects && mainCV.projects.length > 0 ? (
+              <div className="space-y-3">
+                {mainCV.projects.map((project) => (
+                  <div 
+                    key={project.id} 
+                    className="p-3 border border-gray-100 rounded-lg hover:border-[#DAA520]/40 transition-all bg-white"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-medium text-sm">{project.title}</h3>
+                        {project.startDate && (
+                          <p className="text-gray-400 text-xs mt-0.5">
+                            {project.startDate}{project.endDate ? ` - ${project.endDate}` : ' - Present'}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex space-x-1">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-7 w-7 p-0 text-gray-400 hover:text-[#DAA520] hover:bg-gray-50"
+                        >
+                          <LucidePencil className="w-3.5 h-3.5" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-7 w-7 p-0 text-gray-400 hover:text-red-500 hover:bg-gray-50"
+                          onClick={() => removeProject(project.id)}
+                        >
+                          <LucideTrash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <p className="mt-2 text-xs text-gray-600">{project.description}</p>
+                    
+                    {project.technologies && project.technologies.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {project.technologies.map((tech, i) => (
+                          <span key={i} className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded">
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    
+                    {project.url && (
+                      <a 
+                        href={project.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="mt-2 inline-flex items-center text-xs text-[#DAA520] hover:underline"
+                      >
+                        <LucideChevronRight className="w-3 h-3 mr-0.5" />
+                        View Project
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-10 border border-dashed border-gray-200 rounded-lg bg-gray-50/50">
+                <p className="text-gray-500 text-sm mb-3">No projects added yet</p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={toggleAddProjectForm} 
+                  className="text-xs"
+                >
+                  <LucidePlus className="w-3.5 h-3.5 mr-1" />
+                  Add Your First Project
+                </Button>
+              </div>
+            )}
+          </motion.div>
+        )}
+
         {/* Placeholder for other sections */}
         {(activeSection === "certifications" || 
           activeSection === "languages" || 
           activeSection === "references" || 
-          activeSection === "publications" || 
-          activeSection === "custom") && (
+          activeSection === "publications") && (
           <motion.div
             key={activeSection}
             initial={{ opacity: 0, y: 10 }}
@@ -1234,9 +1575,15 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
               variant="outline" 
               size="sm" 
               className="text-xs"
+              onClick={() => {
+                if (activeSection === "certifications") toggleAddCertificationForm();
+                if (activeSection === "languages") toggleAddLanguageForm();
+                if (activeSection === "references") toggleAddReferenceForm();
+                if (activeSection === "publications") toggleAddPublicationForm();
+              }}
             >
               <LucidePlus className="w-3.5 h-3.5 mr-1" />
-              Add {activeSection === "custom" ? "Custom Section" : activeSection}
+              Add {activeSection}
             </Button>
           </motion.div>
         )}
