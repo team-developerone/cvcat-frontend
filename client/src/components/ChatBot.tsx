@@ -14,8 +14,14 @@ interface Message {
 // Define bot state type
 type BotState = "idle" | "thinking" | "typing" | "happy" | "curious" | "sleeping";
 
-export default function ChatBot() {
-  const [isOpen, setIsOpen] = useState(false);
+interface ChatBotProps {
+  isEmbedded?: boolean; // Whether the chat is embedded in another component
+}
+
+export default function ChatBot({ isEmbedded = false }: ChatBotProps) {
+  // In embedded mode, the chat is always open
+  const [isOpen, setIsOpen] = useState(isEmbedded);
+  // In embedded mode, we don't need the expanded state
   const [isExpanded, setIsExpanded] = useState(false);
   const [botState, setBotState] = useState<BotState>("idle");
   const [messages, setMessages] = useState<Message[]>([
@@ -369,6 +375,88 @@ export default function ChatBot() {
     </div>
   );
   
+  // If embedded, we'll only render the chat interface, not the button and popup
+  if (isEmbedded) {
+    return (
+      <div className="bg-gray-50 w-full h-full rounded-lg flex flex-col overflow-hidden">
+        {/* Chat Header */}
+        <div className="bg-[#DAA520] text-white px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center">
+            {renderCatAnimation("medium")}
+            <h3 className="ml-2 font-medium">CV Assistant</h3>
+          </div>
+        </div>
+        
+        {/* Chat Messages Area */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {messages.map((message) => (
+            <div 
+              key={message.id} 
+              className={`flex ${message.isBot ? 'items-start' : 'items-start justify-end'}`}
+            >
+              {message.isBot && (
+                <div className="w-8 h-8 bg-[#DAA520] flex items-center justify-center flex-shrink-0">
+                  {renderCatAnimation("small")}
+                </div>
+              )}
+              <div 
+                className={`max-w-[80%] px-4 py-2 rounded-lg ${
+                  message.isBot 
+                    ? 'ml-2 bg-white border border-gray-100' 
+                    : 'mr-2 bg-gray-800 text-white'
+                }`}
+              >
+                <p className="text-sm">{message.text}</p>
+              </div>
+            </div>
+          ))}
+          
+          {isTyping && <TypingIndicator />}
+          
+          <div ref={messagesEndRef} />
+        </div>
+        
+        {/* Suggestions */}
+        {!isTyping && messages.length < 2 && (
+          <div className="px-4 py-2 border-t border-gray-100">
+            <p className="text-xs text-gray-500 mb-2">Suggested questions:</p>
+            <div className="flex flex-wrap gap-2">
+              {suggestions.map((suggestion) => (
+                <button
+                  key={suggestion}
+                  className="text-xs bg-gray-100 hover:bg-gray-200 rounded-full px-3 py-1.5 transition-colors"
+                  onClick={() => handleSuggestionClick(suggestion)}
+                >
+                  {suggestion}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        {/* Input Area */}
+        <div className="p-3 border-t border-gray-100 bg-white flex items-center gap-2">
+          <Input
+            type="text"
+            placeholder="Ask me about CV best practices..."
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            onKeyDown={handleKeyPress}
+            className="flex-1"
+          />
+          <Button 
+            onClick={handleSendMessage}
+            className="bg-[#DAA520] hover:bg-[#c79518] text-white"
+            size="sm"
+          >
+            Send
+          </Button>
+        </div>
+      </div>
+    );
+  }
+  
+  // Regular floating ChatBot UI
   return (
     <>
       {/* Chat Button - Fixed at bottom right of the viewport */}

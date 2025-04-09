@@ -668,7 +668,7 @@ export default function CVBuilder() {
                           </p>
                         </div>
                         <div className="h-[calc(80vh-120px)]">
-                          <ChatBot />
+                          <ChatBot isEmbedded={true} />
                         </div>
                       </div>
                     </TabsContent>
