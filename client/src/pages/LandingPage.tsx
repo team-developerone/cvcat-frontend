@@ -895,6 +895,289 @@ export default function LandingPage() {
                 </motion.div>
               </motion.div>
               
+              {/* Profile Summary Improvement Suggestion */}
+              <motion.div
+                className="absolute top-[120px] left-[80px] z-30"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{
+                  opacity: [0, 1, 1, 0],
+                  scale: [0.8, 1, 1, 0.8],
+                }}
+                transition={{
+                  duration: 8,
+                  times: [0, 0.1, 0.9, 1],
+                  repeat: Infinity,
+                  repeatDelay: 5,
+                  delay: 1.5
+                }}
+              >
+                <div className="relative">
+                  <motion.div 
+                    className="bg-black rounded-md p-1.5 shadow-lg"
+                    animate={{
+                      y: [0, -2, 0, -2, 0]
+                    }}
+                    transition={{
+                      duration: 2.5,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    <div className="text-white text-[7px] max-w-[120px]">
+                      <div className="flex items-center mb-1">
+                        <svg className="w-2 h-2 mr-1 text-[#DAA520]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M15 16L11 12L15 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M11 12H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                          <path d="M19 4H5C3.89543 4 3 4.89543 3 6V18C3 19.1046 3.89543 20 5 20H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        </svg>
+                        <span className="font-bold text-[#DAA520]">AI Improvement</span>
+                      </div>
+                      
+                      <div className="mb-1">Your summary needs more impact.</div>
+                      
+                      <div className="bg-[#111] p-1 rounded mb-1">
+                        <div className="mb-0.5 text-gray-400">Current:</div>
+                        <div className="text-[6px] text-gray-300">Experienced software developer with skills in React and Node.js.</div>
+                      </div>
+                      
+                      <div className="bg-[#1a1a1a] p-1 rounded">
+                        <div className="mb-0.5 text-[#DAA520]">Suggested:</div>
+                        <div className="text-[6px] text-white">Results-driven software developer who increased user engagement by 40% through innovative React and Node.js solutions.</div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-between mt-1">
+                      <motion.button 
+                        className="text-[6px] text-gray-400 px-1 py-0.5 rounded bg-[#222]"
+                        whileHover={{ scale: 1.05, backgroundColor: "#333" }}
+                      >
+                        Skip
+                      </motion.button>
+                      <motion.button 
+                        className="text-[6px] text-black px-1 py-0.5 rounded bg-[#DAA520]"
+                        whileHover={{ scale: 1.05, backgroundColor: "#c99417" }}
+                        animate={{
+                          boxShadow: [
+                            "0 0 0 0 rgba(218, 165, 32, 0.2)",
+                            "0 0 0 2px rgba(218, 165, 32, 0.4)",
+                            "0 0 0 0 rgba(218, 165, 32, 0.2)"
+                          ]
+                        }}
+                        transition={{
+                          duration: 1.5,
+                          repeat: Infinity
+                        }}
+                      >
+                        Apply
+                      </motion.button>
+                    </div>
+                  </motion.div>
+                  
+                  {/* Connector line */}
+                  <motion.svg 
+                    width="30" 
+                    height="50" 
+                    viewBox="0 0 30 50" 
+                    fill="none" 
+                    className="absolute top-1/2 -right-[18px]"
+                    animate={{
+                      opacity: [0.5, 1, 0.5]
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity
+                    }}
+                  >
+                    <path d="M0 25C20 25 30 40 30 50" stroke="#DAA520" strokeDasharray="2 2" />
+                    <circle cx="0" cy="25" r="2" fill="#DAA520" />
+                  </motion.svg>
+                </div>
+              </motion.div>
+              
+              {/* Skills Enhancement Suggestion */}
+              <motion.div
+                className="absolute bottom-[90px] right-[75px] z-30"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{
+                  opacity: [0, 1, 1, 0],
+                  scale: [0.9, 1, 1, 0.9],
+                }}
+                transition={{
+                  duration: 7,
+                  times: [0, 0.1, 0.9, 1],
+                  repeat: Infinity,
+                  repeatDelay: 6,
+                  delay: 5
+                }}
+              >
+                <motion.div 
+                  className="bg-black/90 rounded p-1 max-w-[100px]"
+                  animate={{
+                    y: [0, -2, 0]
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                >
+                  <div className="flex items-center mb-1">
+                    <motion.div
+                      className="w-2 h-2 mr-1 rounded-full bg-[#DAA520]"
+                      animate={{
+                        scale: [1, 1.3, 1]
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity
+                      }}
+                    />
+                    <span className="text-[6px] text-white font-medium">Skills Analysis</span>
+                  </div>
+                  
+                  <div className="text-[6px] text-[#DAA520] font-medium mb-0.5">Missing in-demand skills:</div>
+                  
+                  <div className="flex flex-wrap gap-0.5 mb-1">
+                    {["TypeScript", "AWS", "Docker"].map((skill, i) => (
+                      <motion.div
+                        key={skill}
+                        className="text-[5px] bg-[#222] text-white rounded px-0.5"
+                        initial={{ opacity: 0, x: -5 }}
+                        animate={{ 
+                          opacity: 1, 
+                          x: 0,
+                          backgroundColor: i === 0 ? ["#222", "#DAA520/30", "#222"] : "#222"
+                        }}
+                        transition={{ 
+                          delay: i * 0.3,
+                          duration: i === 0 ? 2 : 0.3,
+                          repeat: i === 0 ? Infinity : 0,
+                          repeatDelay: i === 0 ? 4 : 0
+                        }}
+                      >
+                        {skill}
+                      </motion.div>
+                    ))}
+                  </div>
+                  
+                  <div className="text-[6px] text-white">
+                    Adding these skills could increase interview chances by <span className="text-[#DAA520] font-bold">35%</span>
+                  </div>
+                </motion.div>
+              </motion.div>
+              
+              {/* Job Title Optimization */}
+              <motion.div
+                className="absolute top-[100px] right-[60px] z-30"
+                initial={{ opacity: 0 }}
+                animate={{
+                  opacity: [0, 1, 1, 0],
+                }}
+                transition={{
+                  duration: 6,
+                  times: [0, 0.1, 0.8, 1],
+                  repeat: Infinity,
+                  repeatDelay: 8,
+                  delay: 3.5
+                }}
+              >
+                <div className="flex items-center">
+                  <motion.div 
+                    className="bg-gradient-to-r from-black/90 to-black/95 rounded-md p-1 text-center shadow-lg border border-[#DAA520]/20"
+                    animate={{
+                      boxShadow: [
+                        "0 0 0 0 rgba(218, 165, 32, 0)",
+                        "0 0 10px 2px rgba(218, 165, 32, 0.2)",
+                        "0 0 0 0 rgba(218, 165, 32, 0)"
+                      ]
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity
+                    }}
+                  >
+                    <div className="text-[6px] text-white mb-0.5">
+                      <span className="text-[#DAA520]">AI</span> Title Optimizer
+                    </div>
+                    
+                    <div className="flex justify-center items-center space-x-1 mb-1">
+                      <div className="text-[6px] text-gray-200 line-through">Developer</div>
+                      <svg className="w-2 h-2 text-[#DAA520]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        <path d="M12 5L19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      <motion.div
+                        className="text-[6px] text-[#DAA520] font-bold"
+                        animate={{
+                          scale: [1, 1.1, 1]
+                        }}
+                        transition={{
+                          duration: 1.5,
+                          repeat: Infinity
+                        }}
+                      >
+                        Software Engineer
+                      </motion.div>
+                    </div>
+                    
+                    <div className="text-[5px] text-gray-300">
+                      +65% more interview requests
+                    </div>
+                  </motion.div>
+                </div>
+              </motion.div>
+              
+              {/* AI Writing In Progress */}
+              <motion.div
+                className="absolute top-[160px] left-[30px]"
+                initial={{ opacity: 0 }}
+                animate={{
+                  opacity: [0, 0.9, 0.9, 0]
+                }}
+                transition={{
+                  duration: 6,
+                  times: [0, 0.2, 0.8, 1],
+                  repeat: Infinity,
+                  repeatDelay: 6
+                }}
+              >
+                <div className="relative">
+                  <svg className="w-36 h-4" viewBox="0 0 120 12" fill="none">
+                    <rect width="120" height="12" fill="#111111" rx="2"/>
+                    
+                    <motion.rect 
+                      x="4" 
+                      y="4" 
+                      width="0" 
+                      height="4" 
+                      fill="#DAA520"
+                      animate={{
+                        width: [0, 112, 0]
+                      }}
+                      transition={{
+                        duration: 6,
+                        times: [0, 0.8, 1],
+                        repeat: Infinity,
+                        repeatDelay: 6
+                      }}
+                    />
+                    
+                    <motion.text 
+                      x="60" 
+                      y="8" 
+                      fontSize="6" 
+                      fontFamily="sans-serif" 
+                      fill="white" 
+                      textAnchor="middle" 
+                      dominantBaseline="middle"
+                      opacity="0.8"
+                    >
+                      AI generating work experience...
+                    </motion.text>
+                  </svg>
+                </div>
+              </motion.div>
+              
               {/* Main AI pointer */}
               <motion.div
                 className="absolute bottom-4 right-12 flex items-center"
