@@ -415,7 +415,7 @@ export default function ChatBot() {
             )}
             
             <motion.div 
-              className={`fixed z-[1000] bg-white overflow-hidden flex flex-col shadow-lg ${isExpanded ? "border-0" : "border border-gray-100 rounded-md"}`}
+              className={`fixed z-[1000] bg-white overflow-hidden flex flex-col shadow-lg ${isExpanded ? "border-0 rounded-lg" : "border border-gray-100 rounded-lg"}`}
               style={{ 
                 position: 'fixed',
                 ...(isExpanded
@@ -446,7 +446,7 @@ export default function ChatBot() {
               transition={{ type: "spring", damping: 20, stiffness: 300 }}
             >
             {/* Chat Header */}
-            <div className="bg-black text-white p-3 flex justify-between items-center">
+            <div className="bg-black text-white p-3 flex justify-between items-center rounded-t-lg">
               <div className="flex items-center">
                 <div className="w-7 h-7 flex items-center justify-center mr-2 relative">
                   {renderCatAnimation("medium")}
@@ -538,7 +538,7 @@ export default function ChatBot() {
                     transition={{ type: "spring", damping: 25, stiffness: 300 }}
                   >
                     {message.isBot && (
-                      <div className="w-6 h-6 bg-[#DAA520] flex items-center justify-center flex-shrink-0 relative">
+                      <div className="w-6 h-6 bg-[#DAA520] flex items-center justify-center flex-shrink-0 relative rounded-full">
                         {renderCatAnimation("small")}
                       </div>
                     )}
@@ -547,7 +547,7 @@ export default function ChatBot() {
                         message.isBot 
                           ? "ml-2 bg-white border border-gray-100" 
                           : "mr-2 bg-black text-white"
-                      } py-2 px-3 max-w-[80%] rounded-md`}
+                      } py-2 px-3 max-w-[80%] rounded-lg`}
                       whileHover={{ scale: 1.01 }}
                     >
                       <p className="text-xs">{message.text}</p>
@@ -593,7 +593,7 @@ export default function ChatBot() {
                     {suggestions.map((suggestion, index) => (
                       <motion.button 
                         key={index}
-                        className="text-[10px] bg-[#DAA520]/10 hover:bg-[#DAA520]/20 text-black px-2 py-1 border border-[#DAA520]/20 rounded-md"
+                        className="text-[10px] bg-[#DAA520]/10 hover:bg-[#DAA520]/20 text-black px-2 py-1 border border-[#DAA520]/20 rounded-lg"
                         onClick={() => handleSuggestionClick(suggestion)}
                         whileHover={{ scale: 1.05, backgroundColor: "rgba(218, 165, 32, 0.2)" }}
                         whileTap={{ scale: 0.98 }}
@@ -610,7 +610,7 @@ export default function ChatBot() {
             </div>
             
             {/* Chat Input */}
-            <div className="p-3 border-t border-gray-100 bg-white">
+            <div className="p-3 border-t border-gray-100 bg-white rounded-b-lg">
               <div className="flex items-center">
                 <Input 
                   type="text" 
@@ -618,11 +618,11 @@ export default function ChatBot() {
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  className="w-full px-3 py-2 text-xs border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#DAA520] rounded-l-md"
+                  className="w-full px-3 py-2 text-xs border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#DAA520] rounded-l-lg"
                 />
                 <Button 
                   onClick={handleSendMessage}
-                  className="bg-black text-white px-3 py-2 rounded-r-md hover:bg-[#DAA520] transition-all"
+                  className="bg-black text-white px-3 py-2 rounded-r-lg hover:bg-[#DAA520] transition-all"
                 >
                   <motion.div
                     whileHover={{ scale: 1.1 }}
