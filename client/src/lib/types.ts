@@ -46,6 +46,7 @@ export interface Education {
 export interface PricingTier {
   name: string;
   price: string | number;
+  duration?: string;
   description: string;
   features: string[];
   isPopular?: boolean;

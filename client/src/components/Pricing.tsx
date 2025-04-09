@@ -18,8 +18,9 @@ const pricingTiers: PricingTier[] = [
   },
   {
     name: "Pro",
-    price: "$9.99",
-    description: "For career-focused individuals",
+    price: "₹150",
+    duration: "2 weeks",
+    description: "For active job seekers",
     features: [
       "1 Core CV",
       "5 Tailored versions",
@@ -33,8 +34,9 @@ const pricingTiers: PricingTier[] = [
   },
   {
     name: "Premium",
-    price: "$24.99",
-    description: "For serious job seekers",
+    price: "₹500",
+    duration: "1 year",
+    description: "For serious professionals",
     features: [
       "Multiple Core CVs",
       "Unlimited tailored versions",
@@ -52,8 +54,8 @@ export default function Pricing() {
     <section id="pricing" className="py-12 px-4 md:px-6 bg-white">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-8">
-          <h2 className="text-xl font-medium mb-2">Pricing</h2>
-          <p className="text-xs text-gray-600 max-w-md mx-auto">
+          <h2 className="text-xl font-bold mb-2 text-black">Pricing</h2>
+          <p className="text-xs text-gray-700 max-w-md mx-auto">
             Simple plans for every stage of your career
           </p>
           
@@ -73,24 +75,28 @@ export default function Pricing() {
           {pricingTiers.map((tier, index) => (
             <div 
               key={index} 
-              className={`bg-white shadow-sm ${
+              className={`bg-white shadow-md ${
                 tier.isPopular 
-                  ? 'border-[#DAA520]' 
-                  : 'border-gray-100'
-              } p-5 relative hover:shadow-md transition-all`}
+                  ? 'border-2 border-[#DAA520]' 
+                  : 'border-2 border-gray-300'
+              } p-5 relative hover:shadow-lg transition-all rounded-md`}
             >
               {tier.isPopular && (
-                <div className="absolute top-0 right-0 bg-[#DAA520] text-white text-[10px] px-2 py-0.5">
+                <div className="absolute top-0 right-0 bg-[#DAA520] text-white text-[10px] font-medium px-2 py-0.5">
                   POPULAR
                 </div>
               )}
               
-              <h3 className="text-base font-medium">{tier.name}</h3>
-              <p className="text-xs text-gray-500 mb-2">{tier.description}</p>
+              <h3 className="text-base font-semibold text-black">{tier.name}</h3>
+              <p className="text-xs text-gray-600 mb-2">{tier.description}</p>
               
-              <div className="text-xl font-medium mb-4">
+              <div className="text-xl font-bold mb-4 text-black">
                 {tier.price}
-                {tier.price !== "Free" && <span className="text-xs font-normal text-gray-400">/month</span>}
+                {tier.price !== "Free" && (
+                  <span className="text-xs font-normal text-gray-400">
+                    {tier.duration ? ` for ${tier.duration}` : "/month"}
+                  </span>
+                )}
               </div>
               
               <ul className="space-y-2 mb-5">
@@ -109,11 +115,11 @@ export default function Pricing() {
               
               <Link href="/auth">
                 <Button 
-                  className={`w-full text-xs py-1.5 ${
+                  className={`w-full text-xs font-medium py-2 ${
                     tier.isPopular 
-                      ? 'btn-primary' 
-                      : 'btn-secondary'
-                  }`}
+                      ? 'bg-black hover:bg-[#DAA520] text-white'
+                      : 'bg-white border-2 border-gray-300 hover:border-[#DAA520] text-gray-700 hover:text-[#DAA520]'
+                  } rounded shadow-sm transition-all`}
                 >
                   {tier.ctaText}
                 </Button>
@@ -128,7 +134,7 @@ export default function Pricing() {
             <path d="M12 16V12" stroke="#DAA520" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             <path d="M12 8H12.01" stroke="#DAA520" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-          <p>30-day money-back guarantee. No questions asked.</p>
+          <p>100% refund available within 7 days of purchase. No questions asked.</p>
         </div>
       </div>
     </section>
