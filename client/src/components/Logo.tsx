@@ -23,66 +23,76 @@ export default function Logo({ className = "", size = "md", showText = true, dar
   };
 
   const primaryColor = "#DAA520"; // Gold
+  const accentColor = darkMode ? "#FFFFFF" : "#333333";
   const textColorClass = darkMode ? "text-white" : "text-black";
 
   return (
     <div className={`flex items-center ${className}`}>
       <div className={`${sizeMap[size]} mr-2`}>
         <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-          {/* Ultra minimalist cat icon - line art only */}
+          {/* Cat + Resume combined design */}
           
-          {/* Cat face outline */}
-          <path 
-            d="M15 35C15 25 25 15 35 25C35 35 25 40 15 35Z" 
-            stroke={primaryColor}
-            strokeWidth="2"
-            fill="none"
+          {/* Document/CV outline */}
+          <rect 
+            x="10" 
+            y="10" 
+            width="30" 
+            height="35" 
+            rx="2"
+            fill={primaryColor}
           />
           
-          {/* Mirrored side */}
-          <path 
-            d="M35 35C35 25 25 15 15 25C15 35 25 40 35 35Z" 
-            stroke={primaryColor}
-            strokeWidth="2"
-            fill="none"
-          />
-          
-          {/* Ears */}
-          <path 
-            d="M15 25L10 10L20 20" 
-            stroke={primaryColor}
-            strokeWidth="2"
-            fill="none"
-            strokeLinejoin="round"
+          {/* Document lines */}
+          <line 
+            x1="15" y1="30" x2="35" y2="30" 
+            stroke={accentColor} 
+            strokeWidth="1.5"
             strokeLinecap="round"
+            opacity="0.7"
           />
-          <path 
-            d="M35 25L40 10L30 20" 
-            stroke={primaryColor}
-            strokeWidth="2"
-            fill="none"
-            strokeLinejoin="round"
+          <line 
+            x1="15" y1="35" x2="35" y2="35" 
+            stroke={accentColor} 
+            strokeWidth="1.5"
             strokeLinecap="round"
+            opacity="0.7"
+          />
+          <line 
+            x1="15" y1="40" x2="27" y2="40" 
+            stroke={accentColor} 
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            opacity="0.7"
           />
           
-          {/* Eyes - simple dots */}
+          {/* Cat ears emerging from top of document */}
+          <path 
+            d="M20 10L15 3L25 5L20 10Z" 
+            fill={primaryColor}
+          />
+          <path 
+            d="M30 10L35 3L25 5L30 10Z" 
+            fill={primaryColor}
+          />
+          
+          {/* Cat eyes */}
           <circle 
             cx="20" 
-            cy="28" 
-            r="1.5" 
-            fill={primaryColor}
+            cy="20" 
+            r="2" 
+            fill={accentColor}
           />
           <circle 
             cx="30" 
-            cy="28" 
-            r="1.5" 
-            fill={primaryColor}
+            cy="20" 
+            r="2" 
+            fill={accentColor}
           />
           
-          {/* Nose - tiny triangle */}
+          {/* Cat nose */}
           <path 
-            d="M23 32L25 35L27 32Z" 
-            fill={primaryColor}
+            d="M23 24L25 26L27 24Z" 
+            fill={accentColor}
           />
         </svg>
       </div>
