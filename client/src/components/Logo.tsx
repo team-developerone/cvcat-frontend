@@ -23,27 +23,34 @@ export default function Logo({ className = "", size = "md", showText = true, dar
   };
 
   const primaryColor = "#DAA520";
+  const secondaryColor = darkMode ? "#FFFFFF" : "#222222";
   const textColorClass = darkMode ? "text-white" : "text-black";
 
   return (
     <div className={`flex items-center ${className}`}>
       <div className={`${sizeMap[size]} mr-2`}>
         <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-          {/* Ultra-minimal flat cat silhouette */}
+          {/* Refined ultra-minimal cat shape with cleaner angles */}
           <path 
-            d="M15 35L15 28L8 20L8 12L18 20L25 20L32 20L42 12L42 20L35 28L35 35L25 40L15 35Z" 
+            d="M10 36L10 26L5 20L10 12L15 15L25 15L35 15L40 12L45 20L40 26L40 36L25 42L10 36Z" 
             fill={primaryColor}
-            stroke="none"
           />
           
-          {/* Extremely minimal eyes - just two small triangles */}
+          {/* Sharp modern eye slits */}
           <path 
-            d="M20 26L20 29L23 29Z" 
-            fill={darkMode ? "#FFFFFF" : "#222222"}
+            d="M18 24L18 30L22 27L18 24Z" 
+            fill={secondaryColor}
           />
           <path 
-            d="M30 26L30 29L27 29Z" 
-            fill={darkMode ? "#FFFFFF" : "#222222"}
+            d="M32 24L32 30L28 27L32 24Z" 
+            fill={secondaryColor}
+          />
+          
+          {/* Super minimal whisker suggestion - just a hint */}
+          <path 
+            d="M25 34L20 36L30 36L25 34Z" 
+            fill={secondaryColor}
+            opacity="0.7"
           />
         </svg>
       </div>
