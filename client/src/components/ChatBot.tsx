@@ -28,7 +28,24 @@ export default function ChatBot() {
   ]);
   const [inputText, setInputText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  // Check for mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // Initial check
+    checkMobile();
+    
+    // Add event listener for window resize
+    window.addEventListener('resize', checkMobile);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   
   const toggleChat = () => {
     setIsOpen(!isOpen);
@@ -382,24 +399,52 @@ export default function ChatBot() {
         />
       </motion.button>
       
-      {/* Chat Window - Fixed position relative to viewport */}
+      {/* Chat Window - Fixed position relative to viewport or full modal */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div 
-            className="fixed z-[1000] bg-white border border-gray-100 overflow-hidden flex flex-col rounded shadow-lg" 
-            style={{ 
-              position: 'fixed', 
-              bottom: '60px', 
-              right: '16px', 
-              height: isExpanded ? "calc(85vh - 80px)" : "560px", // Increased height, even more when expanded
-              width: isExpanded ? "min(70vw, 800px)" : "320px", // 70% of viewport width with a maximum of 800px
-              minWidth: isExpanded ? "350px" : "320px" // Minimum width when expanded
-            }}
-            initial={{ opacity: 0, y: 20, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            transition={{ type: "spring", damping: 20, stiffness: 300 }}
-          >
+          <>
+            {/* Modal overlay for expanded view */}
+            {isExpanded && (
+              <motion.div
+                className="fixed inset-0 bg-black/60 z-[999]"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => toggleExpand()}
+              />
+            )}
+            
+            <motion.div 
+              className={`fixed z-[1000] bg-white overflow-hidden flex flex-col shadow-lg ${isExpanded ? "border-0" : "border border-gray-100 rounded-md"}`}
+              style={{ 
+                position: 'fixed',
+                ...(isExpanded
+                  ? isMobile 
+                    ? { 
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0
+                      } // Full screen on mobile
+                    : { 
+                        top: '5vh',
+                        left: '10vw',
+                        width: '80vw',
+                        height: '90vh'
+                      }
+                  : {
+                      bottom: '60px',
+                      right: '16px',
+                      height: '560px',
+                      width: '320px'
+                    }
+                )
+              }}
+              initial={{ opacity: 0, y: isExpanded ? 0 : 20, scale: isExpanded ? 0.95 : 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: isExpanded ? 0 : 20, scale: isExpanded ? 0.95 : 0.9 }}
+              transition={{ type: "spring", damping: 20, stiffness: 300 }}
+            >
             {/* Chat Header */}
             <div className="bg-black text-white p-3 flex justify-between items-center">
               <div className="flex items-center">
@@ -621,6 +666,7 @@ export default function ChatBot() {
               </motion.div>
             </div>
           </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>
