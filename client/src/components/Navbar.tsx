@@ -60,6 +60,12 @@ export default function Navbar({ isAuthenticated = false }: NavbarProps) {
               Logo
             </div>
             <div
+              onClick={() => goTo('/logo-examples')}
+              className="text-sm text-gray-700 hover:text-[#DAA520] transition-all cursor-pointer"
+            >
+              Logo Concepts
+            </div>
+            <div
               className="text-sm text-gray-700 hover:text-[#DAA520] transition-all cursor-pointer"
             >
               Resources
