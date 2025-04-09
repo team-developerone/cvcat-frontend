@@ -23,35 +23,44 @@ export default function Logo({ className = "", size = "md", showText = true, dar
   };
 
   const primaryColor = "#DAA520";
-  const secondaryColor = darkMode ? "#FFFFFF" : "#222222";
   const textColorClass = darkMode ? "text-white" : "text-black";
 
   return (
     <div className={`flex items-center ${className}`}>
       <div className={`${sizeMap[size]} mr-2`}>
         <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-          {/* Refined ultra-minimal cat shape with cleaner angles */}
-          <path 
-            d="M10 36L10 26L5 20L10 12L15 15L25 15L35 15L40 12L45 20L40 26L40 36L25 42L10 36Z" 
-            fill={primaryColor}
-          />
-          
-          {/* Sharp modern eye slits */}
-          <path 
-            d="M18 24L18 30L22 27L18 24Z" 
-            fill={secondaryColor}
-          />
-          <path 
-            d="M32 24L32 30L28 27L32 24Z" 
-            fill={secondaryColor}
-          />
-          
-          {/* Super minimal whisker suggestion - just a hint */}
-          <path 
-            d="M25 34L20 36L30 36L25 34Z" 
-            fill={secondaryColor}
-            opacity="0.7"
-          />
+          {/* Super clean, minimal abstract cat icon */}
+          <g>
+            {/* Main abstract cat form - just two triangles */}
+            <path 
+              d="M8 15L25 40L42 15H8Z" 
+              fill={primaryColor}
+            />
+            
+            {/* Ears - two simple triangles */}
+            <path 
+              d="M15 15L8 5L22 5L15 15Z" 
+              fill={primaryColor}
+            />
+            <path 
+              d="M35 15L28 5L42 5L35 15Z" 
+              fill={primaryColor}
+            />
+            
+            {/* Eyes - ultra minimal white spaces */}
+            <circle 
+              cx="18" 
+              cy="23" 
+              r="2" 
+              fill={darkMode ? "#FFF" : "#FFF"}
+            />
+            <circle 
+              cx="32" 
+              cy="23" 
+              r="2" 
+              fill={darkMode ? "#FFF" : "#FFF"}
+            />
+          </g>
         </svg>
       </div>
       {showText && (
