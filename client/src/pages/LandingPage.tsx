@@ -1,6 +1,7 @@
 import Layout from "@/components/Layout";
 import Features from "@/components/Features";
 import Pricing from "@/components/Pricing";
+import CVSamplesModal from "@/components/CVSamplesModal";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
@@ -8,6 +9,7 @@ import { useEffect, useState } from "react";
 
 export default function LandingPage() {
   const [scrollY, setScrollY] = useState(0);
+  const [showSamplesModal, setShowSamplesModal] = useState(false);
 
   // Track scroll position for animations
   useEffect(() => {
@@ -156,6 +158,7 @@ export default function LandingPage() {
                 <Button
                   variant="outline"
                   className="btn-secondary text-xs py-2 px-4"
+                  onClick={() => setShowSamplesModal(true)}
                 >
                   See Samples
                 </Button>
@@ -1906,6 +1909,11 @@ export default function LandingPage() {
       
       {/* Pricing Section */}
       <Pricing />
+      {/* CV Samples Modal */}
+      <CVSamplesModal 
+        isOpen={showSamplesModal} 
+        onClose={() => setShowSamplesModal(false)} 
+      />
     </Layout>
   );
 }
