@@ -23,75 +23,48 @@ export default function Logo({ className = "", size = "md", showText = true, dar
   };
 
   const primaryColor = "#DAA520"; // Gold
-  const accentColor = darkMode ? "#FFFFFF" : "#333333";
+  const accentColor = darkMode ? "#222222" : "#FFFFFF";
   const textColorClass = darkMode ? "text-white" : "text-black";
 
   return (
     <div className={`flex items-center ${className}`}>
       <div className={`${sizeMap[size]} mr-2`}>
         <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-          {/* Cat + Resume combined design */}
+          {/* Clean, flat cat with solid colors */}
           
-          {/* Document/CV outline */}
-          <rect 
-            x="10" 
-            y="10" 
-            width="30" 
-            height="35" 
-            rx="2"
+          {/* Cat head - simple polygon */}
+          <path 
+            d="M10 33L15 15L25 8L35 15L40 33L25 40L10 33Z" 
             fill={primaryColor}
           />
           
-          {/* Document lines */}
-          <line 
-            x1="15" y1="30" x2="35" y2="30" 
-            stroke={accentColor} 
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            opacity="0.7"
-          />
-          <line 
-            x1="15" y1="35" x2="35" y2="35" 
-            stroke={accentColor} 
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            opacity="0.7"
-          />
-          <line 
-            x1="15" y1="40" x2="27" y2="40" 
-            stroke={accentColor} 
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            opacity="0.7"
-          />
-          
-          {/* Cat ears emerging from top of document */}
+          {/* Cat ears - triangular shapes */}
           <path 
-            d="M20 10L15 3L25 5L20 10Z" 
+            d="M15 15L8 5L20 12L15 15Z" 
             fill={primaryColor}
           />
           <path 
-            d="M30 10L35 3L25 5L30 10Z" 
+            d="M35 15L42 5L30 12L35 15Z" 
             fill={primaryColor}
           />
           
-          {/* Cat eyes */}
+          {/* Cat eyes - clean circles */}
           <circle 
-            cx="20" 
-            cy="20" 
-            r="2" 
+            cx="18" 
+            cy="24" 
+            r="3" 
             fill={accentColor}
           />
           <circle 
-            cx="30" 
-            cy="20" 
-            r="2" 
+            cx="32" 
+            cy="24" 
+            r="3" 
             fill={accentColor}
           />
           
-          {/* Cat nose */}
+          {/* Cat nose - simple triangle */}
           <path 
-            d="M23 24L25 26L27 24Z" 
+            d="M22 30L25 33L28 30Z" 
             fill={accentColor}
           />
         </svg>
