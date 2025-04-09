@@ -58,6 +58,12 @@ export default function Navbar({ isAuthenticated = false }: NavbarProps) {
               Pricing
             </div>
             <div
+              onClick={() => goTo('/team')}
+              className="text-sm text-gray-700 hover:text-[#DAA520] transition-all cursor-pointer"
+            >
+              Team
+            </div>
+            <div
               className="text-sm text-gray-700 hover:text-[#DAA520] transition-all cursor-pointer"
             >
               Resources

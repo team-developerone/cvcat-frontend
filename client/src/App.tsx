@@ -8,6 +8,7 @@ import AuthPage from "@/pages/AuthPage";
 import ImportSelection from "@/pages/ImportSelection";
 import CVBuilder from "@/pages/CVBuilder";
 import CVManagement from "@/pages/CVManagement";
+import TeamPage from "@/pages/TeamPage";
 import ChatBot from "@/components/ChatBot";
 import { CVProvider } from "@/lib/context";
 
@@ -17,6 +18,7 @@ function Router() {
       <Switch>
         <Route path="/" component={LandingPage} />
         <Route path="/auth" component={AuthPage} />
+        <Route path="/team" component={TeamPage} />
         <Route path="/import-selection">
           <CVProvider>
             <ImportSelection />
