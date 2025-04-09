@@ -211,7 +211,7 @@ export default function CVBuilder() {
                                 </div>
                               </div>
                               
-                              <div>
+                              <div className="mb-4">
                                 <h3 className="font-semibold text-gray-800 mb-2">Skills</h3>
                                 <div className="flex flex-wrap gap-2">
                                   {mainCV.skills.map((skill, i) => (
@@ -221,6 +221,152 @@ export default function CVBuilder() {
                                   ))}
                                 </div>
                               </div>
+                              
+                              {/* Projects Section */}
+                              {mainCV.projects && mainCV.projects.length > 0 && (
+                                <div className="mb-4">
+                                  <h3 className="font-semibold text-gray-800 mb-2">Projects</h3>
+                                  <div className="space-y-3">
+                                    {mainCV.projects.map((project, i) => (
+                                      <div key={i} className="text-sm">
+                                        <div className="flex justify-between mb-1">
+                                          <p className="font-medium">{project.title}</p>
+                                          {(project.startDate || project.endDate) && (
+                                            <p className="text-gray-500">
+                                              {project.startDate}{project.endDate ? ` - ${project.endDate}` : ' - Present'}
+                                            </p>
+                                          )}
+                                        </div>
+                                        <p className="text-gray-600 text-xs">{project.description}</p>
+                                        {project.technologies && project.technologies.length > 0 && (
+                                          <div className="mt-1 flex flex-wrap gap-1">
+                                            {project.technologies.map((tech, techIndex) => (
+                                              <span key={techIndex} className="text-[10px] px-1.5 py-0.5 bg-gray-50 text-gray-500 rounded">
+                                                {tech}
+                                              </span>
+                                            ))}
+                                          </div>
+                                        )}
+                                        {project.url && (
+                                          <a 
+                                            href={project.url} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer" 
+                                            className="mt-1 inline-block text-xs text-[#DAA520]"
+                                          >
+                                            Project Link
+                                          </a>
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {/* Certifications Section */}
+                              {mainCV.certifications && mainCV.certifications.length > 0 && (
+                                <div className="mb-4">
+                                  <h3 className="font-semibold text-gray-800 mb-2">Certifications</h3>
+                                  <div className="space-y-2">
+                                    {mainCV.certifications.map((cert, i) => (
+                                      <div key={i} className="text-sm">
+                                        <div className="flex justify-between mb-0.5">
+                                          <p className="font-medium">{cert.name}</p>
+                                          <p className="text-gray-500 text-xs">{cert.date}{cert.expiryDate ? ` - ${cert.expiryDate}` : ''}</p>
+                                        </div>
+                                        <p className="text-gray-600 text-xs">{cert.issuer}</p>
+                                        {cert.description && <p className="text-gray-500 text-xs mt-1">{cert.description}</p>}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {/* Languages Section */}
+                              {mainCV.languages && mainCV.languages.length > 0 && (
+                                <div className="mb-4">
+                                  <h3 className="font-semibold text-gray-800 mb-2">Languages</h3>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    {mainCV.languages.map((lang, i) => (
+                                      <div key={i} className="text-sm flex justify-between">
+                                        <span>{lang.name}</span>
+                                        <span className="text-gray-500 text-xs">{lang.proficiency}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {/* References Section */}
+                              {mainCV.references && mainCV.references.length > 0 && (
+                                <div className="mb-4">
+                                  <h3 className="font-semibold text-gray-800 mb-2">References</h3>
+                                  <div className="space-y-3">
+                                    {mainCV.references.map((ref, i) => (
+                                      <div key={i} className="text-sm">
+                                        <p className="font-medium">{ref.name}</p>
+                                        <p className="text-gray-600 text-xs">{ref.position} at {ref.company}</p>
+                                        <p className="text-gray-600 text-xs">{ref.relationship}</p>
+                                        {(ref.email || ref.phone) && (
+                                          <p className="text-gray-500 text-xs mt-1">
+                                            {ref.email && <span className="mr-2">{ref.email}</span>}
+                                            {ref.phone && <span>{ref.phone}</span>}
+                                          </p>
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {/* Publications Section */}
+                              {mainCV.publications && mainCV.publications.length > 0 && (
+                                <div className="mb-4">
+                                  <h3 className="font-semibold text-gray-800 mb-2">Publications</h3>
+                                  <div className="space-y-2">
+                                    {mainCV.publications.map((pub, i) => (
+                                      <div key={i} className="text-sm">
+                                        <p className="font-medium">{pub.title}</p>
+                                        <p className="text-gray-600 text-xs">{pub.publisher} • {pub.date}</p>
+                                        {pub.description && <p className="text-gray-500 text-xs mt-1">{pub.description}</p>}
+                                        {pub.url && (
+                                          <a 
+                                            href={pub.url} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer" 
+                                            className="text-xs text-[#DAA520] mt-1 inline-block"
+                                          >
+                                            View Publication
+                                          </a>
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {/* Custom Sections */}
+                              {mainCV.customSections && mainCV.customSections.map((section, sectionIndex) => (
+                                <div key={sectionIndex} className="mb-4">
+                                  <h3 className="font-semibold text-gray-800 mb-2">{section.title}</h3>
+                                  {section.items.length > 0 ? (
+                                    <div className="space-y-2">
+                                      {section.items.map((item, itemIndex) => (
+                                        <div key={itemIndex} className="text-sm">
+                                          <div className="flex justify-between mb-0.5">
+                                            <p className="font-medium">{item.title}</p>
+                                            {item.date && <p className="text-gray-500 text-xs">{item.date}</p>}
+                                          </div>
+                                          {item.subtitle && <p className="text-gray-600 text-xs">{item.subtitle}</p>}
+                                          {item.description && <p className="text-gray-500 text-xs mt-1">{item.description}</p>}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  ) : (
+                                    <p className="text-gray-400 text-xs italic">No items in this section</p>
+                                  )}
+                                </div>
+                              ))}
                             </div>
                           )}
                         </div>
