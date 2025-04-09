@@ -185,10 +185,71 @@ export default function LandingPage() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <div className="relative bg-gray-50 p-6">
-              {/* Animated Cat */}
+            <div className="relative bg-gradient-to-br from-gray-100 to-white p-8 rounded-lg shadow-lg">
+              {/* Gold gradient accent lines */}
               <motion.div 
-                className="absolute -top-6 -right-6 w-24 h-24"
+                className="absolute inset-x-0 top-0 h-[2px]"
+                style={{ 
+                  background: "linear-gradient(90deg, transparent, rgba(218, 165, 32, 0.7), transparent)" 
+                }}
+                animate={{
+                  backgroundPosition: ["200% 0", "-200% 0"],
+                }}
+                transition={{ 
+                  duration: 3, 
+                  repeat: Infinity, 
+                  ease: "linear" 
+                }}
+              />
+              <motion.div 
+                className="absolute inset-y-0 right-0 w-[2px]"
+                style={{ 
+                  background: "linear-gradient(180deg, transparent, rgba(218, 165, 32, 0.7), transparent)" 
+                }}
+                animate={{
+                  backgroundPosition: ["0 200%", "0 -200%"],
+                }}
+                transition={{ 
+                  duration: 3, 
+                  repeat: Infinity, 
+                  ease: "linear",
+                  delay: 0.5
+                }}
+              />
+              <motion.div 
+                className="absolute inset-x-0 bottom-0 h-[2px]"
+                style={{ 
+                  background: "linear-gradient(90deg, transparent, rgba(218, 165, 32, 0.7), transparent)" 
+                }}
+                animate={{
+                  backgroundPosition: ["-200% 0", "200% 0"],
+                }}
+                transition={{ 
+                  duration: 3, 
+                  repeat: Infinity, 
+                  ease: "linear",
+                  delay: 1
+                }}
+              />
+              <motion.div 
+                className="absolute inset-y-0 left-0 w-[2px]"
+                style={{ 
+                  background: "linear-gradient(180deg, transparent, rgba(218, 165, 32, 0.7), transparent)" 
+                }}
+                animate={{
+                  backgroundPosition: ["0 -200%", "0 200%"],
+                }}
+                transition={{ 
+                  duration: 3, 
+                  repeat: Infinity, 
+                  ease: "linear",
+                  delay: 1.5
+                }}
+              />
+              
+              {/* Interactive Animated Cat */}
+              <motion.div 
+                className="absolute -top-14 -right-6 w-28 h-28 z-10"
                 animate={{ 
                   rotate: [0, 5, 0, -5, 0],
                   y: [0, -5, 0, -5, 0] 
@@ -198,106 +259,358 @@ export default function LandingPage() {
                   duration: 5,
                   ease: "easeInOut" 
                 }}
+                whileHover={{
+                  scale: 1.1,
+                  rotate: [0, 10, 0, -10, 0],
+                  transition: { duration: 0.3 }
+                }}
+                whileTap={{
+                  scale: 0.9,
+                  rotate: 0
+                }}
               >
                 <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M50 10C50 10 55 25 45 40C38 50 25 60 30 80C30 80 45 75 50 50C50 50 55 75 75 90C75 90 90 70 75 55C60 40 65 25 65 25C65 25 60 28 55 28C50 28 50 25 50 25C50 25 50 28 45 28C40 28 35 25 35 25C35 25 40 40 25 55C10 70 25 90 25 90C45 75 50 50 50 50C55 75 70 80 70 80C75 60 62 50 55 40C45 25 50 10 50 10Z" fill="#DAA520"/>
-                  <circle cx="40" cy="35" r="2" fill="black"/>
-                  <circle cx="60" cy="35" r="2" fill="black"/>
+                  {/* Cat body */}
+                  <g>
+                    <path d="M50 10C50 10 55 25 45 40C38 50 25 60 30 80C30 80 45 75 50 50C50 50 55 75 75 90C75 90 90 70 75 55C60 40 65 25 65 25C65 25 60 28 55 28C50 28 50 25 50 25C50 25 50 28 45 28C40 28 35 25 35 25C35 25 40 40 25 55C10 70 25 90 25 90C45 75 50 50 50 50C55 75 70 80 70 80C75 60 62 50 55 40C45 25 50 10 50 10Z" fill="#DAA520"/>
+                    <motion.path 
+                      d="M50 10C50 10 55 25 45 40C38 50 25 60 30 80C30 80 45 75 50 50C50 50 55 75 75 90C75 90 90 70 75 55C60 40 65 25 65 25C65 25 60 28 55 28C50 28 50 25 50 25C50 25 50 28 45 28C40 28 35 25 35 25C35 25 40 40 25 55C10 70 25 90 25 90C45 75 50 50 50 50C55 75 70 80 70 80C75 60 62 50 55 40C45 25 50 10 50 10Z" 
+                      stroke="#B58800" 
+                      strokeWidth="0.5" 
+                      strokeOpacity="0.6"
+                      animate={{
+                        strokeOpacity: [0.2, 0.6, 0.2],
+                        strokeWidth: [0.5, 1, 0.5]
+                      }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                  </g>
+                  
+                  {/* Cat eyes */}
+                  <motion.g
+                    animate={{
+                      y: [0, 0.5, 0]
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: 1
+                    }}
+                  >
+                    <circle cx="40" cy="35" r="2.5" fill="#111111"/>
+                    <circle cx="40" cy="34" r="0.8" fill="white"/>
+                    <circle cx="60" cy="35" r="2.5" fill="#111111"/>
+                    <circle cx="60" cy="34" r="0.8" fill="white"/>
+                  </motion.g>
+                  
+                  {/* Cat mouth */}
                   <motion.path 
                     d="M45 45C45 45 50 46 55 45" 
-                    stroke="black" 
-                    strokeWidth="2" 
+                    stroke="#111111" 
+                    strokeWidth="1.5" 
                     strokeLinecap="round"
                     animate={{ 
                       d: ["M45 45C45 45 50 46 55 45", "M45 47C45 47 50 49 55 47", "M45 45C45 45 50 46 55 45"] 
                     }}
                     transition={{ repeat: Infinity, duration: 2, repeatType: "reverse" }}
                   />
+                  
+                  {/* Cat whiskers */}
+                  <motion.g
+                    animate={{
+                      x: [0, 0.3, 0, -0.3, 0]
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    <path d="M30 40L20 38" stroke="#111111" strokeWidth="0.5" strokeLinecap="round"/>
+                    <path d="M30 43L18 43" stroke="#111111" strokeWidth="0.5" strokeLinecap="round"/>
+                    <path d="M30 46L20 48" stroke="#111111" strokeWidth="0.5" strokeLinecap="round"/>
+                    
+                    <path d="M70 40L80 38" stroke="#111111" strokeWidth="0.5" strokeLinecap="round"/>
+                    <path d="M70 43L82 43" stroke="#111111" strokeWidth="0.5" strokeLinecap="round"/>
+                    <path d="M70 46L80 48" stroke="#111111" strokeWidth="0.5" strokeLinecap="round"/>
+                  </motion.g>
                 </svg>
               </motion.div>
               
-              {/* CV Preview with animated elements */}
+              {/* Enhanced CV Preview with animated elements */}
               <motion.div 
-                className="border border-gray-200 bg-white overflow-hidden"
+                className="border border-gray-200 bg-white overflow-hidden shadow-md"
                 whileHover={{ 
-                  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
-                  y: -5 
+                  boxShadow: "0 15px 30px -5px rgba(0, 0, 0, 0.1), 0 5px 10px -5px rgba(218, 165, 32, 0.2)",
+                  y: -8,
+                  borderColor: "rgba(218, 165, 32, 0.3)"
                 }}
-                transition={{ duration: 0.2 }}
+                transition={{ duration: 0.3 }}
               >
+                {/* CV Header */}
                 <div className="bg-black text-white p-3">
                   <div className="flex justify-between items-center">
-                    <h3 className="text-xs font-medium">Professional CV</h3>
+                    <div className="flex items-center">
+                      <motion.div 
+                        className="w-3 h-3 bg-[#DAA520] mr-2 rounded-full"
+                        animate={{ 
+                          scale: [1, 1.2, 1],
+                          opacity: [1, 0.7, 1]
+                        }}
+                        transition={{ 
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                      />
+                      <h3 className="text-xs font-medium">Professional CV</h3>
+                    </div>
                     <div className="flex space-x-1.5">
-                      <div className="h-2 w-2 rounded-full bg-red-400"></div>
-                      <div className="h-2 w-2 rounded-full bg-yellow-400"></div>
-                      <div className="h-2 w-2 rounded-full bg-green-400"></div>
+                      <motion.div 
+                        className="h-2 w-2 rounded-full bg-red-400"
+                        whileHover={{ scale: 1.2 }}
+                      />
+                      <motion.div 
+                        className="h-2 w-2 rounded-full bg-yellow-400"
+                        whileHover={{ scale: 1.2 }}
+                      />
+                      <motion.div 
+                        className="h-2 w-2 rounded-full bg-green-400"
+                        whileHover={{ scale: 1.2 }}
+                      />
                     </div>
                   </div>
                 </div>
-                <div className="p-3">
-                  <div className="mb-3">
+                
+                {/* CV Content */}
+                <div className="p-4">
+                  {/* Header Section */}
+                  <div className="mb-4 border-b border-gray-100 pb-3">
                     <motion.div 
-                      className="h-5 bg-gray-100 mb-1.5 w-2/3"
-                      animate={{ opacity: [0.5, 0.8, 0.5] }}
+                      className="h-6 bg-gray-100 mb-2 w-3/4 rounded-sm relative overflow-hidden"
+                      animate={{ opacity: [0.7, 0.9, 0.7] }}
                       transition={{ duration: 2, repeat: Infinity }}
-                    ></motion.div>
-                    <div className="h-3 bg-gray-100 w-1/2"></div>
+                    >
+                      <motion.div 
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30"
+                        animate={{ 
+                          x: [-100, 200],
+                        }}
+                        transition={{ 
+                          repeat: Infinity, 
+                          duration: 1.5,
+                          ease: "linear"
+                        }}
+                      />
+                    </motion.div>
+                    <div className="flex justify-between items-center">
+                      <div className="h-3 bg-gray-100 w-1/3 rounded-sm"></div>
+                      <div className="h-3 w-3 rounded-full bg-[#DAA520]/30"></div>
+                    </div>
                   </div>
-                  <div className="mb-3">
-                    <div className="h-2.5 bg-gray-100 mb-1.5"></div>
-                    <div className="h-2.5 bg-gray-100 mb-1.5"></div>
-                    <div className="h-2.5 bg-gray-100 w-3/4"></div>
-                  </div>
-                  <div className="mb-3">
+                  
+                  {/* Profile Section */}
+                  <div className="mb-4">
                     <motion.div 
-                      className="h-4 bg-gray-100 mb-1.5 w-1/3"
-                      animate={{ width: ["30%", "35%", "30%"] }}
+                      className="h-3 bg-[#DAA520]/20 mb-2 w-1/4 rounded-sm"
+                      animate={{ width: ["25%", "28%", "25%"] }}
                       transition={{ duration: 3, repeat: Infinity }}
-                    ></motion.div>
-                    <div className="h-2.5 bg-gray-100 mb-1.5"></div>
-                    <div className="h-2.5 bg-gray-100 mb-1.5"></div>
-                    <div className="h-2.5 bg-gray-100 w-5/6"></div>
+                    />
+                    <div className="space-y-1.5">
+                      <div className="h-2 bg-gray-100 rounded-sm"></div>
+                      <div className="h-2 bg-gray-100 rounded-sm"></div>
+                      <div className="h-2 bg-gray-100 w-11/12 rounded-sm"></div>
+                    </div>
                   </div>
+                  
+                  {/* Experience Section */}
+                  <div className="mb-4">
+                    <motion.div 
+                      className="h-3 bg-[#DAA520]/20 mb-2 w-1/3 rounded-sm"
+                      initial={{ width: "30%" }}
+                      animate={{ 
+                        width: ["30%", "35%", "30%"],
+                        backgroundColor: ["rgba(218, 165, 32, 0.2)", "rgba(218, 165, 32, 0.3)", "rgba(218, 165, 32, 0.2)"]
+                      }}
+                      transition={{ duration: 3, repeat: Infinity }}
+                    />
+                    
+                    {/* Job Entry 1 */}
+                    <div className="mb-2 pl-2 border-l-2 border-gray-200">
+                      <div className="flex justify-between mb-1">
+                        <div className="h-2.5 bg-gray-200 w-1/3 rounded-sm"></div>
+                        <div className="h-2 bg-gray-100 w-1/5 rounded-sm"></div>
+                      </div>
+                      <div className="h-2 bg-gray-100 mb-1 w-1/2 rounded-sm"></div>
+                      <div className="space-y-1">
+                        <div className="h-1.5 bg-gray-100 rounded-sm"></div>
+                        <div className="h-1.5 bg-gray-100 rounded-sm"></div>
+                      </div>
+                    </div>
+                    
+                    {/* Job Entry 2 - Animated */}
+                    <motion.div 
+                      className="mb-2 pl-2 border-l-2 border-[#DAA520]/30"
+                      animate={{ 
+                        borderColor: ["rgba(218, 165, 32, 0.3)", "rgba(218, 165, 32, 0.6)", "rgba(218, 165, 32, 0.3)"]
+                      }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    >
+                      <div className="flex justify-between mb-1">
+                        <div className="h-2.5 bg-gray-200 w-1/4 rounded-sm"></div>
+                        <div className="h-2 bg-gray-100 w-1/5 rounded-sm"></div>
+                      </div>
+                      <div className="h-2 bg-gray-100 mb-1 w-2/5 rounded-sm"></div>
+                      <div className="space-y-1">
+                        <div className="h-1.5 bg-gray-100 rounded-sm"></div>
+                        <motion.div 
+                          className="h-1.5 bg-gray-100 rounded-sm w-11/12"
+                          animate={{ width: ["91.666667%", "95%", "91.666667%"] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                        />
+                      </div>
+                    </motion.div>
+                  </div>
+                  
+                  {/* Skills Section */}
                   <div>
-                    <div className="h-4 bg-gray-100 mb-1.5 w-1/3"></div>
-                    <div className="h-2.5 bg-gray-100 mb-1.5"></div>
-                    <div className="h-2.5 bg-gray-100 w-2/3"></div>
+                    <div className="h-3 bg-[#DAA520]/20 mb-2 w-1/4 rounded-sm"></div>
+                    {/* Skill bars */}
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 bg-gray-100 w-1/4 rounded-sm"></div>
+                        <motion.div 
+                          className="h-1.5 bg-[#DAA520]/40 rounded-full flex-1"
+                          initial={{ width: "70%" }}
+                          animate={{ width: ["70%", "75%", "70%"] }}
+                          transition={{ duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
+                        />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 bg-gray-100 w-1/5 rounded-sm"></div>
+                        <motion.div 
+                          className="h-1.5 bg-[#DAA520]/30 rounded-full flex-1"
+                          initial={{ width: "85%" }}
+                          animate={{ width: ["85%", "90%", "85%"] }}
+                          transition={{ duration: 2, repeat: Infinity, repeatType: "reverse", delay: 0.3 }}
+                        />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 bg-gray-100 w-1/5 rounded-sm"></div>
+                        <motion.div 
+                          className="h-1.5 bg-[#DAA520]/20 rounded-full flex-1"
+                          initial={{ width: "60%" }}
+                          animate={{ width: ["60%", "63%", "60%"] }}
+                          transition={{ duration: 1.8, repeat: Infinity, repeatType: "reverse", delay: 0.6 }}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </motion.div>
               
-              {/* Animated Paw Prints */}
-              <motion.div 
-                className="absolute top-1/4 left-2"
-                animate={{ 
-                  x: [0, 5, 0, 5, 0],
-                  rotate: [0, 10, 0, 10, 0]
+              {/* Animated Paw Prints Trail */}
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <motion.div 
+                  className="absolute"
+                  animate={{
+                    left: ["-5%", "110%"],
+                    top: ["110%", "-10%"],
+                    opacity: [0, 1, 1, 0],
+                    scale: [0.8, 1, 1, 0.8]
+                  }}
+                  transition={{
+                    duration: 8,
+                    repeat: Infinity,
+                    ease: "linear",
+                    times: [0, 0.2, 0.8, 1]
+                  }}
+                >
+                  {[...Array(5)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      className="absolute"
+                      style={{
+                        left: `${i * 20}px`,
+                        top: `${i * 20}px`,
+                        rotate: `${i * 5}deg`
+                      }}
+                      animate={{
+                        rotate: [`${i * 5}deg`, `${i * 5 + 5}deg`, `${i * 5}deg`]
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        delay: i * 0.1
+                      }}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 9C9.10457 9 10 8.10457 10 7C10 5.89543 9.10457 5 8 5C6.89543 5 6 5.89543 6 7C6 8.10457 6.89543 9 8 9Z" fill="#DAA520" fillOpacity="0.4"/>
+                        <path d="M16 9C17.1046 9 18 8.10457 18 7C18 5.89543 17.1046 5 16 5C14.8954 5 14 5.89543 14 7C14 8.10457 14.8954 9 16 9Z" fill="#DAA520" fillOpacity="0.4"/>
+                        <path d="M12 12C13.1046 12 14 11.1046 14 10C14 8.89543 13.1046 8 12 8C10.8954 8 10 8.89543 10 10C10 11.1046 10.8954 12 12 12Z" fill="#DAA520" fillOpacity="0.4"/>
+                        <path d="M5 15C6.10457 15 7 14.1046 7 13C7 11.8954 6.10457 11 5 11C3.89543 11 3 11.8954 3 13C3 14.1046 3.89543 15 5 15Z" fill="#DAA520" fillOpacity="0.4"/>
+                        <path d="M19 15C20.1046 15 21 14.1046 21 13C21 11.8954 20.1046 11 19 11C17.8954 11 17 11.8954 17 13C17 14.1046 17.8954 15 19 15Z" fill="#DAA520" fillOpacity="0.4"/>
+                      </svg>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </div>
+              
+              {/* Animated Cursor */}
+              <motion.div
+                className="absolute hidden md:block w-4 h-4 z-10"
+                style={{
+                  borderRadius: "50%",
+                  boxShadow: "0 0 0 1px rgba(0,0,0,0.1), 0 0 0 3px rgba(218, 165, 32, 0.2)",
+                  backgroundColor: "rgba(218, 165, 32, 0.1)"
                 }}
-                transition={{ duration: 4, repeat: Infinity }}
+                animate={{
+                  x: [100, 200, 150, 180, 120],
+                  y: [100, 120, 200, 150, 100],
+                  scale: [1, 1.2, 1, 1.1, 1]
+                }}
+                transition={{
+                  duration: 10,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  times: [0, 0.2, 0.5, 0.8, 1]
+                }}
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8 9C9.10457 9 10 8.10457 10 7C10 5.89543 9.10457 5 8 5C6.89543 5 6 5.89543 6 7C6 8.10457 6.89543 9 8 9Z" fill="#DAA520" fillOpacity="0.3"/>
-                  <path d="M16 9C17.1046 9 18 8.10457 18 7C18 5.89543 17.1046 5 16 5C14.8954 5 14 5.89543 14 7C14 8.10457 14.8954 9 16 9Z" fill="#DAA520" fillOpacity="0.3"/>
-                  <path d="M12 12C13.1046 12 14 11.1046 14 10C14 8.89543 13.1046 8 12 8C10.8954 8 10 8.89543 10 10C10 11.1046 10.8954 12 12 12Z" fill="#DAA520" fillOpacity="0.3"/>
-                  <path d="M5 15C6.10457 15 7 14.1046 7 13C7 11.8954 6.10457 11 5 11C3.89543 11 3 11.8954 3 13C3 14.1046 3.89543 15 5 15Z" fill="#DAA520" fillOpacity="0.3"/>
-                  <path d="M19 15C20.1046 15 21 14.1046 21 13C21 11.8954 20.1046 11 19 11C17.8954 11 17 11.8954 17 13C17 14.1046 17.8954 15 19 15Z" fill="#DAA520" fillOpacity="0.3"/>
-                </svg>
+                <motion.div
+                  className="w-1 h-1 bg-[#DAA520] rounded-full mx-auto mt-[7px]"
+                  animate={{
+                    opacity: [1, 0.5, 1]
+                  }}
+                  transition={{
+                    duration: 1,
+                    repeat: Infinity
+                  }}
+                />
               </motion.div>
-              <motion.div 
-                className="absolute bottom-10 right-4"
-                animate={{ 
-                  y: [0, -5, 0, -5, 0],
-                  rotate: [0, -10, 0, -10, 0]
+              
+              {/* AI assistance pointer */}
+              <motion.div
+                className="absolute bottom-4 right-12 flex items-center"
+                animate={{
+                  y: [0, -5, 0]
                 }}
-                transition={{ duration: 3, repeat: Infinity, delay: 1 }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8 9C9.10457 9 10 8.10457 10 7C10 5.89543 9.10457 5 8 5C6.89543 5 6 5.89543 6 7C6 8.10457 6.89543 9 8 9Z" fill="#DAA520" fillOpacity="0.3"/>
-                  <path d="M16 9C17.1046 9 18 8.10457 18 7C18 5.89543 17.1046 5 16 5C14.8954 5 14 5.89543 14 7C14 8.10457 14.8954 9 16 9Z" fill="#DAA520" fillOpacity="0.3"/>
-                  <path d="M12 12C13.1046 12 14 11.1046 14 10C14 8.89543 13.1046 8 12 8C10.8954 8 10 8.89543 10 10C10 11.1046 10.8954 12 12 12Z" fill="#DAA520" fillOpacity="0.3"/>
-                  <path d="M5 15C6.10457 15 7 14.1046 7 13C7 11.8954 6.10457 11 5 11C3.89543 11 3 11.8954 3 13C3 14.1046 3.89543 15 5 15Z" fill="#DAA520" fillOpacity="0.3"/>
-                  <path d="M19 15C20.1046 15 21 14.1046 21 13C21 11.8954 20.1046 11 19 11C17.8954 11 17 11.8954 17 13C17 14.1046 17.8954 15 19 15Z" fill="#DAA520" fillOpacity="0.3"/>
+                <div className="bg-black/90 text-white text-xs py-1 px-2 rounded mr-2 shadow-md">
+                  AI Suggestion
+                </div>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M5 12H19" stroke="#DAA520" strokeWidth="2" strokeLinecap="round"/>
+                  <path d="M12 5L19 12L12 19" stroke="#DAA520" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </motion.div>
             </div>
