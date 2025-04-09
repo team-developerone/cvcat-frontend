@@ -29,10 +29,60 @@ export default function CVBuilder() {
   
   // Template options
   const templates = [
-    { id: "modern", name: "Modern" },
-    { id: "classic", name: "Classic" },
-    { id: "minimalist", name: "Minimalist" },
-    { id: "creative", name: "Creative" }
+    { 
+      id: "modern", 
+      name: "Modern",
+      description: "Clean and professional with a touch of elegance",
+      headerStyle: "centered",
+      accentStyle: "line",
+      fontFamily: "Inter, sans-serif",
+      spacing: "comfortable"
+    },
+    { 
+      id: "classic", 
+      name: "Classic",
+      description: "Traditional layout with a timeless design",
+      headerStyle: "left-aligned",
+      accentStyle: "bold",
+      fontFamily: "Georgia, serif",
+      spacing: "compact" 
+    },
+    { 
+      id: "minimalist", 
+      name: "Minimalist",
+      description: "Sleek and concise with minimal visual elements",
+      headerStyle: "side",
+      accentStyle: "subtle",
+      fontFamily: "Inter, sans-serif",
+      spacing: "airy"
+    },
+    { 
+      id: "creative", 
+      name: "Creative",
+      description: "Bold design with unique visual elements",
+      headerStyle: "banner",
+      accentStyle: "dots",
+      fontFamily: "Poppins, sans-serif",
+      spacing: "balanced"
+    },
+    { 
+      id: "executive", 
+      name: "Executive",
+      description: "Sophisticated design for senior professionals",
+      headerStyle: "box",
+      accentStyle: "double-line",
+      fontFamily: "Merriweather, serif",
+      spacing: "compact"
+    },
+    { 
+      id: "technical", 
+      name: "Technical",
+      description: "Structured layout ideal for technical roles",
+      headerStyle: "tabbed",
+      accentStyle: "brackets",
+      fontFamily: "Roboto Mono, monospace",
+      spacing: "compact"
+    }
   ];
   
   // Color options
@@ -163,22 +213,33 @@ export default function CVBuilder() {
                         
                         <div className="aspect-[1/1.414] bg-white border border-gray-200 rounded-md shadow-sm overflow-hidden">
                           {mainCV && (
-                            <div className="w-full h-full p-8 flex flex-col">
-                              <h2 className="text-center font-bold text-2xl">{mainCV.personalInfo.fullName}</h2>
-                              <p className="text-center text-gray-600 mb-4">{mainCV.personalInfo.title}</p>
-                              
-                              <div className="flex justify-center space-x-4 mb-6 text-sm text-gray-500">
-                                <span>{mainCV.personalInfo.email}</span>
-                                <span>•</span>
-                                <span>{mainCV.personalInfo.phone}</span>
-                                <span>•</span>
-                                <span>{mainCV.personalInfo.location}</span>
-                              </div>
-                              
-                              <div className="border-t border-gray-200 pt-4 mb-4">
-                                <h3 className="font-semibold text-gray-800 mb-2">Professional Summary</h3>
-                                <p className="text-sm text-gray-600">{mainCV.personalInfo.summary}</p>
-                              </div>
+                            <div 
+                              className="w-full h-full"
+                              style={{
+                                fontFamily: templates.find(t => t.id === activeTemplate)?.fontFamily || "Inter, sans-serif"
+                              }}
+                            >
+                              {/* Modern Template */}
+                              {activeTemplate === "modern" && (
+                                <div className="p-8 w-full h-full flex flex-col overflow-auto">
+                                  <div className="text-center mb-6">
+                                    <div className="w-24 h-0.5 bg-[#DAA520] mx-auto mb-3"></div>
+                                    <h2 className="font-bold text-2xl">{mainCV.personalInfo.fullName}</h2>
+                                    <p className="text-gray-600 mb-2">{mainCV.personalInfo.title}</p>
+                                    <div className="flex justify-center flex-wrap gap-x-4 text-sm text-gray-500">
+                                      <span>{mainCV.personalInfo.email}</span>
+                                      <span>{mainCV.personalInfo.phone}</span>
+                                      <span>{mainCV.personalInfo.location}</span>
+                                    </div>
+                                  </div>
+                                  
+                                  <div className="mb-5">
+                                    <h3 className="font-semibold text-gray-800 mb-2 flex items-center">
+                                      <span className="w-8 h-0.5 bg-[#DAA520] mr-2"></span>
+                                      Professional Summary
+                                    </h3>
+                                    <p className="text-sm text-gray-600">{mainCV.personalInfo.summary}</p>
+                                  </div>
                               
                               <div className="mb-4">
                                 <h3 className="font-semibold text-gray-800 mb-2">Experience</h3>
@@ -384,22 +445,175 @@ export default function CVBuilder() {
                       <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
                         <div className="mb-5">
                           <h3 className="text-xs font-medium uppercase tracking-wider text-gray-500 mb-3 ml-2">Template</h3>
-                          <div className="grid grid-cols-2 gap-2">
+                          <div className="grid grid-cols-2 gap-3">
                             {templates.map((template) => (
                               <div 
                                 key={template.id}
                                 className={`cursor-pointer transition-all rounded-lg overflow-hidden border ${
                                   activeTemplate === template.id 
-                                    ? 'border-[#DAA520]/80 ring-1 ring-[#DAA520]/30' 
-                                    : 'border-gray-200 hover:border-gray-300'
+                                    ? 'border-[#DAA520]/80 ring-1 ring-[#DAA520]/30 shadow-md' 
+                                    : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
                                 }`}
                                 onClick={() => setActiveTemplate(template.id)}
                               >
-                                <div className="aspect-[1/1.414] bg-gray-50"></div>
+                                <div className="aspect-[1/1.414] bg-white relative">
+                                  {/* Template Preview */}
+                                  {template.id === "modern" && (
+                                    <div className="absolute inset-0 flex flex-col p-2">
+                                      <div className="text-center">
+                                        <div className="w-16 h-0.5 bg-[#DAA520] mx-auto mb-1"></div>
+                                        <div className="w-10 h-1.5 bg-gray-800 mx-auto mb-1 rounded-sm"></div>
+                                        <div className="w-20 h-0.5 bg-gray-300 mx-auto"></div>
+                                      </div>
+                                      <div className="flex justify-center mt-2 space-x-1">
+                                        <div className="w-4 h-0.5 bg-gray-200"></div>
+                                        <div className="w-4 h-0.5 bg-gray-200"></div>
+                                        <div className="w-4 h-0.5 bg-gray-200"></div>
+                                      </div>
+                                      <div className="mt-auto space-y-1 px-1">
+                                        {[1,2,3].map(i => (
+                                          <div key={i} className="flex items-center">
+                                            <div className="w-8 h-0.5 bg-[#DAA520]/40"></div>
+                                            <div className="flex-1 ml-1">
+                                              <div className="w-full h-0.5 bg-gray-100"></div>
+                                              <div className="w-3/4 h-0.5 bg-gray-100 mt-0.5"></div>
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                  {template.id === "classic" && (
+                                    <div className="absolute inset-0 flex flex-col p-2">
+                                      <div className="text-left">
+                                        <div className="w-10 h-1.5 bg-gray-800 rounded-sm mb-1"></div>
+                                        <div className="w-16 h-0.5 bg-gray-300"></div>
+                                      </div>
+                                      <div className="w-full mt-2 h-px bg-gray-200"></div>
+                                      <div className="mt-2">
+                                        <div className="w-8 h-1 bg-gray-800 mb-1 rounded-sm"></div>
+                                        {[1,2].map(i => (
+                                          <div key={i} className="flex items-center mt-1">
+                                            <div className="w-full h-0.5 bg-gray-100"></div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                      <div className="mt-2">
+                                        <div className="w-8 h-1 bg-gray-800 mb-1 rounded-sm"></div>
+                                        {[1,2].map(i => (
+                                          <div key={i} className="flex items-center mt-1">
+                                            <div className="w-full h-0.5 bg-gray-100"></div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                  {template.id === "minimalist" && (
+                                    <div className="absolute inset-0 flex p-2">
+                                      <div className="w-1/3 border-r border-gray-100 pr-1">
+                                        <div className="w-full h-2 bg-gray-800 rounded-sm mb-2"></div>
+                                        <div className="w-full h-0.5 bg-gray-100 mb-0.5"></div>
+                                        <div className="w-2/3 h-0.5 bg-gray-100 mb-0.5"></div>
+                                        <div className="w-full h-0.5 bg-gray-100 mb-0.5"></div>
+                                        <div className="mt-2 w-full h-0.5 bg-gray-200"></div>
+                                        <div className="w-full h-0.5 bg-gray-100 mt-1 mb-0.5"></div>
+                                        <div className="w-full h-0.5 bg-gray-100 mb-0.5"></div>
+                                      </div>
+                                      <div className="w-2/3 pl-1 space-y-2">
+                                        <div>
+                                          <div className="w-12 h-0.5 bg-[#DAA520]"></div>
+                                          <div className="w-full h-0.5 bg-gray-100 mt-1 mb-0.5"></div>
+                                          <div className="w-full h-0.5 bg-gray-100 mb-0.5"></div>
+                                        </div>
+                                        <div>
+                                          <div className="w-12 h-0.5 bg-[#DAA520]"></div>
+                                          <div className="w-full h-0.5 bg-gray-100 mt-1 mb-0.5"></div>
+                                          <div className="w-full h-0.5 bg-gray-100 mb-0.5"></div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )}
+                                  {template.id === "creative" && (
+                                    <div className="absolute inset-0 flex flex-col p-2">
+                                      <div className="h-5 w-full bg-[#DAA520]/20 -mx-2 -mt-2 px-2 pt-1 mb-2">
+                                        <div className="w-10 h-1 bg-gray-800 rounded-sm"></div>
+                                        <div className="w-16 h-0.5 bg-gray-600 mt-1"></div>
+                                      </div>
+                                      <div className="mt-1">
+                                        <div className="flex items-center gap-1 mb-1">
+                                          <div className="w-1 h-1 rounded-full bg-[#DAA520]"></div>
+                                          <div className="w-12 h-0.5 bg-gray-200"></div>
+                                        </div>
+                                        <div className="flex items-center gap-1 mb-1">
+                                          <div className="w-1 h-1 rounded-full bg-[#DAA520]"></div>
+                                          <div className="w-16 h-0.5 bg-gray-200"></div>
+                                        </div>
+                                        <div className="flex items-center gap-1">
+                                          <div className="w-1 h-1 rounded-full bg-[#DAA520]"></div>
+                                          <div className="w-10 h-0.5 bg-gray-200"></div>
+                                        </div>
+                                      </div>
+                                      <div className="mt-auto mb-1 flex flex-wrap gap-0.5">
+                                        {[1,2,3,4,5].map(i => (
+                                          <div key={i} className="w-2 h-1 bg-gray-100"></div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                  {template.id === "executive" && (
+                                    <div className="absolute inset-0 flex flex-col p-2">
+                                      <div className="flex items-center mb-2">
+                                        <div className="flex-1">
+                                          <div className="w-10 h-1.5 bg-gray-800 rounded-sm mb-1"></div>
+                                          <div className="w-16 h-0.5 bg-gray-400"></div>
+                                        </div>
+                                        <div className="w-4 h-4 border-2 border-[#DAA520] rounded-sm"></div>
+                                      </div>
+                                      <div className="w-full h-0.5 border-t border-b border-gray-300"></div>
+                                      <div className="mt-2 space-y-2">
+                                        <div>
+                                          <div className="w-12 h-0.5 bg-gray-800 mb-1"></div>
+                                          <div className="w-full h-0.5 bg-gray-100"></div>
+                                          <div className="w-full h-0.5 bg-gray-100 mt-0.5"></div>
+                                        </div>
+                                        <div>
+                                          <div className="w-12 h-0.5 bg-gray-800 mb-1"></div>
+                                          <div className="w-full h-0.5 bg-gray-100"></div>
+                                          <div className="w-full h-0.5 bg-gray-100 mt-0.5"></div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )}
+                                  {template.id === "technical" && (
+                                    <div className="absolute inset-0 flex flex-col p-2">
+                                      <div className="text-left mb-1">
+                                        <div className="w-12 h-1 bg-gray-800 rounded-sm mb-0.5"></div>
+                                        <div className="w-16 h-0.5 bg-gray-400 mb-1"></div>
+                                        <div className="font-mono text-[5px] text-gray-400">&lt;summary&gt;</div>
+                                        <div className="w-full h-0.5 bg-gray-100 mb-0.5 ml-1"></div>
+                                        <div className="font-mono text-[5px] text-gray-400">&lt;/summary&gt;</div>
+                                      </div>
+                                      <div className="font-mono text-[5px] text-gray-400">&lt;experience&gt;</div>
+                                      <div className="ml-1">
+                                        <div className="w-full h-0.5 bg-gray-100 mt-0.5"></div>
+                                        <div className="w-2/3 h-0.5 bg-gray-100 mt-0.5"></div>
+                                      </div>
+                                      <div className="font-mono text-[5px] text-gray-400">&lt;/experience&gt;</div>
+                                      <div className="mt-1 flex flex-wrap gap-1">
+                                        {[1,2,3,4].map(i => (
+                                          <div key={i} className="px-0.5 py-px bg-gray-100 rounded">
+                                            <div className="w-3 h-0.5 bg-[#DAA520]/50"></div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
                                 <div className="p-1.5">
                                   <p className={`text-xs ${activeTemplate === template.id ? 'text-[#DAA520] font-medium' : 'text-gray-600'}`}>
                                     {template.name}
                                   </p>
+                                  <p className="text-[10px] text-gray-400 truncate">{template.description}</p>
                                 </div>
                               </div>
                             ))}
