@@ -1,1 +1,0 @@
-tsx backend/index.ts
