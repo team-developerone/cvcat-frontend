@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Layout from "@/components/Layout";
 import CVBuilderForm from "@/components/CVBuilderForm";
 import ChatBot from "@/components/ChatBot";
@@ -7,7 +7,9 @@ import { Button } from "@/components/ui/button";
 import { useCV } from "@/lib/context";
 import { motion } from "framer-motion";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { LucideFileText, LucideDownload, LucideShare2, LucideZap, LucideMessageCircle } from "lucide-react";
+import { LucideFileText, LucideDownload, LucideShare2, LucideZap, LucideMessageCircle, LucideSave } from "lucide-react";
+import { useLocation } from "wouter";
+import { toast } from "@/hooks/use-toast";
 
 // Available section types
 export type SectionType = 
@@ -23,12 +25,52 @@ export type SectionType =
   | 'custom';
 
 export default function CVBuilder() {
-  const { mainCV } = useCV();
+  const { mainCV, saveCV, savingCV } = useCV();
+  const [, navigate] = useLocation();
   const [activeTemplate, setActiveTemplate] = useState("modern");
   const [activeColor, setActiveColor] = useState("golden");
   const [activeTab, setActiveTab] = useState<"edit" | "preview" | "chat">("edit");
   const [activeSection, setActiveSection] = useState<SectionType>("personal");
   const [isPDFModalOpen, setIsPDFModalOpen] = useState(false);
+
+  const handleSave = useCallback(async () => {
+    if (!mainCV) return;
+    try {
+      await saveCV(mainCV);
+      toast({ title: "CV saved successfully" });
+    } catch (err: unknown) {
+      toast({
+        title: "Save failed",
+        description: err instanceof Error ? err.message : "Unknown error",
+        variant: "destructive",
+      });
+    }
+  }, [mainCV, saveCV]);
+
+  const handleSaveAndExit = useCallback(async () => {
+    if (!mainCV) {
+      navigate("/cv-management");
+      return;
+    }
+    try {
+      await saveCV(mainCV);
+      toast({ title: "CV saved successfully" });
+      navigate("/cv-management");
+    } catch (err: unknown) {
+      toast({
+        title: "Save failed",
+        description: err instanceof Error ? err.message : "Unknown error",
+        variant: "destructive",
+      });
+    }
+  }, [mainCV, saveCV, navigate]);
+
+  // Listen for "Save & Exit" from Navbar
+  useEffect(() => {
+    const handler = () => { handleSaveAndExit(); };
+    window.addEventListener("cvcat:save-and-exit", handler);
+    return () => window.removeEventListener("cvcat:save-and-exit", handler);
+  }, [handleSaveAndExit]);
   
   // Template options
   const templates = [
@@ -122,29 +164,43 @@ export default function CVBuilder() {
               onValueChange={(value) => setActiveTab(value as "edit" | "preview" | "chat")}
               className="w-full mb-6"
             >
-              <TabsList className="grid w-full grid-cols-3 rounded-full h-12 p-1 bg-gray-100">
-                <TabsTrigger 
-                  value="edit" 
+              <div className="flex items-center gap-3 mb-2">
+                <TabsList className="grid flex-1 grid-cols-3 rounded-full h-12 p-1 bg-gray-100">
+                <TabsTrigger
+                  value="edit"
                   className="rounded-full data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm h-10"
                 >
                   <LucideFileText className="w-4 h-4 mr-2" />
                   Edit CV
                 </TabsTrigger>
-                <TabsTrigger 
-                  value="preview" 
+                <TabsTrigger
+                  value="preview"
                   className="rounded-full data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm h-10"
                 >
                   <LucideZap className="w-4 h-4 mr-2" />
                   Preview
                 </TabsTrigger>
-                <TabsTrigger 
-                  value="chat" 
+                <TabsTrigger
+                  value="chat"
                   className="rounded-full data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm h-10"
                 >
                   <LucideMessageCircle className="w-4 h-4 mr-2" />
                   CV Assistant
                 </TabsTrigger>
               </TabsList>
+                <Button
+                  onClick={handleSave}
+                  disabled={savingCV || !mainCV}
+                  className="bg-[#DAA520] hover:bg-[#B8860B] text-white rounded-full h-12 px-5 text-sm font-medium shadow-sm transition-all flex-shrink-0"
+                >
+                  {savingCV ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                  ) : (
+                    <LucideSave className="w-4 h-4 mr-2" />
+                  )}
+                  {savingCV ? "Saving..." : "Save"}
+                </Button>
+              </div>
 
               <div className="mt-6">
                 <div className="flex flex-col lg:flex-row lg:gap-6">

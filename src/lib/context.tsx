@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
-import { CV, ChatMessage, backendCVToFrontendCV } from "./types";
-import { fetchAllCVs } from "@/services/api";
+import { CV, ChatMessage, backendCVToFrontendCV, frontendCVToBackendData } from "./types";
+import { fetchAllCVs, updateCV as apiUpdateCV, createCV as apiCreateCV } from "@/services/api";
 
 interface CVContextType {
   mainCV: CV | null;
@@ -12,6 +12,8 @@ interface CVContextType {
   messages: ChatMessage[];
   addMessage: (message: string, isBot: boolean) => void;
   refreshCVs: () => Promise<void>;
+  saveCV: (cv: CV) => Promise<CV>;
+  savingCV: boolean;
   cvsLoading: boolean;
 }
 
@@ -22,6 +24,7 @@ export function CVProvider({ children }: { children: ReactNode }) {
   const [tailoredCVsList, setTailoredCVs] = useState<CV[]>([]);
   const [currentCV, setCurrentCV] = useState<CV | null>(null);
   const [cvsLoading, setCvsLoading] = useState(true);
+  const [savingCV, setSavingCV] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "initial",
@@ -61,6 +64,49 @@ export function CVProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const saveCV = useCallback(async (cv: CV): Promise<CV> => {
+    setSavingCV(true);
+    try {
+      const backendData = frontendCVToBackendData(cv);
+      const payload = {
+        title: cv.title,
+        description: cv.description,
+        data: backendData,
+        isDraft: false,
+        cvType: cv.isTailored ? "tailored" as const : "base" as const,
+      };
+
+      // If the CV has a backend-style ID (MongoDB ObjectId), update it; otherwise create new
+      const isExistingCV = cv.id && cv.id.length === 24 && /^[a-f0-9]+$/.test(cv.id);
+
+      let savedBackendCV;
+      if (isExistingCV) {
+        const res = await apiUpdateCV(cv.id, payload);
+        savedBackendCV = res.data;
+      } else {
+        const res = await apiCreateCV(payload);
+        savedBackendCV = res.data;
+      }
+
+      const savedCV = backendCVToFrontendCV(savedBackendCV);
+
+      // Update local state with the saved CV
+      if (savedCV.isTailored) {
+        setTailoredCVs(prev =>
+          prev.some(t => t.id === savedCV.id)
+            ? prev.map(t => (t.id === savedCV.id ? savedCV : t))
+            : [...prev, savedCV]
+        );
+      } else {
+        setMainCV(savedCV);
+      }
+
+      return savedCV;
+    } finally {
+      setSavingCV(false);
+    }
+  }, []);
+
   useEffect(() => {
     refreshCVs();
   }, [refreshCVs]);
@@ -77,6 +123,8 @@ export function CVProvider({ children }: { children: ReactNode }) {
         messages,
         addMessage,
         refreshCVs,
+        saveCV,
+        savingCV,
         cvsLoading,
       }}
     >

@@ -103,7 +103,9 @@ export default function Navbar({ isAuthenticated = false }: NavbarProps) {
             </Button>
           ) : location === "/cv-builder" ? (
             <Button
-              onClick={() => goTo('/cv-management')}
+              onClick={() => {
+                window.dispatchEvent(new CustomEvent("cvcat:save-and-exit"));
+              }}
               className="bg-black hover:bg-[#DAA520] text-white text-sm font-medium px-4 py-2 rounded"
             >
               Save & Exit
