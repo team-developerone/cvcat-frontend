@@ -262,6 +262,7 @@ export default function CVBuilder() {
                               variant="ghost"
                               size="sm"
                               className="text-gray-500 hover:text-black hover:bg-gray-100"
+                              onClick={() => setIsPDFModalOpen(true)}
                             >
                               <LucideDownload className="w-4 h-4 mr-2" />
                               Download
