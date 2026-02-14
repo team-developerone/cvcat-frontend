@@ -1,0 +1,307 @@
+Now lets create a plan to integrate auth (firebase+custom jwt) and the endpoints from our backend service. We have all static ui elements already in the frontend project.
+
+Here is summary
+
+1. Firebase auth is there to authenticate the user from frontend. Once logged in/ signed up, we will send the firebase token to our backend and get back a custom jwt token that will be used to call all the endpoints from our backend service. 
+2. This app is mainly to manage cv. 
+3. First once the user is logged in, we will check if he already have any cv in our database. If not, we will take him to the create or import cv page. 
+4. They can start creating it manually or upload an existing cv. We have an endpoint to upload cv from frontend. 
+https://cvcat-api-dev-phhm2.ondigitalocean.app/api/v1/cv/import (accepts file)
+
+Sample response
+{
+  "error": false,
+  "message": "CV imported successfully",
+  "data": {
+    "title": "Debojyoti Saha's CV",
+    "description": "System Architect & Full-Stack (React/Next.js, Node/TS) | 8+ years | Shipped 15+ 0→1 products | DevOps on AWS/DO | Scalable, secure systems",
+    "cvSource": "parsed",
+    "originalFile": {
+      "name": "Profile.pdf",
+      "url": "",
+      "metadata": {
+        "size": 58354,
+        "mimetype": "application/pdf",
+        "uploadedAt": "2026-02-14T14:52:21.226Z"
+      }
+    },
+    "isDraft": true,
+    "cvType": "base",
+    "data": {
+      "basics": {
+        "name": "Debojyoti Saha",
+        "label": "",
+        "image": "",
+        "email": "dsahapersonal@gmail.com",
+        "phone": "9933050905",
+        "url": "",
+        "summary": "System Architect & Full-Stack (React/Next.js, Node/TS) | 8+ years | Shipped 15+ 0→1 products | DevOps on AWS/DO | Scalable, secure systems",
+        "location": {
+          "address": "",
+          "postalCode": "",
+          "city": "Bengaluru",
+          "countryCode": "IN",
+          "region": "Karnataka"
+        },
+        "profiles": [
+          {
+            "network": "LinkedIn",
+            "username": "",
+            "url": "www.linkedin.com/in/debojyoti-dev"
+          },
+          {
+            "network": "Personal",
+            "username": "",
+            "url": "www.debojyoti.dev"
+          }
+        ]
+      },
+      "work": [
+        {
+          "name": "Dexterous Technology LLC",
+          "location": "California, United States",
+          "description": "System Architect owning end-to-end delivery for 15+ greenfield product launches—from discovery and architecture to hands-on full-stack dev and DevOps. I lead a small, high-velocity team to ship scalable, secure, and observable systems with React/Next.js, TypeScript/Node.js, and cloud-native infrastructure.",
+          "position": "Lead System Architect",
+          "url": "",
+          "startDate": "2024-07-01",
+          "endDate": "",
+          "summary": "",
+          "highlights": []
+        },
+        {
+          "name": "quester",
+          "location": "London Area, United Kingdom",
+          "description": "• Frontend Team Lead: Lead the frontend development team, collaborating closely with designers to deliver well-structured React and Redux applications with efficient data flow, component organization, and robust business logic.\n• Enhanced Website Efficiency: Developed Node.js projects to automate website preview generation for iframes (Firestore, Bucket Storage, Selenium) and scrape metadata, streamlining content management.\n• Streamlined Data Management: Built Node.js projects to export Firestore collections to Cloud Storage (BigQuery integration) and utilize OpenAI SDK for efficient data processing tasks.",
+          "position": "Senior Developer",
+          "url": "",
+          "startDate": "2021-10-01",
+          "endDate": "2024-06-01",
+          "summary": "",
+          "highlights": []
+        },
+        {
+          "name": "Capital Numbers",
+          "location": "Kolkata, West Bengal",
+          "description": "• Full-stack development expertise: Built diverse applications including housing management (Next.js, Firebase), messaging platform (Vue.js, Twilio), video call platforms (React, Node.js), kiosk management (React, Redux), social game platform (React, Socket.io), and photo gallery management (React, MobX). (Highlights your full-stack development capabilities)\n• Enhanced user experience: Implemented features like microservers for form filling (AWS), chat plugins (Vanilla JS), virtual waiting rooms (React), screensharing (React, Twillio), and group messaging (React). (Focuses on user-centric development)\n• Database and backend expertise: Developed custom database backup solutions (Firebase) and integrated services like Stripe payment gateway and MongoDB for specific projects.",
+          "position": "Full Stack Engineer",
+          "url": "",
+          "startDate": "2020-05-01",
+          "endDate": "2021-10-01",
+          "summary": "",
+          "highlights": []
+        },
+        {
+          "name": "Logic Square Technologies",
+          "location": "Kolkata Area, India",
+          "description": "• Developed mobile applications using lonic 3, Angular 6, and React Native for various functionalities, including e-learning ap, e-book reading, and warehouse management.",
+          "position": "Frontend Developer",
+          "url": "",
+          "startDate": "2018-11-01",
+          "endDate": "2020-05-01",
+          "summary": "",
+          "highlights": []
+        },
+        {
+          "name": "iPleaders.in",
+          "location": "Kolkata Area, India",
+          "description": "• Enhanced projects by integrating 3rd party libraries and advanced caching mechanisms for improved performance.\n• Designed and implemented database solutions including data models for Firebase NoSQL database and payment gateway integration (PayPal).",
+          "position": "Web Application Developer",
+          "url": "",
+          "startDate": "2018-03-01",
+          "endDate": "2018-10-01",
+          "summary": "",
+          "highlights": []
+        },
+        {
+          "name": "Development Intern",
+          "location": "Kolkata Area, India",
+          "description": "• Boosted LMS Eff iciency: Redeveloped the assignment portal using Angular 6, reducing submission drop rate by 80%.\n• Optimized System Performance: Implemented a caching system and applied Angular 6 best practices, leading to a 40% server load reduction and improved website performance.\n• Enhanced User Experience: Converted design prototypes into functional front-end code and implemented best practices for smoother animations.",
+          "position": "Development Intern",
+          "url": "",
+          "startDate": "2017-12-01",
+          "endDate": "2018-02-01",
+          "summary": "",
+          "highlights": []
+        }
+      ],
+      "volunteer": [],
+      "education": [
+        {
+          "institution": "West Bengal University of Technology, Kolkata",
+          "url": "",
+          "area": "Computer Science and Engineering",
+          "studyType": "BTech",
+          "startDate": "2014-01-01",
+          "endDate": "2018-05-01",
+          "score": "",
+          "courses": []
+        },
+        {
+          "institution": "Berhampore J. N. Academy",
+          "url": "",
+          "area": "Science",
+          "studyType": "Higher Secondary and Secondary",
+          "startDate": "",
+          "endDate": "",
+          "score": "",
+          "courses": []
+        }
+      ],
+      "awards": [
+        {
+          "title": "Honors-Awards",
+          "date": "",
+          "awarder": "Frontend Development Contest",
+          "summary": "Secured 4th rank in Frontend Development Contest"
+        }
+      ],
+      "certifications": [
+        {
+          "name": "Codechef Certified",
+          "date": "",
+          "awarder": "Codechef",
+          "url": ""
+        }
+      ],
+      "publications": [],
+      "skills": [
+        {
+          "name": "Top Skills",
+          "level": "",
+          "keywords": [
+            "System Architecture",
+            "Solution Architecture",
+            "MERN Stack"
+          ]
+        },
+        {
+          "name": "Focus",
+          "level": "",
+          "keywords": [
+            "Architecture & System Design",
+            "React/Next.js",
+            "Node/TypeScript",
+            "Postgres/Mongo",
+            "Redis/queues",
+            "Docker/GitHub Actions",
+            "AWS/DO",
+            "Observability & SRE",
+            "Security",
+            "Twilio/SendGrid",
+            "RAG/KB features"
+          ]
+        }
+      ],
+      "languages": [
+        {
+          "language": "Bengali",
+          "fluency": ""
+        },
+        {
+          "language": "Hindi",
+          "fluency": ""
+        },
+        {
+          "language": "English",
+          "fluency": ""
+        }
+      ],
+      "interests": [],
+      "references": [],
+      "projects": [],
+      "meta": {
+        "canonical": "",
+        "version": "",
+        "lastModified": ""
+      }
+    },
+    "_parent": null,
+    "_user": "697e321254ac5dc7ef027b08",
+    "_id": "69908c2554ac5dc7ef027b3a",
+    "createdAt": "2026-02-14T14:52:21.230Z",
+    "updatedAt": "2026-02-14T14:52:21.230Z",
+    "__v": 0,
+    "_versions": [],
+    "_exportHistory": [],
+    "id": "69908c2554ac5dc7ef027b3a"
+  }
+}
+
+Once uploaded, call fetch all cv endpoint to get the cv details. 
+
+GET: https://cvcat-api-dev-phhm2.ondigitalocean.app/api/v1/cv/fetchAll
+
+{
+  "error": false,
+  "message": "CVs fetched successfully",
+  "data": [
+    {
+      "originalFile": {
+        "metadata": {
+          "uploadedAt": "2026-02-14T14:52:21.226Z",
+          "fileExtension": "pdf"
+        },
+        "name": "Profile.pdf"
+      },
+      "_id": "69908c2554ac5dc7ef027b3a",
+      "title": "Debojyoti Saha's CV",
+      "description": "System Architect & Full-Stack (React/Next.js, Node/TS) | 8+ years | Shipped 15+ 0→1 products | DevOps on AWS/DO | Scalable, secure systems",
+      "isDraft": true,
+      "cvType": "base",
+      "data": {
+        "basics": {
+          "name": "Debojyoti Saha",
+          "label": "",
+          "email": "dsahapersonal@gmail.com",
+          "phone": "9933050905",
+          "summary": "System Architect & Full-Stack (React/Next.js, Node/TS) | 8+ years | Shipped 15+ 0→1 products | DevOps on AWS/DO | Scalable, secure systems"
+        }
+      },
+      "_parent": null,
+      "_user": "697e321254ac5dc7ef027b08",
+      "createdAt": "2026-02-14T14:52:21.230Z",
+      "updatedAt": "2026-02-14T14:52:22.105Z",
+      "_versions": [],
+      "_exportHistory": [],
+      "id": "69908c2554ac5dc7ef027b3a"
+    },
+    {
+      "originalFile": {
+        "metadata": {
+          "uploadedAt": "2026-01-31T17:08:49.342Z",
+          "fileExtension": "pdf"
+        },
+        "name": "Profile (1).pdf"
+      },
+      "_id": "697e372154ac5dc7ef027b0c",
+      "title": "Debojyoti Saha's CV",
+      "description": "System Architect & Full-Stack (React/Next.js, Node/TS) | 8+ years | Shipped 15+ 0→1 products | DevOps on AWS/DO | Scalable, secure systems",
+      "isDraft": true,
+      "cvType": "base",
+      "data": {
+        "basics": {
+          "name": "Debojyoti Saha",
+          "label": "",
+          "email": "dsahapersonal@gmail.com",
+          "phone": "9933050905",
+          "summary": "System Architect & Full-Stack (React/Next.js, Node/TS) | 8+ years | Shipped 15+ 0→1 products | DevOps on AWS/DO | Scalable, secure systems"
+        }
+      },
+      "_parent": null,
+      "_user": "697e321254ac5dc7ef027b08",
+      "createdAt": "2026-01-31T17:08:49.349Z",
+      "updatedAt": "2026-01-31T17:08:50.200Z",
+      "_versions": [],
+      "_exportHistory": [],
+      "id": "697e372154ac5dc7ef027b0c"
+    }
+  ],
+  "pagination": {
+    "currentPage": 1,
+    "totalPages": 1,
+    "totalCount": 2,
+    "limit": 10,
+    "hasNextPage": false,
+    "hasPrevPage": false
+  }
+}

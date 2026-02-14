@@ -88,7 +88,7 @@ export default function TailorCVWizard() {
   };
   
   return (
-    <Layout isAuthenticated={true}>
+    <Layout>
       <div className="container max-w-3xl mx-auto py-10 px-4 sm:px-6">
         <h1 className="text-2xl font-bold mb-8 text-center">Create Tailored CV</h1>
         

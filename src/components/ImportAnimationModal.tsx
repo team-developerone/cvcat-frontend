@@ -1,37 +1,90 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
+import { importCV } from "@/services/api";
 
 interface ImportAnimationModalProps {
   isOpen: boolean;
   onClose: () => void;
   importType: "pdf" | "word" | "linkedin" | null;
+  file?: File | null;
 }
 
 export default function ImportAnimationModal({
   isOpen,
   onClose,
-  importType
+  importType,
+  file
 }: ImportAnimationModalProps) {
   const [, navigate] = useLocation();
-  const [currentStage, setCurrentStage] = useState<"uploading" | "scanning" | "analyzing" | "completed">("uploading");
+  const [currentStage, setCurrentStage] = useState<"uploading" | "scanning" | "analyzing" | "completed" | "error">("uploading");
   const [progress, setProgress] = useState(0);
+  const [errorMessage, setErrorMessage] = useState("");
+  const uploadStarted = useRef(false);
 
   // Reset state when modal opens
   useEffect(() => {
     if (isOpen) {
       setCurrentStage("uploading");
       setProgress(0);
+      setErrorMessage("");
+      uploadStarted.current = false;
     }
   }, [isOpen]);
 
-  // Animation progression
+  // Start real upload when file is provided
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || !file || uploadStarted.current) return;
+    uploadStarted.current = true;
+
+    // Simulate uploading stage briefly then do the real API call
+    setCurrentStage("uploading");
+    let progressInterval = setInterval(() => {
+      setProgress(prev => Math.min(prev + 2, 30));
+    }, 50);
+
+    importCV(file)
+      .then((res) => {
+        clearInterval(progressInterval);
+        setProgress(100);
+        setCurrentStage("scanning");
+
+        // Simulate scanning stage
+        let scanProgress = 0;
+        const scanInterval = setInterval(() => {
+          scanProgress += 5;
+          setProgress(scanProgress);
+          if (scanProgress >= 100) {
+            clearInterval(scanInterval);
+            setCurrentStage("analyzing");
+
+            // Simulate analyzing stage
+            let analyzeProgress = 0;
+            const analyzeInterval = setInterval(() => {
+              analyzeProgress += 5;
+              setProgress(analyzeProgress);
+              if (analyzeProgress >= 100) {
+                clearInterval(analyzeInterval);
+                setCurrentStage("completed");
+              }
+            }, 30);
+          }
+        }, 30);
+      })
+      .catch((err) => {
+        clearInterval(progressInterval);
+        setErrorMessage(err.message || "Import failed");
+        setCurrentStage("error");
+      });
+  }, [isOpen, file]);
+
+  // Simulated progress for LinkedIn (no file)
+  useEffect(() => {
+    if (!isOpen || file || importType !== "linkedin") return;
 
     let interval: NodeJS.Timeout;
-    
+
     if (currentStage === "uploading") {
       interval = setInterval(() => {
         setProgress(prev => {
@@ -71,9 +124,9 @@ export default function ImportAnimationModal({
         });
       }, 50);
     }
-    
+
     return () => clearInterval(interval);
-  }, [isOpen, currentStage]);
+  }, [isOpen, currentStage, file, importType]);
 
   // Proceed to CV Builder after animation completes
   useEffect(() => {
@@ -81,12 +134,11 @@ export default function ImportAnimationModal({
       const timer = setTimeout(() => {
         navigate('/cv-builder');
       }, 2000);
-      
+
       return () => clearTimeout(timer);
     }
   }, [currentStage, navigate]);
 
-  // Get stage title
   const getStageTitle = () => {
     switch (currentStage) {
       case "uploading":
@@ -97,12 +149,13 @@ export default function ImportAnimationModal({
         return "Analyzing Content";
       case "completed":
         return "Import Completed!";
+      case "error":
+        return "Import Failed";
       default:
         return "";
     }
   };
 
-  // Get stage description
   const getStageDescription = () => {
     switch (currentStage) {
       case "uploading":
@@ -113,28 +166,29 @@ export default function ImportAnimationModal({
         return "Our AI is analyzing your CV structure and content...";
       case "completed":
         return "Successfully imported! Redirecting to CV builder...";
+      case "error":
+        return errorMessage;
       default:
         return "";
     }
   };
 
-  // Animation for icon
   const getIconAnimation = () => {
     switch (currentStage) {
       case "uploading":
         return (
-          <motion.div 
+          <motion.div
             className="w-24 h-24 bg-[#DAA520]/10 rounded-full flex items-center justify-center mb-6"
-            animate={{ 
+            animate={{
               scale: [1, 1.05, 1],
               opacity: [0.8, 1, 0.8]
             }}
             transition={{ duration: 1.5, repeat: Infinity }}
           >
-            <motion.svg 
-              className="w-10 h-10 text-[#DAA520]" 
-              viewBox="0 0 24 24" 
-              fill="none" 
+            <motion.svg
+              className="w-10 h-10 text-[#DAA520]"
+              viewBox="0 0 24 24"
+              fill="none"
               xmlns="http://www.w3.org/2000/svg"
               animate={{ y: [0, -5, 0] }}
               transition={{ duration: 1.5, repeat: Infinity }}
@@ -147,14 +201,14 @@ export default function ImportAnimationModal({
         );
       case "scanning":
         return (
-          <motion.div 
+          <motion.div
             className="w-24 h-24 bg-[#DAA520]/10 rounded-full flex items-center justify-center mb-6 relative overflow-hidden"
-            animate={{ 
+            animate={{
               boxShadow: ["0 0 0 0 rgba(218, 165, 32, 0)", "0 0 10px 3px rgba(218, 165, 32, 0.3)", "0 0 0 0 rgba(218, 165, 32, 0)"]
             }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            <motion.div 
+            <motion.div
               className="absolute top-0 left-0 w-full h-2 bg-[#DAA520]/40"
               animate={{ y: ["0%", "500%", "0%"] }}
               transition={{ duration: 2, repeat: Infinity }}
@@ -167,18 +221,18 @@ export default function ImportAnimationModal({
         );
       case "analyzing":
         return (
-          <motion.div 
+          <motion.div
             className="w-24 h-24 bg-[#DAA520]/10 rounded-full flex items-center justify-center mb-6"
             animate={{ rotate: [0, 5, 0, -5, 0] }}
             transition={{ duration: 4, repeat: Infinity }}
           >
             <motion.div className="relative">
-              <motion.div 
+              <motion.div
                 className="absolute w-12 h-12 border-t-2 border-r-2 border-[#DAA520] rounded-full"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
               />
-              <motion.div 
+              <motion.div
                 className="absolute w-8 h-8 border-t-2 border-l-2 border-black rounded-full"
                 animate={{ rotate: -360 }}
                 transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
@@ -191,10 +245,10 @@ export default function ImportAnimationModal({
         );
       case "completed":
         return (
-          <motion.div 
+          <motion.div
             className="w-24 h-24 bg-[#DAA520]/10 rounded-full flex items-center justify-center mb-6"
             initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ 
+            animate={{
               scale: 1,
               opacity: 1
             }}
@@ -206,21 +260,21 @@ export default function ImportAnimationModal({
               transition={{ duration: 0.5, delay: 0.2 }}
             >
               <svg className="w-12 h-12 text-[#DAA520]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <motion.path 
+                <motion.path
                   d="M7 13L10 16L17 9"
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
                   strokeLinejoin="round"
                   initial={{ pathLength: 0 }}
                   animate={{ pathLength: 1 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
                 />
-                <motion.path 
-                  d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
+                <motion.path
+                  d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
                   strokeLinejoin="round"
                   initial={{ pathLength: 0 }}
                   animate={{ pathLength: 1 }}
@@ -228,6 +282,21 @@ export default function ImportAnimationModal({
                 />
               </svg>
             </motion.div>
+          </motion.div>
+        );
+      case "error":
+        return (
+          <motion.div
+            className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mb-6"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <svg className="w-12 h-12 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="15" y1="9" x2="9" y2="15" />
+              <line x1="9" y1="9" x2="15" y2="15" />
+            </svg>
           </motion.div>
         );
       default:
@@ -245,9 +314,9 @@ export default function ImportAnimationModal({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
+            onClick={currentStage === "error" ? onClose : undefined}
           />
-          
+
           {/* Modal */}
           <motion.div
             className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-xl p-8 w-[90%] max-w-md z-50"
@@ -258,19 +327,21 @@ export default function ImportAnimationModal({
           >
             <div className="flex flex-col items-center text-center">
               {getIconAnimation()}
-              
+
               <h2 className="text-2xl font-bold mb-2">{getStageTitle()}</h2>
               <p className="text-gray-600 mb-6">{getStageDescription()}</p>
-              
-              <div className="w-full bg-gray-100 rounded-full h-2 mb-4">
-                <motion.div 
-                  className="h-full rounded-full bg-[#DAA520]"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progress}%` }}
-                  transition={{ type: "tween" }}
-                />
-              </div>
-              
+
+              {currentStage !== "error" && (
+                <div className="w-full bg-gray-100 rounded-full h-2 mb-4">
+                  <motion.div
+                    className="h-full rounded-full bg-[#DAA520]"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progress}%` }}
+                    transition={{ type: "tween" }}
+                  />
+                </div>
+              )}
+
               {currentStage === "completed" ? (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
@@ -279,9 +350,17 @@ export default function ImportAnimationModal({
                 >
                   <p className="text-sm text-gray-500">Redirecting to CV builder...</p>
                 </motion.div>
+              ) : currentStage === "error" ? (
+                <Button
+                  variant="outline"
+                  className="text-sm"
+                  onClick={onClose}
+                >
+                  Close
+                </Button>
               ) : (
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="text-sm"
                   onClick={onClose}
                 >

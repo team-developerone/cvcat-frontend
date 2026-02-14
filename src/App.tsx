@@ -13,6 +13,8 @@ import TeamPage from "@/pages/TeamPage";
 import LogoPage from "@/pages/LogoPage";
 import ChatBot from "@/components/ChatBot";
 import { CVProvider } from "@/lib/context";
+import { AuthProvider } from "@/lib/auth-context";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 function Router() {
   return (
@@ -23,28 +25,36 @@ function Router() {
         <Route path="/team" component={TeamPage} />
         <Route path="/logo" component={LogoPage} />
         <Route path="/import-selection">
-          <CVProvider>
-            <ImportSelection />
-          </CVProvider>
+          <ProtectedRoute>
+            <CVProvider>
+              <ImportSelection />
+            </CVProvider>
+          </ProtectedRoute>
         </Route>
         <Route path="/cv-builder">
-          <CVProvider>
-            <CVBuilder />
-          </CVProvider>
+          <ProtectedRoute>
+            <CVProvider>
+              <CVBuilder />
+            </CVProvider>
+          </ProtectedRoute>
         </Route>
         <Route path="/cv-management">
-          <CVProvider>
-            <CVManagement />
-          </CVProvider>
+          <ProtectedRoute>
+            <CVProvider>
+              <CVManagement />
+            </CVProvider>
+          </ProtectedRoute>
         </Route>
         <Route path="/tailor-cv">
-          <CVProvider>
-            <TailorCVWizard />
-          </CVProvider>
+          <ProtectedRoute>
+            <CVProvider>
+              <TailorCVWizard />
+            </CVProvider>
+          </ProtectedRoute>
         </Route>
         <Route component={NotFound} />
       </Switch>
-      
+
       {/* Chat bot is now visible on all routes */}
       <ChatBot />
     </>
@@ -53,10 +63,12 @@ function Router() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <Router />
-      <Toaster />
-    </QueryClientProvider>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <Router />
+        <Toaster />
+      </QueryClientProvider>
+    </AuthProvider>
   );
 }
 

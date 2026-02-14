@@ -112,7 +112,7 @@ export default function CVBuilder() {
   ];
   
   return (
-    <Layout isAuthenticated={true}>
+    <Layout>
       <div className="bg-gray-50 min-h-screen">
         <div className="max-w-screen-2xl mx-auto">
           <div className="p-4 md:p-6">

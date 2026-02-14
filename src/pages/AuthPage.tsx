@@ -1,15 +1,24 @@
 import Layout from "@/components/Layout";
 import AuthForms from "@/components/AuthForms";
-import { useLocation } from "wouter";
 import { motion } from "framer-motion";
 import Logo from "@/components/Logo";
+import { useAuth } from "@/lib/auth-context";
+import { Redirect } from "wouter";
 
 export default function AuthPage() {
-  const [, navigate] = useLocation();
-  
-  const handleLoginSuccess = () => {
-    navigate('/import-selection');
-  };
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-[#DAA520] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (isAuthenticated) {
+    return <Redirect to="/cv-management" />;
+  }
 
   return (
     <Layout showFooter={false}>
@@ -18,10 +27,10 @@ export default function AuthPage() {
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
           {/* Top left circle */}
           <div className="absolute -top-20 -left-20 w-72 h-72 bg-[#DAA520]/5 rounded-full"></div>
-          
+
           {/* Bottom right circle */}
           <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-[#DAA520]/5 rounded-full"></div>
-          
+
           {/* Center pattern */}
           <svg className="absolute w-full h-full opacity-[0.02]" viewBox="0 0 100 100">
             <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
@@ -29,7 +38,7 @@ export default function AuthPage() {
             </pattern>
             <rect width="100%" height="100%" fill="url(#grid)" />
           </svg>
-          
+
           {/* Diagonal lines */}
           <div className="absolute top-0 left-0 w-full h-full">
             <svg className="w-full h-full opacity-[0.03]" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -39,11 +48,11 @@ export default function AuthPage() {
             </svg>
           </div>
         </div>
-        
+
         {/* Left side - Brand showcase */}
         <div className="hidden lg:flex lg:w-5/12 bg-black items-center justify-center p-8 relative overflow-hidden">
           <div className="relative z-10 text-center">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
@@ -51,8 +60,8 @@ export default function AuthPage() {
             >
               <Logo size="lg" darkMode={true} />
             </motion.div>
-            
-            <motion.h2 
+
+            <motion.h2
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -60,7 +69,7 @@ export default function AuthPage() {
             >
               Create, manage, and perfect <br/> your professional CV
             </motion.h2>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -69,7 +78,7 @@ export default function AuthPage() {
             >
               <p>Unlock AI-powered CV building, smart customization, and personalized recommendations to make your application stand out.</p>
             </motion.div>
-            
+
             {/* Decorative sparkles */}
             <div className="absolute top-20 left-10 opacity-20">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
@@ -82,13 +91,13 @@ export default function AuthPage() {
               </svg>
             </div>
           </div>
-          
+
           {/* Diagonal divider */}
           <div className="absolute top-0 right-0 h-full w-20 overflow-hidden">
             <div className="w-40 h-full bg-gradient-to-l from-white/5 to-transparent transform rotate-6 translate-x-10"></div>
           </div>
         </div>
-        
+
         {/* Right side - Auth forms */}
         <div className="w-full lg:w-7/12 flex items-center justify-center p-4 md:p-8 lg:p-12">
           <motion.div
@@ -97,7 +106,7 @@ export default function AuthPage() {
             transition={{ duration: 0.6 }}
             className="w-full max-w-md"
           >
-            <AuthForms onLoginSuccess={handleLoginSuccess} />
+            <AuthForms />
           </motion.div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/Logo";
+import { useAuth } from "@/lib/auth-context";
 
 interface NavbarProps {
   isAuthenticated?: boolean;
@@ -8,6 +9,7 @@ interface NavbarProps {
 
 export default function Navbar({ isAuthenticated = false }: NavbarProps) {
   const [location, navigate] = useLocation();
+  const { user, logout } = useAuth();
 
   const goTo = (path: string) => {
     navigate(path);
@@ -20,23 +22,31 @@ export default function Navbar({ isAuthenticated = false }: NavbarProps) {
     }
   };
 
+  const handleLogout = async () => {
+    await logout();
+    navigate("/");
+  };
+
+  const displayName = user
+    ? `${user.name.first || ""} ${user.name.last || ""}`.trim() || user.email
+    : "My Account";
+
   return (
     <nav className="bg-white py-3 px-4 md:px-6 border-b border-gray-100 flex justify-between items-center">
       <div className="flex items-center">
-        <div 
+        <div
           onClick={() => goTo('/')}
           className="flex items-center cursor-pointer"
         >
-          {/* Modern Sleek Cat Logo */}
           <Logo size="md" />
         </div>
       </div>
-      
+
       {!isAuthenticated ? (
         // Public navbar
         <div className="flex items-center">
           <div className="hidden md:flex space-x-6 mr-6">
-            <div 
+            <div
               onClick={() => scrollToSection('features')}
               className="text-sm text-gray-700 hover:text-[#DAA520] transition-all cursor-pointer"
             >
@@ -65,9 +75,9 @@ export default function Navbar({ isAuthenticated = false }: NavbarProps) {
               FAQ
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-3">
-            <div 
+            <div
               onClick={() => goTo('/auth')}
               className="text-sm text-gray-700 font-medium hover:text-[#DAA520] cursor-pointer"
             >
@@ -99,16 +109,28 @@ export default function Navbar({ isAuthenticated = false }: NavbarProps) {
               Save & Exit
             </Button>
           ) : null}
-          
-          <div className="flex items-center space-x-2 cursor-pointer">
+
+          <div className="flex items-center space-x-2">
             <div className="w-8 h-8 rounded-full bg-[#DAA520]/10 border border-[#DAA520]/30 flex items-center justify-center">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M20 21V19C20 16.7909 18.2091 15 16 15H8C5.79086 15 4 16.7909 4 19V21" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <span className="hidden md:inline text-sm font-medium">My Account</span>
+            <span className="hidden md:inline text-sm font-medium">{displayName}</span>
           </div>
+
+          <button
+            onClick={handleLogout}
+            className="text-sm text-gray-500 hover:text-red-500 transition-all"
+            title="Sign out"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+          </button>
         </div>
       )}
     </nav>

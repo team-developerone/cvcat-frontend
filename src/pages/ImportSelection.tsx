@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
@@ -11,35 +11,55 @@ export default function ImportSelection() {
   const [showImportOptions, setShowImportOptions] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [importType, setImportType] = useState<"pdf" | "word" | "linkedin" | null>(null);
-  
-  // Toggle import options
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const toggleImportOptions = () => {
     setShowImportOptions(!showImportOptions);
   };
-  
-  // Go to CV builder
+
   const goToCVBuilder = () => {
     navigate('/cv-builder');
   };
 
-  // Start import process with animation
-  const startImport = (type: "pdf" | "word" | "linkedin") => {
+  const handleFileSelect = (type: "pdf" | "word") => {
     setImportType(type);
+    if (fileInputRef.current) {
+      fileInputRef.current.accept = type === "pdf"
+        ? ".pdf"
+        : ".doc,.docx";
+      fileInputRef.current.click();
+    }
+  };
+
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setIsModalOpen(true);
+    }
+    // Reset input so the same file can be re-selected
+    e.target.value = "";
+  };
+
+  const startLinkedInImport = () => {
+    setImportType("linkedin");
+    setSelectedFile(null);
     setIsModalOpen(true);
   };
-  
-  // Close modal
+
   const closeModal = () => {
     setIsModalOpen(false);
+    setSelectedFile(null);
   };
-  
+
   return (
-    <Layout isAuthenticated={true}>
+    <Layout>
       <div className="flex-1 flex flex-col items-center justify-center p-4">
         <div className="max-w-lg w-full text-center">
           <h1 className="text-3xl font-bold mb-6">Let's Get Started</h1>
           <p className="text-gray-600 mb-10">Would you like to import an existing CV or create a new one from scratch?</p>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <motion.div
               whileHover={{ scale: 1.02 }}
@@ -58,7 +78,7 @@ export default function ImportSelection() {
                 <p className="text-gray-600">Start from scratch with our easy-to-use CV builder</p>
               </Card>
             </motion.div>
-            
+
             <motion.div
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -77,7 +97,7 @@ export default function ImportSelection() {
               </Card>
             </motion.div>
           </div>
-          
+
           {showImportOptions && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -86,13 +106,13 @@ export default function ImportSelection() {
             >
               <Card className="mt-8 border border-gray-200 rounded-lg p-6">
                 <h3 className="text-lg font-medium mb-4">Choose Import Method</h3>
-                
+
                 <div className="space-y-4">
                   <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
                     <Button
                       variant="outline"
                       className="w-full flex items-center justify-center py-6 px-4 border border-gray-300 rounded-lg hover:border-[#DAA520]/60 transition-all"
-                      onClick={() => startImport("pdf")}
+                      onClick={() => handleFileSelect("pdf")}
                     >
                       <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mr-3">
                         <svg className="w-5 h-5 text-red-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -106,12 +126,12 @@ export default function ImportSelection() {
                       </div>
                     </Button>
                   </motion.div>
-                  
+
                   <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
                     <Button
                       variant="outline"
                       className="w-full flex items-center justify-center py-6 px-4 border border-gray-300 rounded-lg hover:border-[#DAA520]/60 transition-all"
-                      onClick={() => startImport("word")}
+                      onClick={() => handleFileSelect("word")}
                     >
                       <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
                         <svg className="w-5 h-5 text-blue-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -125,12 +145,12 @@ export default function ImportSelection() {
                       </div>
                     </Button>
                   </motion.div>
-                  
+
                   <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
                     <Button
                       variant="outline"
                       className="w-full flex items-center justify-center py-6 px-4 border border-gray-300 rounded-lg hover:border-[#DAA520]/60 transition-all"
-                      onClick={() => startImport("linkedin")}
+                      onClick={startLinkedInImport}
                     >
                       <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
                         <svg className="w-5 h-5 text-blue-700" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -149,12 +169,21 @@ export default function ImportSelection() {
           )}
         </div>
       </div>
-      
+
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        className="hidden"
+        onChange={onFileChange}
+      />
+
       {/* Import Animation Modal */}
-      <ImportAnimationModal 
+      <ImportAnimationModal
         isOpen={isModalOpen}
         onClose={closeModal}
         importType={importType}
+        file={selectedFile}
       />
     </Layout>
   );
