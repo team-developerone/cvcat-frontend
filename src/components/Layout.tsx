@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { Link } from "wouter";
 import Navbar from "./Navbar";
 import { useAuth } from "@/lib/auth-context";
 
@@ -53,9 +54,8 @@ export default function Layout({
             <div>
               <h4 className="font-semibold text-lg mb-4">Legal</h4>
               <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 hover:text-[#DAA520] transition-all">Privacy Policy</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-[#DAA520] transition-all">Terms of Service</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-[#DAA520] transition-all">Cookie Policy</a></li>
+                <li><Link href="/privacy" className="text-gray-600 hover:text-[#DAA520] transition-all">Privacy Policy</Link></li>
+                <li><Link href="/terms" className="text-gray-600 hover:text-[#DAA520] transition-all">Terms of Service</Link></li>
               </ul>
             </div>
           </div>

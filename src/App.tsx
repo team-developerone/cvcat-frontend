@@ -11,6 +11,8 @@ import CVManagement from "@/pages/CVManagement";
 import TailorCVWizard from "@/pages/TailorCVWizard";
 import TeamPage from "@/pages/TeamPage";
 import LogoPage from "@/pages/LogoPage";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import TermsOfService from "@/pages/TermsOfService";
 import ChatBot from "@/components/ChatBot";
 import { CVProvider } from "@/lib/context";
 import { AuthProvider } from "@/lib/auth-context";
@@ -24,6 +26,8 @@ function Router() {
         <Route path="/auth" component={AuthPage} />
         <Route path="/team" component={TeamPage} />
         <Route path="/logo" component={LogoPage} />
+        <Route path="/privacy" component={PrivacyPolicy} />
+        <Route path="/terms" component={TermsOfService} />
         <Route path="/import-selection">
           <ProtectedRoute>
             <CVProvider>
