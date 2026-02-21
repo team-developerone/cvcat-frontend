@@ -170,10 +170,12 @@ export function backendCVToFrontendCV(bcv: BackendCV): CV {
       description: e.score ? `GPA: ${e.score}` : undefined,
     })),
     skills: (bcv.data?.skills || []).flatMap((s) => {
-      const items: string[] = [];
-      if (s.name) items.push(s.name);
-      if (s.keywords) items.push(...s.keywords);
-      return items;
+      // If the skill group has keywords, use them (these are the actual skills).
+      // Only use the group name as a skill if there are no keywords (single-skill entry).
+      if (s.keywords && s.keywords.length > 0) {
+        return s.keywords;
+      }
+      return s.name ? [s.name] : [];
     }),
     projects: (bcv.data?.projects || []).map((p, i) => ({
       id: `proj-${i}`,

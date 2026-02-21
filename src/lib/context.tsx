@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { CV, ChatMessage, backendCVToFrontendCV, frontendCVToBackendData } from "./types";
-import { fetchAllCVs, updateCV as apiUpdateCV, createCV as apiCreateCV } from "@/services/api";
+import { fetchAllCVs, getCVDetails, updateCV as apiUpdateCV, createCV as apiCreateCV } from "@/services/api";
 
 interface CVContextType {
   mainCV: CV | null;
@@ -12,6 +12,7 @@ interface CVContextType {
   messages: ChatMessage[];
   addMessage: (message: string, isBot: boolean) => void;
   refreshCVs: () => Promise<void>;
+  loadCVById: (id: string) => Promise<CV | null>;
   saveCV: (cv: CV) => Promise<CV>;
   savingCV: boolean;
   cvsLoading: boolean;
@@ -48,10 +49,23 @@ export function CVProvider({ children }: { children: ReactNode }) {
     setCvsLoading(true);
     try {
       const res = await fetchAllCVs({ limit: 50 });
-      const allCVs = res.data.map(backendCVToFrontendCV);
 
-      const base = allCVs.find(cv => !cv.isTailored) || null;
-      const tailored = allCVs.filter(cv => cv.isTailored);
+      // fetchAll may return summary data without full nested sections.
+      // Fetch full details for each CV to ensure all data is available.
+      const detailedCVs = await Promise.all(
+        res.data.map(async (cv) => {
+          try {
+            const detail = await getCVDetails(cv._id);
+            return backendCVToFrontendCV(detail.data);
+          } catch {
+            // Fallback to list data if detail fetch fails
+            return backendCVToFrontendCV(cv);
+          }
+        })
+      );
+
+      const base = detailedCVs.find(cv => !cv.isTailored) || null;
+      const tailored = detailedCVs.filter(cv => cv.isTailored);
 
       setMainCV(base);
       setTailoredCVs(tailored);
@@ -61,6 +75,22 @@ export function CVProvider({ children }: { children: ReactNode }) {
       setTailoredCVs([]);
     } finally {
       setCvsLoading(false);
+    }
+  }, []);
+
+  const loadCVById = useCallback(async (id: string): Promise<CV | null> => {
+    try {
+      const res = await getCVDetails(id);
+      const cv = backendCVToFrontendCV(res.data);
+      // Set it as the active CV in context
+      if (cv.isTailored) {
+        setCurrentCV(cv);
+      } else {
+        setMainCV(cv);
+      }
+      return cv;
+    } catch {
+      return null;
     }
   }, []);
 
@@ -123,6 +153,7 @@ export function CVProvider({ children }: { children: ReactNode }) {
         messages,
         addMessage,
         refreshCVs,
+        loadCVById,
         saveCV,
         savingCV,
         cvsLoading,

@@ -25,13 +25,22 @@ export type SectionType =
   | 'custom';
 
 export default function CVBuilder() {
-  const { mainCV, saveCV, savingCV } = useCV();
+  const { mainCV, saveCV, savingCV, loadCVById } = useCV();
   const [, navigate] = useLocation();
   const [activeTemplate, setActiveTemplate] = useState("modern");
   const [activeColor, setActiveColor] = useState("golden");
   const [activeTab, setActiveTab] = useState<"edit" | "preview" | "chat">("edit");
   const [activeSection, setActiveSection] = useState<SectionType>("personal");
   const [isPDFModalOpen, setIsPDFModalOpen] = useState(false);
+
+  // Load specific CV by ID from query param
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const cvId = params.get("id");
+    if (cvId) {
+      loadCVById(cvId);
+    }
+  }, [loadCVById]);
 
   const handleSave = useCallback(async () => {
     if (!mainCV) return;
