@@ -33,6 +33,7 @@ export interface WorkExperience {
   startDate: string;
   endDate: string;
   description: string;
+  highlights?: string[];
 }
 
 export interface Education {
@@ -158,7 +159,8 @@ export function backendCVToFrontendCV(bcv: BackendCV): CV {
       position: w.position || "",
       startDate: w.startDate || "",
       endDate: w.endDate || "",
-      description: w.summary || (w.highlights || []).join("\n"),
+      description: w.summary || "",
+      highlights: w.highlights || [],
     })),
     education: (bcv.data?.education || []).map((e, i) => ({
       id: `edu-${i}`,
@@ -173,6 +175,15 @@ export function backendCVToFrontendCV(bcv: BackendCV): CV {
       if (s.keywords) items.push(...s.keywords);
       return items;
     }),
+    projects: (bcv.data?.projects || []).map((p, i) => ({
+      id: `proj-${i}`,
+      title: p.name || "",
+      description: p.description || "",
+      technologies: p.keywords || [],
+      url: p.url,
+      startDate: p.startDate,
+      endDate: p.endDate,
+    })),
     certifications: (bcv.data?.certificates || []).map((c, i) => ({
       id: `cert-${i}`,
       name: c.name || "",
@@ -200,12 +211,38 @@ export function backendCVToFrontendCV(bcv: BackendCV): CV {
       company: "",
       relationship: r.reference || "",
     })),
-    projects: [],
-    customSections: [],
+    customSections: (bcv.data?.custom || []).map((cs, i) => ({
+      id: `custom-${i}`,
+      title: cs.sectionTitle || "",
+      items: (cs.items || []).map((item, j) => ({
+        id: `custom-${i}-item-${j}`,
+        title: item.title || "",
+        subtitle: item.subtitle,
+        date: item.date,
+        description: item.description,
+      })),
+    })),
   };
 }
 
 export function frontendCVToBackendData(cv: CV): BackendCV["data"] {
+  // Parse the combined degree string back into studyType and area
+  // Format is "studyType in area" (e.g. "Bachelor's in Computer Science")
+  const parseEducationDegree = (degree: string) => {
+    const match = degree.match(/^(.+?)\s+in\s+(.+)$/);
+    if (match) {
+      return { studyType: match[1], area: match[2] };
+    }
+    return { studyType: degree, area: "" };
+  };
+
+  // Group skills into a single skill group with all skills as keywords
+  // This preserves them as a flat list while using the JSON Resume structure
+  const skillsData: BackendCV["data"]["skills"] =
+    cv.skills.length > 0
+      ? [{ name: "Skills", keywords: cv.skills }]
+      : [];
+
   return {
     basics: {
       name: cv.personalInfo.fullName,
@@ -223,16 +260,28 @@ export function frontendCVToBackendData(cv: CV): BackendCV["data"] {
       startDate: e.startDate,
       endDate: e.endDate,
       summary: e.description,
+      highlights: e.highlights || [],
     })),
-    education: cv.education.map((e) => ({
-      institution: e.institution,
-      studyType: e.degree,
-      area: "",
-      startDate: e.period.split(" - ")[0] || "",
-      endDate: e.period.split(" - ")[1] || "",
-    })),
-    skills: cv.skills.map((s) => ({
-      name: s,
+    education: cv.education.map((e) => {
+      const { studyType, area } = parseEducationDegree(e.degree);
+      const periodParts = e.period.split(" - ");
+      return {
+        institution: e.institution,
+        studyType,
+        area,
+        startDate: periodParts[0]?.trim() || "",
+        endDate: periodParts[1]?.trim() || "",
+        score: e.description?.replace(/^GPA:\s*/, "") || undefined,
+      };
+    }),
+    skills: skillsData,
+    projects: (cv.projects || []).map((p) => ({
+      name: p.title,
+      description: p.description,
+      keywords: p.technologies,
+      url: p.url,
+      startDate: p.startDate,
+      endDate: p.endDate,
     })),
     certificates: (cv.certifications || []).map((c) => ({
       name: c.name,
@@ -254,6 +303,15 @@ export function frontendCVToBackendData(cv: CV): BackendCV["data"] {
     references: (cv.references || []).map((r) => ({
       name: r.name,
       reference: r.relationship,
+    })),
+    custom: (cv.customSections || []).map((cs) => ({
+      sectionTitle: cs.title,
+      items: cs.items.map((item) => ({
+        title: item.title,
+        subtitle: item.subtitle,
+        date: item.date,
+        description: item.description,
+      })),
     })),
   };
 }
