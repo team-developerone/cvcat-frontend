@@ -276,6 +276,19 @@ export async function fetchAllCVs(params?: {
   );
 }
 
+export async function fetchLatestCV(): Promise<BackendCV | null> {
+  try {
+    const res = await fetchAllCVs({ 
+      limit: 1, 
+      sortBy: 'updatedAt', 
+      sortOrder: 'desc' 
+    });
+    return res.data.length > 0 ? res.data[0] : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function getCVDetails(
   id: string
 ): Promise<ApiResponse<BackendCV>> {

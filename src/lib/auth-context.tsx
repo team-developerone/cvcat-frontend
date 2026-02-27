@@ -3,7 +3,7 @@ import { signInWithPopup, signOut } from "firebase/auth";
 import { auth, googleProvider } from "./firebase";
 import {
   loginWithFirebaseToken,
-  fetchAllCVs,
+  fetchLatestCV,
   getStoredToken,
   getStoredUser,
   storeAuth,
@@ -39,7 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(storedUser);
 
       // Validate token by making a lightweight API call
-      fetchAllCVs({ limit: 1 })
+      fetchLatestCV()
         .then(() => {
           // Token is valid
         })

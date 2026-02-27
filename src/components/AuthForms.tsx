@@ -4,7 +4,7 @@ import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import LogoMinimal from "@/components/LogoMinimal";
 import { useAuth } from "@/lib/auth-context";
-import { fetchAllCVs } from "@/services/api";
+import { fetchLatestCV } from "@/services/api";
 import { toast } from "@/hooks/use-toast";
 
 export default function AuthForms() {
@@ -24,8 +24,8 @@ export default function AuthForms() {
 
       // Check if returning user has CVs
       try {
-        const res = await fetchAllCVs({ limit: 1 });
-        if (res.data.length === 0) {
+        const latestCV = await fetchLatestCV();
+        if (!latestCV) {
           navigate("/import-selection");
         } else {
           navigate("/cv-management");

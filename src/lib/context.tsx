@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { CV, ChatMessage, backendCVToFrontendCV, frontendCVToBackendData } from "./types";
-import { fetchAllCVs, getCVDetails, updateCV as apiUpdateCV, createCV as apiCreateCV } from "@/services/api";
+import { fetchLatestCV, getCVDetails, updateCV as apiUpdateCV, createCV as apiCreateCV } from "@/services/api";
 
 interface CVContextType {
   mainCV: CV | null;
@@ -48,27 +48,40 @@ export function CVProvider({ children }: { children: ReactNode }) {
   const refreshCVs = useCallback(async () => {
     setCvsLoading(true);
     try {
-      const res = await fetchAllCVs({ limit: 50 });
+      const latestCV = await fetchLatestCV();
 
-      // fetchAll may return summary data without full nested sections.
-      // Fetch full details for each CV to ensure all data is available.
-      const detailedCVs = await Promise.all(
-        res.data.map(async (cv) => {
-          try {
-            const detail = await getCVDetails(cv._id);
-            return backendCVToFrontendCV(detail.data);
-          } catch {
-            // Fallback to list data if detail fetch fails
-            return backendCVToFrontendCV(cv);
+      if (latestCV) {
+        // Fetch full details for the latest CV
+        try {
+          const detail = await getCVDetails(latestCV._id);
+          const cv = backendCVToFrontendCV(detail.data);
+          
+          // Set as main CV if it's not tailored, otherwise as current CV
+          if (cv.isTailored) {
+            setCurrentCV(cv);
+            setTailoredCVs([cv]);
+            setMainCV(null);
+          } else {
+            setMainCV(cv);
+            setTailoredCVs([]);
           }
-        })
-      );
-
-      const base = detailedCVs.find(cv => !cv.isTailored) || null;
-      const tailored = detailedCVs.filter(cv => cv.isTailored);
-
-      setMainCV(base);
-      setTailoredCVs(tailored);
+        } catch {
+          // Fallback to list data if detail fetch fails
+          const cv = backendCVToFrontendCV(latestCV);
+          if (cv.isTailored) {
+            setCurrentCV(cv);
+            setTailoredCVs([cv]);
+            setMainCV(null);
+          } else {
+            setMainCV(cv);
+            setTailoredCVs([]);
+          }
+        }
+      } else {
+        // No CVs found
+        setMainCV(null);
+        setTailoredCVs([]);
+      }
     } catch {
       // If fetch fails (e.g. no CVs yet), leave state empty
       setMainCV(null);
