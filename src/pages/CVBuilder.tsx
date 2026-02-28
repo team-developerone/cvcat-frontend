@@ -12,14 +12,17 @@ import { useLocation } from "wouter";
 import { toast } from "@/hooks/use-toast";
 
 // Available section types
-export type SectionType = 
+export type SectionType =
   | 'personal'
   | 'experience'
+  | 'volunteer'
   | 'education'
   | 'skills'
   | 'projects'
   | 'certifications'
+  | 'awards'
   | 'languages'
+  | 'interests'
   | 'references'
   | 'publications'
   | 'custom';
@@ -152,11 +155,14 @@ export default function CVBuilder() {
   const sections = [
     { id: 'personal', name: 'Personal Info', icon: 'user' },
     { id: 'experience', name: 'Experience', icon: 'briefcase' },
+    { id: 'volunteer', name: 'Volunteer', icon: 'heart' },
     { id: 'education', name: 'Education', icon: 'graduation-cap' },
     { id: 'skills', name: 'Skills', icon: 'star' },
     { id: 'projects', name: 'Projects', icon: 'code' },
     { id: 'certifications', name: 'Certifications', icon: 'certificate' },
+    { id: 'awards', name: 'Awards', icon: 'trophy' },
     { id: 'languages', name: 'Languages', icon: 'language' },
+    { id: 'interests', name: 'Interests', icon: 'lightbulb' },
     { id: 'references', name: 'References', icon: 'users' },
     { id: 'publications', name: 'Publications', icon: 'file-text' },
     { id: 'custom', name: 'Custom Sections', icon: 'plus-circle' }
@@ -346,26 +352,32 @@ export default function CVBuilder() {
                                         {mainCV.education.map((edu, i) => (
                                           <div key={i} className="text-sm">
                                             <div className="flex justify-between mb-1">
-                                              <p className="font-medium">{edu.degree}</p>
-                                              <p className="text-gray-500">{edu.period}</p>
+                                              <p className="font-medium">{[edu.studyType, edu.area].filter(Boolean).join(' in ')}</p>
+                                              <p className="text-gray-500">{[edu.startDate, edu.endDate].filter(Boolean).join(' - ')}</p>
                                             </div>
                                             <p className="text-gray-600">{edu.institution}</p>
+                                            {edu.score && <p className="text-gray-500 text-xs">GPA: {edu.score}</p>}
                                           </div>
                                         ))}
                                       </div>
                                     </div>
-                                    
+
                                     {/* Skills */}
                                     <div>
                                       <h3 className="font-semibold text-gray-800 mb-2 flex items-center">
                                         <span className="w-6 h-0.5 bg-[#DAA520] mr-2"></span>
                                         Skills
                                       </h3>
-                                      <div className="flex flex-wrap gap-2">
-                                        {mainCV.skills.map((skill, i) => (
-                                          <span key={i} className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded-md">
-                                            {skill}
-                                          </span>
+                                      <div className="space-y-2">
+                                        {mainCV.skills.map((group, i) => (
+                                          <div key={i}>
+                                            <p className="text-xs font-medium text-gray-700 mb-1">{group.name}{group.level ? ` (${group.level})` : ''}</p>
+                                            <div className="flex flex-wrap gap-1">
+                                              {group.keywords.map((kw, j) => (
+                                                <span key={j} className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded-md">{kw}</span>
+                                              ))}
+                                            </div>
+                                          </div>
                                         ))}
                                       </div>
                                     </div>
@@ -483,9 +495,80 @@ export default function CVBuilder() {
                                         </div>
                                       </div>
                                     )}
-                                    
+
+                                    {/* Volunteer */}
+                                    {mainCV.volunteer && mainCV.volunteer.length > 0 && (
+                                      <div>
+                                        <h3 className="font-semibold text-gray-800 mb-2 flex items-center">
+                                          <span className="w-6 h-0.5 bg-[#DAA520] mr-2"></span>
+                                          Volunteer Experience
+                                        </h3>
+                                        <div className="space-y-3">
+                                          {mainCV.volunteer.map((vol, i) => (
+                                            <div key={i} className="text-sm">
+                                              <div className="flex justify-between mb-1">
+                                                <p className="font-medium">{vol.position}</p>
+                                                <p className="text-gray-500">{vol.startDate} - {vol.endDate}</p>
+                                              </div>
+                                              <p className="text-gray-600 mb-1">{vol.organization}</p>
+                                              <p className="text-gray-600 text-xs">{vol.summary}</p>
+                                              {vol.highlights && vol.highlights.length > 0 && (
+                                                <ul className="list-disc list-inside text-xs text-gray-600 mt-1">
+                                                  {vol.highlights.map((h, j) => <li key={j}>{h}</li>)}
+                                                </ul>
+                                              )}
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
+
+                                    {/* Awards */}
+                                    {mainCV.awards && mainCV.awards.length > 0 && (
+                                      <div>
+                                        <h3 className="font-semibold text-gray-800 mb-2 flex items-center">
+                                          <span className="w-6 h-0.5 bg-[#DAA520] mr-2"></span>
+                                          Awards
+                                        </h3>
+                                        <div className="space-y-2">
+                                          {mainCV.awards.map((award, i) => (
+                                            <div key={i} className="text-sm">
+                                              <div className="flex justify-between mb-0.5">
+                                                <p className="font-medium">{award.title}</p>
+                                                <p className="text-gray-500">{award.date}</p>
+                                              </div>
+                                              <p className="text-gray-600">{award.awarder}</p>
+                                              {award.summary && <p className="text-gray-600 text-xs mt-0.5">{award.summary}</p>}
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
+
+                                    {/* Interests */}
+                                    {mainCV.interests && mainCV.interests.length > 0 && (
+                                      <div>
+                                        <h3 className="font-semibold text-gray-800 mb-2 flex items-center">
+                                          <span className="w-6 h-0.5 bg-[#DAA520] mr-2"></span>
+                                          Interests
+                                        </h3>
+                                        <div className="space-y-2">
+                                          {mainCV.interests.map((interest, i) => (
+                                            <div key={i}>
+                                              <p className="text-xs font-medium text-gray-700 mb-1">{interest.name}</p>
+                                              <div className="flex flex-wrap gap-1">
+                                                {interest.keywords.map((kw, j) => (
+                                                  <span key={j} className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded-md">{kw}</span>
+                                                ))}
+                                              </div>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
+
                                     {/* Custom Sections */}
-                                    {mainCV.customSections && mainCV.customSections.length > 0 && 
+                                    {mainCV.customSections && mainCV.customSections.length > 0 &&
                                       mainCV.customSections.map((section, i) => (
                                         <div key={i}>
                                           <h3 className="font-semibold text-gray-800 mb-2 flex items-center">
@@ -557,22 +640,26 @@ export default function CVBuilder() {
                                       <div className="space-y-3">
                                         {mainCV.education.map((edu, i) => (
                                           <div key={i} className="text-sm">
-                                            <p className="font-bold">{edu.degree}</p>
+                                            <p className="font-bold">{[edu.studyType, edu.area].filter(Boolean).join(' in ')}</p>
                                             <div className="flex justify-between text-gray-700 italic">
                                               <p>{edu.institution}</p>
-                                              <p>{edu.period}</p>
+                                              <p>{[edu.startDate, edu.endDate].filter(Boolean).join(' - ')}</p>
                                             </div>
+                                            {edu.score && <p className="text-gray-600 text-xs">GPA: {edu.score}</p>}
                                           </div>
                                         ))}
                                       </div>
                                     </div>
-                                    
+
                                     {/* Skills */}
                                     <div>
                                       <h3 className="font-bold text-gray-800 mb-2 uppercase tracking-wide">SKILLS</h3>
-                                      <p className="text-sm text-gray-700">
-                                        {mainCV.skills.join(', ')}
-                                      </p>
+                                      {mainCV.skills.map((group, i) => (
+                                        <div key={i} className="mb-2">
+                                          <p className="text-sm font-semibold text-gray-800">{group.name}{group.level ? ` — ${group.level}` : ''}</p>
+                                          <p className="text-sm text-gray-700">{group.keywords.join(', ')}</p>
+                                        </div>
+                                      ))}
                                     </div>
                                     
                                     {/* Projects */}
@@ -678,9 +765,65 @@ export default function CVBuilder() {
                                         </div>
                                       </div>
                                     )}
-                                    
+
+                                    {/* Volunteer */}
+                                    {mainCV.volunteer && mainCV.volunteer.length > 0 && (
+                                      <div className="mt-4">
+                                        <h3 className="font-bold text-gray-800 mb-2 uppercase tracking-wide">VOLUNTEER EXPERIENCE</h3>
+                                        <div className="space-y-4">
+                                          {mainCV.volunteer.map((vol, i) => (
+                                            <div key={i} className="text-sm">
+                                              <p className="font-bold">{vol.position}</p>
+                                              <div className="flex justify-between text-gray-700 italic mb-1">
+                                                <p>{vol.organization}</p>
+                                                <p>{vol.startDate} - {vol.endDate}</p>
+                                              </div>
+                                              <p className="text-gray-700">{vol.summary}</p>
+                                              {vol.highlights && vol.highlights.length > 0 && (
+                                                <ul className="list-disc list-inside text-gray-700 mt-1">
+                                                  {vol.highlights.map((h, j) => <li key={j}>{h}</li>)}
+                                                </ul>
+                                              )}
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
+
+                                    {/* Awards */}
+                                    {mainCV.awards && mainCV.awards.length > 0 && (
+                                      <div className="mt-4">
+                                        <h3 className="font-bold text-gray-800 mb-2 uppercase tracking-wide">AWARDS</h3>
+                                        <div className="space-y-3">
+                                          {mainCV.awards.map((award, i) => (
+                                            <div key={i} className="text-sm">
+                                              <div className="flex justify-between">
+                                                <p className="font-bold">{award.title}</p>
+                                                <p className="text-gray-700 italic">{award.date}</p>
+                                              </div>
+                                              <p className="text-gray-700">{award.awarder}</p>
+                                              {award.summary && <p className="text-gray-600 mt-1">{award.summary}</p>}
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
+
+                                    {/* Interests */}
+                                    {mainCV.interests && mainCV.interests.length > 0 && (
+                                      <div className="mt-4">
+                                        <h3 className="font-bold text-gray-800 mb-2 uppercase tracking-wide">INTERESTS</h3>
+                                        {mainCV.interests.map((interest, i) => (
+                                          <div key={i} className="mb-2">
+                                            <p className="text-sm font-semibold text-gray-800">{interest.name}</p>
+                                            <p className="text-sm text-gray-700">{interest.keywords.join(', ')}</p>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )}
+
                                     {/* Custom Sections */}
-                                    {mainCV.customSections && mainCV.customSections.length > 0 && 
+                                    {mainCV.customSections && mainCV.customSections.length > 0 &&
                                       mainCV.customSections.map((section, i) => (
                                         <div key={i} className="mt-4">
                                           <h3 className="font-bold text-gray-800 mb-2 uppercase tracking-wide">{section.title}</h3>
@@ -702,7 +845,7 @@ export default function CVBuilder() {
                                   </div>
                                 </div>
                               )}
-                              
+
                               {/* Minimalist Template */}
                               {activeTemplate === "minimalist" && (
                                 <div className="flex w-full h-full overflow-auto" style={{ fontFamily: "Inter, sans-serif" }}>
@@ -719,9 +862,16 @@ export default function CVBuilder() {
                                     <div className="space-y-6 mt-6">
                                       <div>
                                         <h3 className="text-xs uppercase tracking-wider font-medium mb-2">Skills</h3>
-                                        <div className="space-y-1.5">
-                                          {mainCV.skills.map((skill, i) => (
-                                            <div key={i} className="text-xs">{skill}</div>
+                                        <div className="space-y-2">
+                                          {mainCV.skills.map((group, i) => (
+                                            <div key={i}>
+                                              <p className="text-xs font-medium">{group.name}</p>
+                                              <div className="space-y-0.5">
+                                                {group.keywords.map((kw, j) => (
+                                                  <div key={j} className="text-xs text-gray-600">{kw}</div>
+                                                ))}
+                                              </div>
+                                            </div>
                                           ))}
                                         </div>
                                       </div>
@@ -773,11 +923,12 @@ export default function CVBuilder() {
                                         <div className="space-y-3">
                                           {mainCV.education.map((edu, i) => (
                                             <div key={i} className="text-xs">
-                                              <p className="font-medium">{edu.degree}</p>
+                                              <p className="font-medium">{[edu.studyType, edu.area].filter(Boolean).join(' in ')}</p>
                                               <div className="flex justify-between text-gray-500">
                                                 <p>{edu.institution}</p>
-                                                <p>{edu.period}</p>
+                                                <p>{[edu.startDate, edu.endDate].filter(Boolean).join(' - ')}</p>
                                               </div>
+                                              {edu.score && <p className="text-gray-500 text-[10px]">GPA: {edu.score}</p>}
                                             </div>
                                           ))}
                                         </div>
@@ -872,9 +1023,67 @@ export default function CVBuilder() {
                                           </div>
                                         </div>
                                       )}
-                                      
+
+                                      {/* Volunteer */}
+                                      {mainCV.volunteer && mainCV.volunteer.length > 0 && (
+                                        <div>
+                                          <h3 className="text-sm font-medium border-b border-gray-200 pb-1 mb-3">
+                                            Volunteer
+                                          </h3>
+                                          <div className="space-y-3">
+                                            {mainCV.volunteer.map((vol, i) => (
+                                              <div key={i} className="text-xs">
+                                                <p className="font-medium">{vol.position}</p>
+                                                <div className="flex justify-between text-gray-500 mb-1">
+                                                  <p>{vol.organization}</p>
+                                                  <p>{vol.startDate} - {vol.endDate}</p>
+                                                </div>
+                                                <p className="text-gray-600">{vol.summary}</p>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      )}
+
+                                      {/* Awards */}
+                                      {mainCV.awards && mainCV.awards.length > 0 && (
+                                        <div>
+                                          <h3 className="text-sm font-medium border-b border-gray-200 pb-1 mb-3">
+                                            Awards
+                                          </h3>
+                                          <div className="space-y-2">
+                                            {mainCV.awards.map((award, i) => (
+                                              <div key={i} className="text-xs">
+                                                <div className="flex justify-between mb-0.5">
+                                                  <p className="font-medium">{award.title}</p>
+                                                  <p className="text-gray-500">{award.date}</p>
+                                                </div>
+                                                <p className="text-gray-600">{award.awarder}</p>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      )}
+
+                                      {/* Interests */}
+                                      {mainCV.interests && mainCV.interests.length > 0 && (
+                                        <div>
+                                          <h3 className="text-sm font-medium border-b border-gray-200 pb-1 mb-3">
+                                            Interests
+                                          </h3>
+                                          <div className="space-y-2">
+                                            {mainCV.interests.map((interest, i) => (
+                                              <div key={i} className="text-xs">
+                                                <p className="font-medium">{interest.name}</p>
+                                                <p className="text-gray-500">{interest.keywords.join(', ')}</p>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      )}
+
                                       {/* Custom Sections */}
-                                      {mainCV.customSections && mainCV.customSections.length > 0 && 
+                                      {mainCV.customSections && mainCV.customSections.length > 0 &&
                                         mainCV.customSections.map((section, i) => (
                                           <div key={i}>
                                             <h3 className="text-sm font-medium border-b border-gray-200 pb-1 mb-3">
@@ -954,23 +1163,28 @@ export default function CVBuilder() {
                                           {mainCV.education.map((edu, i) => (
                                             <div key={i} className="relative pl-4 border-l-2 border-[#DAA520]/30">
                                               <div className="absolute left-[-5px] top-0 w-2 h-2 rounded-full bg-[#DAA520]"></div>
-                                              <p className="font-semibold">{edu.degree}</p>
+                                              <p className="font-semibold">{[edu.studyType, edu.area].filter(Boolean).join(' in ')}</p>
                                               <div className="flex justify-between text-sm text-gray-600 mb-1">
                                                 <p>{edu.institution}</p>
-                                                <p>{edu.period}</p>
+                                                <p>{[edu.startDate, edu.endDate].filter(Boolean).join(' - ')}</p>
                                               </div>
-                                              {edu.description && <p className="text-sm text-gray-600">{edu.description}</p>}
+                                              {edu.score && <p className="text-sm text-gray-600">GPA: {edu.score}</p>}
                                             </div>
                                           ))}
                                         </div>
                                       </div>
-                                      
+
                                       <div className="mt-6">
                                         <h3 className="text-lg font-semibold mb-3">Skills</h3>
-                                        <div className="flex flex-wrap gap-2">
-                                          {mainCV.skills.map((skill, i) => (
-                                            <div key={i} className="px-3 py-1 bg-[#DAA520]/10 rounded-full text-xs">
-                                              {skill}
+                                        <div className="space-y-3">
+                                          {mainCV.skills.map((group, i) => (
+                                            <div key={i}>
+                                              <p className="text-sm font-medium mb-1">{group.name}{group.level ? ` — ${group.level}` : ''}</p>
+                                              <div className="flex flex-wrap gap-2">
+                                                {group.keywords.map((kw, j) => (
+                                                  <div key={j} className="px-3 py-1 bg-[#DAA520]/10 rounded-full text-xs">{kw}</div>
+                                                ))}
+                                              </div>
                                             </div>
                                           ))}
                                         </div>
@@ -1081,9 +1295,68 @@ export default function CVBuilder() {
                                           </div>
                                         </div>
                                       )}
-                                      
+
+                                      {/* Volunteer */}
+                                      {mainCV.volunteer && mainCV.volunteer.length > 0 && (
+                                        <div className="mt-6">
+                                          <h3 className="text-lg font-semibold mb-3">Volunteer</h3>
+                                          <div className="space-y-4">
+                                            {mainCV.volunteer.map((vol, i) => (
+                                              <div key={i} className="relative pl-4 border-l-2 border-[#DAA520]/30">
+                                                <div className="absolute left-[-5px] top-0 w-2 h-2 rounded-full bg-[#DAA520]"></div>
+                                                <p className="font-semibold">{vol.position}</p>
+                                                <div className="flex justify-between text-sm text-gray-600 mb-1">
+                                                  <p>{vol.organization}</p>
+                                                  <p>{vol.startDate} - {vol.endDate}</p>
+                                                </div>
+                                                <p className="text-sm text-gray-600">{vol.summary}</p>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      )}
+
+                                      {/* Awards */}
+                                      {mainCV.awards && mainCV.awards.length > 0 && (
+                                        <div className="mt-6">
+                                          <h3 className="text-lg font-semibold mb-3">Awards</h3>
+                                          <div className="space-y-3">
+                                            {mainCV.awards.map((award, i) => (
+                                              <div key={i} className="pl-4 border-l-2 border-[#DAA520]/30 relative">
+                                                <div className="absolute left-[-5px] top-0 w-2 h-2 rounded-full bg-[#DAA520]"></div>
+                                                <p className="font-semibold">{award.title}</p>
+                                                <div className="flex justify-between text-sm">
+                                                  <p className="text-gray-600">{award.awarder}</p>
+                                                  <p className="text-[#DAA520]">{award.date}</p>
+                                                </div>
+                                                {award.summary && <p className="text-sm text-gray-600 mt-1">{award.summary}</p>}
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      )}
+
+                                      {/* Interests */}
+                                      {mainCV.interests && mainCV.interests.length > 0 && (
+                                        <div className="mt-6">
+                                          <h3 className="text-lg font-semibold mb-3">Interests</h3>
+                                          <div className="space-y-3">
+                                            {mainCV.interests.map((interest, i) => (
+                                              <div key={i}>
+                                                <p className="text-sm font-medium mb-1">{interest.name}</p>
+                                                <div className="flex flex-wrap gap-2">
+                                                  {interest.keywords.map((kw, j) => (
+                                                    <span key={j} className="px-3 py-1 bg-[#DAA520]/10 rounded-full text-xs">{kw}</span>
+                                                  ))}
+                                                </div>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      )}
+
                                       {/* Custom Sections */}
-                                      {mainCV.customSections && mainCV.customSections.length > 0 && 
+                                      {mainCV.customSections && mainCV.customSections.length > 0 &&
                                         mainCV.customSections.map((section, i) => (
                                           <div key={i} className="mt-6">
                                             <h3 className="text-lg font-semibold mb-3">{section.title}</h3>
@@ -1105,7 +1378,7 @@ export default function CVBuilder() {
                                   </div>
                                 </div>
                               )}
-                              
+
                               {/* Executive Template */}
                               {activeTemplate === "executive" && (
                                 <div className="w-full h-full overflow-auto" style={{ fontFamily: "Georgia, serif" }}>
@@ -1174,27 +1447,32 @@ export default function CVBuilder() {
                                         {mainCV.education.map((edu, i) => (
                                           <div key={i}>
                                             <div className="flex justify-between mb-1">
-                                              <p className="font-bold">{edu.degree}</p>
-                                              <p className="font-semibold text-[#DAA520]">{edu.period}</p>
+                                              <p className="font-bold">{[edu.studyType, edu.area].filter(Boolean).join(' in ')}</p>
+                                              <p className="font-semibold text-[#DAA520]">{[edu.startDate, edu.endDate].filter(Boolean).join(' - ')}</p>
                                             </div>
                                             <p className="text-sm">{edu.institution}</p>
-                                            {edu.description && <p className="text-sm text-gray-700 mt-1">{edu.description}</p>}
+                                            {edu.score && <p className="text-sm text-gray-700 mt-1">GPA: {edu.score}</p>}
                                           </div>
                                         ))}
                                       </div>
                                     </div>
-                                    
+
                                     {/* Skills */}
                                     <div>
                                       <h3 className="text-lg font-bold uppercase tracking-wide border-b-2 border-[#DAA520]/30 pb-1 mb-3">CORE COMPETENCIES</h3>
-                                      <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-                                        {mainCV.skills.map((skill, i) => (
-                                          <div key={i} className="flex items-center">
-                                            <div className="w-1.5 h-1.5 bg-[#DAA520] rounded-full mr-2"></div>
-                                            <span className="text-sm">{skill}</span>
+                                      {mainCV.skills.map((group, i) => (
+                                        <div key={i} className="mb-3">
+                                          <p className="text-sm font-bold mb-1">{group.name}{group.level ? ` — ${group.level}` : ''}</p>
+                                          <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                                            {group.keywords.map((kw, j) => (
+                                              <div key={j} className="flex items-center">
+                                                <div className="w-1.5 h-1.5 bg-[#DAA520] rounded-full mr-2"></div>
+                                                <span className="text-sm">{kw}</span>
+                                              </div>
+                                            ))}
                                           </div>
-                                        ))}
-                                      </div>
+                                        </div>
+                                      ))}
                                     </div>
                                     
                                     {/* Projects */}
@@ -1293,9 +1571,66 @@ export default function CVBuilder() {
                                         </div>
                                       </div>
                                     )}
-                                    
+
+                                    {/* Volunteer */}
+                                    {mainCV.volunteer && mainCV.volunteer.length > 0 && (
+                                      <div>
+                                        <h3 className="text-lg font-bold uppercase tracking-wide border-b-2 border-[#DAA520]/30 pb-1 mb-3">VOLUNTEER EXPERIENCE</h3>
+                                        <div className="space-y-4">
+                                          {mainCV.volunteer.map((vol, i) => (
+                                            <div key={i}>
+                                              <div className="flex justify-between mb-1">
+                                                <p className="font-bold">{vol.position}</p>
+                                                <p className="font-semibold text-[#DAA520]">{vol.startDate} - {vol.endDate}</p>
+                                              </div>
+                                              <p className="text-sm font-semibold mb-1">{vol.organization}</p>
+                                              <p className="text-sm text-gray-700">{vol.summary}</p>
+                                              {vol.highlights && vol.highlights.length > 0 && (
+                                                <ul className="list-disc list-inside text-sm text-gray-700 mt-1">
+                                                  {vol.highlights.map((h, j) => <li key={j}>{h}</li>)}
+                                                </ul>
+                                              )}
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
+
+                                    {/* Awards */}
+                                    {mainCV.awards && mainCV.awards.length > 0 && (
+                                      <div>
+                                        <h3 className="text-lg font-bold uppercase tracking-wide border-b-2 border-[#DAA520]/30 pb-1 mb-3">AWARDS & HONORS</h3>
+                                        <div className="space-y-3">
+                                          {mainCV.awards.map((award, i) => (
+                                            <div key={i}>
+                                              <div className="flex justify-between mb-1">
+                                                <p className="font-bold">{award.title}</p>
+                                                <p className="font-semibold text-[#DAA520]">{award.date}</p>
+                                              </div>
+                                              <p className="text-sm">{award.awarder}</p>
+                                              {award.summary && <p className="text-sm text-gray-700 mt-1">{award.summary}</p>}
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
+
+                                    {/* Interests */}
+                                    {mainCV.interests && mainCV.interests.length > 0 && (
+                                      <div>
+                                        <h3 className="text-lg font-bold uppercase tracking-wide border-b-2 border-[#DAA520]/30 pb-1 mb-3">INTERESTS</h3>
+                                        <div className="flex flex-wrap gap-x-6 gap-y-2">
+                                          {mainCV.interests.map((interest, i) => (
+                                            <div key={i} className="text-sm">
+                                              <span className="font-semibold">{interest.name}:</span> {interest.keywords.join(', ')}
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
+
                                     {/* Custom Sections */}
-                                    {mainCV.customSections && mainCV.customSections.length > 0 && 
+                                    {mainCV.customSections && mainCV.customSections.length > 0 &&
                                       mainCV.customSections.map((section, i) => (
                                         <div key={i}>
                                           <h3 className="text-lg font-bold uppercase tracking-wide border-b-2 border-[#DAA520]/30 pb-1 mb-3">{section.title}</h3>

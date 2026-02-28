@@ -22,12 +22,12 @@ function renderCVToHTML(cv: CV, layout: CVLayoutStyle): string {
       description: escape(exp.description),
     })),
     education: cv.education.map(edu => ({
-      degree: escape(edu.degree),
+      degree: escape([edu.studyType, edu.area].filter(Boolean).join(' in ')),
       institution: escape(edu.institution),
-      period: escape(edu.period),
-      description: escape(edu.description),
+      period: escape([edu.startDate, edu.endDate].filter(Boolean).join(' - ')),
+      description: edu.score ? escape(`GPA: ${edu.score}`) : escape(edu.description),
     })),
-    skills: cv.skills.map(s => escape(s)),
+    skills: cv.skills.flatMap(s => s.keywords.length > 0 ? s.keywords.map(k => escape(k)) : [escape(s.name)]),
     projects: (cv.projects || []).map(p => ({
       title: escape(p.title),
       description: escape(p.description),

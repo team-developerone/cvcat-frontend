@@ -4,14 +4,18 @@ import { useFormState } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { 
-  WorkExperience, 
-  Education, 
-  Project, 
-  Certification, 
-  Language, 
-  Reference, 
-  Publication, 
+import {
+  WorkExperience,
+  Education,
+  SkillGroup,
+  Project,
+  Certification,
+  Language,
+  Reference,
+  Publication,
+  Volunteer,
+  Award,
+  Interest,
   CustomSection,
   CustomSectionItem
 } from "@/lib/types";
@@ -36,7 +40,10 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
   const [showAddPublicationForm, setShowAddPublicationForm] = useState(false);
   const [showAddCustomSectionForm, setShowAddCustomSectionForm] = useState(false);
   const [showAddCustomSectionItemForm, setShowAddCustomSectionItemForm] = useState<string | null>(null);
-  const [newSkill, setNewSkill] = useState("");
+  const [showAddVolunteerForm, setShowAddVolunteerForm] = useState(false);
+  const [showAddAwardForm, setShowAddAwardForm] = useState(false);
+  const [showAddInterestForm, setShowAddInterestForm] = useState(false);
+  const [newSkillKeyword, setNewSkillKeyword] = useState("");
   
   // Reset all form states when active section changes
   useEffect(() => {
@@ -49,6 +56,9 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
     setShowAddReferenceForm(false);
     setShowAddPublicationForm(false);
     setShowAddCustomSectionForm(false);
+    setShowAddVolunteerForm(false);
+    setShowAddAwardForm(false);
+    setShowAddInterestForm(false);
   }, [activeSection]);
   
   // Form state for new experience
@@ -63,8 +73,12 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
   // Form state for new education
   const { formData: newEducation, handleChange: handleEducationChange, resetForm: resetEducationForm } = useFormState({
     institution: "",
-    degree: "",
-    period: "",
+    studyType: "",
+    area: "",
+    startDate: "",
+    endDate: "",
+    score: "",
+    url: "",
     description: ""
   });
   
@@ -125,6 +139,35 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
     date: "",
     description: ""
   });
+
+  // Form state for new skill group
+  const { formData: newSkillGroup, handleChange: handleSkillGroupChange, resetForm: resetSkillGroupForm } = useFormState({
+    name: "",
+    level: ""
+  });
+
+  // Form state for new volunteer
+  const { formData: newVolunteer, handleChange: handleVolunteerChange, resetForm: resetVolunteerForm } = useFormState({
+    organization: "",
+    position: "",
+    url: "",
+    startDate: "",
+    endDate: "",
+    summary: ""
+  });
+
+  // Form state for new award
+  const { formData: newAward, handleChange: handleAwardChange, resetForm: resetAwardForm } = useFormState({
+    title: "",
+    date: "",
+    awarder: "",
+    summary: ""
+  });
+
+  // Form state for new interest
+  const { formData: newInterest, handleChange: handleInterestChange, resetForm: resetInterestForm } = useFormState({
+    name: ""
+  });
   
   // Toggle add experience form
   const toggleAddExperienceForm = () => {
@@ -146,7 +189,8 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
   const toggleAddSkillForm = () => {
     setShowAddSkillForm(!showAddSkillForm);
     if (!showAddSkillForm) {
-      setNewSkill("");
+      resetSkillGroupForm();
+      setNewSkillKeyword("");
     }
   };
   
@@ -195,6 +239,30 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
     setShowAddCustomSectionForm(!showAddCustomSectionForm);
     if (!showAddCustomSectionForm) {
       resetCustomSectionForm();
+    }
+  };
+
+  // Toggle add volunteer form
+  const toggleAddVolunteerForm = () => {
+    setShowAddVolunteerForm(!showAddVolunteerForm);
+    if (!showAddVolunteerForm) {
+      resetVolunteerForm();
+    }
+  };
+
+  // Toggle add award form
+  const toggleAddAwardForm = () => {
+    setShowAddAwardForm(!showAddAwardForm);
+    if (!showAddAwardForm) {
+      resetAwardForm();
+    }
+  };
+
+  // Toggle add interest form
+  const toggleAddInterestForm = () => {
+    setShowAddInterestForm(!showAddInterestForm);
+    if (!showAddInterestForm) {
+      resetInterestForm();
     }
   };
   
@@ -246,35 +314,74 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
   // Add new education
   const addEducation = () => {
     if (!mainCV) return;
-    
+
     const newEdu: Education = {
       id: Date.now().toString(),
       institution: newEducation.institution,
-      degree: newEducation.degree,
-      period: newEducation.period,
-      description: newEducation.description
+      studyType: newEducation.studyType,
+      area: newEducation.area,
+      startDate: newEducation.startDate,
+      endDate: newEducation.endDate,
+      score: newEducation.score || undefined,
+      url: newEducation.url || undefined,
+      description: newEducation.description || undefined,
     };
-    
+
     setMainCV({
       ...mainCV,
       education: [newEdu, ...mainCV.education],
       lastUpdated: new Date()
     });
-    
+
     toggleAddEducationForm();
   };
   
-  // Add new skill
-  const addSkill = () => {
-    if (!mainCV || !newSkill.trim()) return;
-    
+  // Add new skill group
+  const addSkillGroup = () => {
+    if (!mainCV || !newSkillGroup.name.trim()) return;
+
+    const group: SkillGroup = {
+      id: Date.now().toString(),
+      name: newSkillGroup.name,
+      level: newSkillGroup.level || undefined,
+      keywords: [],
+    };
+
     setMainCV({
       ...mainCV,
-      skills: [...mainCV.skills, newSkill.trim()],
+      skills: [...mainCV.skills, group],
       lastUpdated: new Date()
     });
-    
-    setNewSkill("");
+
+    resetSkillGroupForm();
+    setNewSkillKeyword("");
+  };
+
+  // Add keyword to skill group
+  const addSkillKeyword = (groupId: string) => {
+    if (!mainCV || !newSkillKeyword.trim()) return;
+
+    setMainCV({
+      ...mainCV,
+      skills: mainCV.skills.map(g =>
+        g.id === groupId ? { ...g, keywords: [...g.keywords, newSkillKeyword.trim()] } : g
+      ),
+      lastUpdated: new Date()
+    });
+    setNewSkillKeyword("");
+  };
+
+  // Remove keyword from skill group
+  const removeSkillKeyword = (groupId: string, keyword: string) => {
+    if (!mainCV) return;
+
+    setMainCV({
+      ...mainCV,
+      skills: mainCV.skills.map(g =>
+        g.id === groupId ? { ...g, keywords: g.keywords.filter(k => k !== keyword) } : g
+      ),
+      lastUpdated: new Date()
+    });
   };
   
   // Add new project
@@ -430,13 +537,13 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
     });
   };
   
-  // Remove skill
-  const removeSkill = (skillToRemove: string) => {
+  // Remove skill group
+  const removeSkillGroup = (id: string) => {
     if (!mainCV) return;
-    
+
     setMainCV({
       ...mainCV,
-      skills: mainCV.skills.filter(skill => skill !== skillToRemove),
+      skills: mainCV.skills.filter(g => g.id !== id),
       lastUpdated: new Date()
     });
   };
@@ -488,10 +595,134 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
   // Remove publication
   const removePublication = (id: string) => {
     if (!mainCV || !mainCV.publications) return;
-    
+
     setMainCV({
       ...mainCV,
       publications: mainCV.publications.filter(pub => pub.id !== id),
+      lastUpdated: new Date()
+    });
+  };
+
+  // Add new volunteer
+  const addVolunteer = () => {
+    if (!mainCV) return;
+
+    const vol: Volunteer = {
+      id: Date.now().toString(),
+      organization: newVolunteer.organization,
+      position: newVolunteer.position,
+      url: newVolunteer.url || undefined,
+      startDate: newVolunteer.startDate,
+      endDate: newVolunteer.endDate,
+      summary: newVolunteer.summary,
+    };
+
+    setMainCV({
+      ...mainCV,
+      volunteer: mainCV.volunteer ? [vol, ...mainCV.volunteer] : [vol],
+      lastUpdated: new Date()
+    });
+
+    toggleAddVolunteerForm();
+  };
+
+  // Remove volunteer
+  const removeVolunteer = (id: string) => {
+    if (!mainCV || !mainCV.volunteer) return;
+
+    setMainCV({
+      ...mainCV,
+      volunteer: mainCV.volunteer.filter(v => v.id !== id),
+      lastUpdated: new Date()
+    });
+  };
+
+  // Add new award
+  const addAward = () => {
+    if (!mainCV) return;
+
+    const award: Award = {
+      id: Date.now().toString(),
+      title: newAward.title,
+      date: newAward.date,
+      awarder: newAward.awarder,
+      summary: newAward.summary || undefined,
+    };
+
+    setMainCV({
+      ...mainCV,
+      awards: mainCV.awards ? [award, ...mainCV.awards] : [award],
+      lastUpdated: new Date()
+    });
+
+    toggleAddAwardForm();
+  };
+
+  // Remove award
+  const removeAward = (id: string) => {
+    if (!mainCV || !mainCV.awards) return;
+
+    setMainCV({
+      ...mainCV,
+      awards: mainCV.awards.filter(a => a.id !== id),
+      lastUpdated: new Date()
+    });
+  };
+
+  // Add new interest
+  const addInterest = () => {
+    if (!mainCV || !newInterest.name.trim()) return;
+
+    const interest: Interest = {
+      id: Date.now().toString(),
+      name: newInterest.name,
+      keywords: [],
+    };
+
+    setMainCV({
+      ...mainCV,
+      interests: mainCV.interests ? [interest, ...mainCV.interests] : [interest],
+      lastUpdated: new Date()
+    });
+
+    resetInterestForm();
+  };
+
+  // Remove interest
+  const removeInterest = (id: string) => {
+    if (!mainCV || !mainCV.interests) return;
+
+    setMainCV({
+      ...mainCV,
+      interests: mainCV.interests.filter(i => i.id !== id),
+      lastUpdated: new Date()
+    });
+  };
+
+  // Add keyword to interest
+  const [newInterestKeyword, setNewInterestKeyword] = useState("");
+  const addInterestKeyword = (interestId: string) => {
+    if (!mainCV || !mainCV.interests || !newInterestKeyword.trim()) return;
+
+    setMainCV({
+      ...mainCV,
+      interests: mainCV.interests.map(i =>
+        i.id === interestId ? { ...i, keywords: [...i.keywords, newInterestKeyword.trim()] } : i
+      ),
+      lastUpdated: new Date()
+    });
+    setNewInterestKeyword("");
+  };
+
+  // Remove keyword from interest
+  const removeInterestKeyword = (interestId: string, keyword: string) => {
+    if (!mainCV || !mainCV.interests) return;
+
+    setMainCV({
+      ...mainCV,
+      interests: mainCV.interests.map(i =>
+        i.id === interestId ? { ...i, keywords: i.keywords.filter(k => k !== keyword) } : i
+      ),
       lastUpdated: new Date()
     });
   };
@@ -853,7 +1084,7 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
+                  <div className="md:col-span-2">
                     <label className="block text-xs font-medium text-gray-600 mb-1">Institution</label>
                     <Input
                       type="text"
@@ -863,41 +1094,78 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
                       className="w-full h-9 focus-visible:ring-[#DAA520]"
                     />
                   </div>
-                  
+
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Degree</label>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Study Type</label>
                     <Input
                       type="text"
-                      name="degree"
-                      value={newEducation.degree}
+                      name="studyType"
+                      value={newEducation.studyType}
+                      onChange={handleEducationChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                      placeholder="e.g. Bachelor's, Master's"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Area of Study</label>
+                    <Input
+                      type="text"
+                      name="area"
+                      value={newEducation.area}
+                      onChange={handleEducationChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                      placeholder="e.g. Computer Science"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Start Date</label>
+                    <Input
+                      type="month"
+                      name="startDate"
+                      value={newEducation.startDate}
                       onChange={handleEducationChange}
                       className="w-full h-9 focus-visible:ring-[#DAA520]"
                     />
                   </div>
-                  
+
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Period</label>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">End Date</label>
                     <Input
-                      type="text"
-                      name="period"
-                      value={newEducation.period}
+                      type="month"
+                      name="endDate"
+                      value={newEducation.endDate}
                       onChange={handleEducationChange}
                       className="w-full h-9 focus-visible:ring-[#DAA520]"
-                      placeholder="e.g. 2015 - 2019"
                     />
                   </div>
-                  
-                  <div className="md:col-span-2">
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Description (Optional)</label>
-                    <Textarea
-                      name="description"
-                      value={newEducation.description}
+
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Score / GPA (Optional)</label>
+                    <Input
+                      type="text"
+                      name="score"
+                      value={newEducation.score}
                       onChange={handleEducationChange}
-                      className="w-full min-h-[80px] focus-visible:ring-[#DAA520]"
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                      placeholder="e.g. 3.8/4.0"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">URL (Optional)</label>
+                    <Input
+                      type="url"
+                      name="url"
+                      value={newEducation.url}
+                      onChange={handleEducationChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                      placeholder="https://..."
                     />
                   </div>
                 </div>
-                
+
                 <div className="flex justify-end mt-4 gap-2">
                   <Button
                     variant="outline"
@@ -923,27 +1191,28 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
             {mainCV.education.length > 0 ? (
               <div className="space-y-3">
                 {mainCV.education.map((edu) => (
-                  <div 
-                    key={edu.id} 
+                  <div
+                    key={edu.id}
                     className="p-3 border border-gray-100 rounded-lg hover:border-[#DAA520]/40 transition-all bg-white"
                   >
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="font-medium text-sm">{edu.degree}</h3>
+                        <h3 className="font-medium text-sm">{[edu.studyType, edu.area].filter(Boolean).join(' in ')}</h3>
                         <p className="text-gray-600 text-xs">{edu.institution}</p>
-                        <p className="text-gray-400 text-xs mt-0.5">{edu.period}</p>
+                        <p className="text-gray-400 text-xs mt-0.5">{[edu.startDate, edu.endDate].filter(Boolean).join(' - ')}</p>
+                        {edu.score && <p className="text-gray-500 text-xs mt-0.5">GPA: {edu.score}</p>}
                       </div>
                       <div className="flex space-x-1">
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           className="h-7 w-7 p-0 text-gray-400 hover:text-[#DAA520] hover:bg-gray-50"
                         >
                           <LucidePencil className="w-3.5 h-3.5" />
                         </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           className="h-7 w-7 p-0 text-gray-400 hover:text-red-500 hover:bg-gray-50"
                           onClick={() => removeEducation(edu.id)}
                         >
@@ -951,8 +1220,12 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
                         </Button>
                       </div>
                     </div>
-                    {edu.description && (
-                      <p className="mt-2 text-xs text-gray-600">{edu.description}</p>
+                    {edu.courses && edu.courses.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {edu.courses.map((course, i) => (
+                          <span key={i} className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded">{course}</span>
+                        ))}
+                      </div>
                     )}
                   </div>
                 ))}
@@ -985,87 +1258,151 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
           >
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-medium">Skills</h2>
-              <Button 
+              <Button
                 variant="ghost"
                 size="sm"
                 className="flex items-center gap-1 text-xs text-[#DAA520] hover:text-[#DAA520]/80 hover:bg-[#DAA520]/5"
                 onClick={toggleAddSkillForm}
               >
                 <LucidePlus className="w-3 h-3 mr-1" />
-                Add Skill
+                Add Skill Group
               </Button>
             </div>
-            
-            {/* Add Skill Form */}
+
+            {/* Add Skill Group Form */}
             {showAddSkillForm && (
               <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
                 <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-sm font-medium">Add Skill</h3>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <h3 className="text-sm font-medium">Add Skill Group</h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     className="text-gray-400 hover:text-gray-600 hover:bg-gray-100/70 h-7 w-7 p-0"
                     onClick={toggleAddSkillForm}
                   >
                     <LucideX className="w-4 h-4" />
                   </Button>
                 </div>
-                
-                <div className="flex">
-                  <Input
-                    type="text"
-                    value={newSkill}
-                    onChange={(e) => setNewSkill(e.target.value)}
-                    className="w-full h-9 focus-visible:ring-[#DAA520]"
-                    placeholder="Enter a skill (e.g. JavaScript, Project Management)"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && newSkill.trim()) {
-                        addSkill();
-                      }
-                    }}
-                  />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Group Name</label>
+                    <Input
+                      type="text"
+                      name="name"
+                      value={newSkillGroup.name}
+                      onChange={handleSkillGroupChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                      placeholder="e.g. Programming Languages, Frameworks"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Level (Optional)</label>
+                    <Input
+                      type="text"
+                      name="level"
+                      value={newSkillGroup.level}
+                      onChange={handleSkillGroupChange}
+                      className="w-full h-9 focus-visible:ring-[#DAA520]"
+                      placeholder="e.g. Advanced, Intermediate"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end mt-4 gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={toggleAddSkillForm}
+                    className="text-xs h-8"
+                  >
+                    Cancel
+                  </Button>
                   <Button
                     size="sm"
-                    onClick={addSkill}
-                    disabled={!newSkill.trim()}
-                    className="ml-2 h-9 bg-black hover:bg-black/80 text-xs"
+                    onClick={addSkillGroup}
+                    disabled={!newSkillGroup.name.trim()}
+                    className="text-xs h-8 bg-black hover:bg-black/80"
                   >
-                    Add
+                    <LucideCheck className="w-3 h-3 mr-1" />
+                    Create Group
                   </Button>
                 </div>
-                
-                <p className="text-xs text-gray-500 mt-2">Press Enter to add multiple skills quickly</p>
               </div>
             )}
-            
-            {/* Skills Items */}
+
+            {/* Skill Groups */}
             {mainCV.skills.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {mainCV.skills.map((skill, index) => (
-                  <Badge
-                    key={index}
-                    variant="outline"
-                    className="bg-[#DAA520]/5 hover:bg-[#DAA520]/10 border-[#DAA520]/20 text-gray-700 py-1 px-3 rounded-full text-xs"
-                  >
-                    {skill}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-4 w-4 p-0 ml-1.5 text-gray-400 hover:text-red-500 hover:bg-transparent"
-                      onClick={() => removeSkill(skill)}
-                    >
-                      <LucideX className="w-3 h-3" />
-                    </Button>
-                  </Badge>
+              <div className="space-y-4">
+                {mainCV.skills.map((group) => (
+                  <div key={group.id} className="p-3 border border-gray-100 rounded-lg hover:border-[#DAA520]/40 transition-all bg-white">
+                    <div className="flex justify-between items-center mb-2">
+                      <div>
+                        <h3 className="font-medium text-sm">{group.name}</h3>
+                        {group.level && <p className="text-gray-500 text-xs">{group.level}</p>}
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 w-7 p-0 text-gray-400 hover:text-red-500 hover:bg-gray-50"
+                        onClick={() => removeSkillGroup(group.id)}
+                      >
+                        <LucideTrash2 className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 mb-2">
+                      {group.keywords.map((kw, i) => (
+                        <Badge
+                          key={i}
+                          variant="outline"
+                          className="bg-[#DAA520]/5 hover:bg-[#DAA520]/10 border-[#DAA520]/20 text-gray-700 py-0.5 px-2 rounded-full text-xs"
+                        >
+                          {kw}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-4 w-4 p-0 ml-1 text-gray-400 hover:text-red-500 hover:bg-transparent"
+                            onClick={() => removeSkillKeyword(group.id, kw)}
+                          >
+                            <LucideX className="w-3 h-3" />
+                          </Button>
+                        </Badge>
+                      ))}
+                    </div>
+
+                    <div className="flex">
+                      <Input
+                        type="text"
+                        value={newSkillKeyword}
+                        onChange={(e) => setNewSkillKeyword(e.target.value)}
+                        className="w-full h-8 text-xs focus-visible:ring-[#DAA520]"
+                        placeholder="Add a skill keyword..."
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && newSkillKeyword.trim()) {
+                            addSkillKeyword(group.id);
+                          }
+                        }}
+                      />
+                      <Button
+                        size="sm"
+                        onClick={() => addSkillKeyword(group.id)}
+                        disabled={!newSkillKeyword.trim()}
+                        className="ml-2 h-8 bg-black hover:bg-black/80 text-xs"
+                      >
+                        Add
+                      </Button>
+                    </div>
+                  </div>
                 ))}
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-10 border border-dashed border-gray-200 rounded-lg bg-gray-50/50">
                 <p className="text-gray-500 text-sm mb-3">No skills added yet</p>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={toggleAddSkillForm} 
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={toggleAddSkillForm}
                   className="text-xs"
                 >
                   <LucidePlus className="w-3.5 h-3.5 mr-1" />
@@ -1075,214 +1412,7 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
             )}
           </motion.div>
         )}
-        
-        {/* Projects Section */}
-        {activeSection === "projects" && (
-          <motion.div
-            key="projects"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-medium">Projects</h2>
-              <Button 
-                variant="ghost"
-                size="sm"
-                className="flex items-center gap-1 text-xs text-[#DAA520] hover:text-[#DAA520]/80 hover:bg-[#DAA520]/5"
-                onClick={toggleAddProjectForm}
-              >
-                <LucidePlus className="w-3 h-3 mr-1" />
-                Add Project
-              </Button>
-            </div>
-            
-            {/* Add Project Form */}
-            {showAddProjectForm && (
-              <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-sm font-medium">Add Project</h3>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="text-gray-400 hover:text-gray-600 hover:bg-gray-100/70 h-7 w-7 p-0"
-                    onClick={toggleAddProjectForm}
-                  >
-                    <LucideX className="w-4 h-4" />
-                  </Button>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Project Title</label>
-                    <Input
-                      type="text"
-                      name="title"
-                      value={newProject.title}
-                      onChange={handleProjectChange}
-                      className="w-full h-9 focus-visible:ring-[#DAA520]"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">URL (Optional)</label>
-                    <Input
-                      type="url"
-                      name="url"
-                      value={newProject.url}
-                      onChange={handleProjectChange}
-                      className="w-full h-9 focus-visible:ring-[#DAA520]"
-                      placeholder="https://..."
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Start Date (Optional)</label>
-                    <Input
-                      type="month"
-                      name="startDate"
-                      value={newProject.startDate}
-                      onChange={handleProjectChange}
-                      className="w-full h-9 focus-visible:ring-[#DAA520]"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">End Date (Optional)</label>
-                    <Input
-                      type="month"
-                      name="endDate"
-                      value={newProject.endDate}
-                      onChange={handleProjectChange}
-                      className="w-full h-9 focus-visible:ring-[#DAA520]"
-                    />
-                  </div>
-                  
-                  <div className="md:col-span-2">
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Technologies (comma separated)</label>
-                    <Input
-                      type="text"
-                      name="technologies"
-                      value={newProject.technologies}
-                      onChange={handleProjectChange}
-                      className="w-full h-9 focus-visible:ring-[#DAA520]"
-                      placeholder="e.g. React, TypeScript, Node.js"
-                    />
-                  </div>
-                  
-                  <div className="md:col-span-2">
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Description</label>
-                    <Textarea
-                      name="description"
-                      value={newProject.description}
-                      onChange={handleProjectChange}
-                      className="w-full min-h-[80px] focus-visible:ring-[#DAA520]"
-                    />
-                  </div>
-                </div>
-                
-                <div className="flex justify-end mt-4 gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={toggleAddProjectForm}
-                    className="text-xs h-8"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    size="sm"
-                    onClick={addProject}
-                    className="text-xs h-8 bg-black hover:bg-black/80"
-                    disabled={!newProject.title || !newProject.description}
-                  >
-                    <LucideCheck className="w-3 h-3 mr-1" />
-                    Save
-                  </Button>
-                </div>
-              </div>
-            )}
-            
-            {/* Project Items */}
-            {mainCV.projects && mainCV.projects.length > 0 ? (
-              <div className="space-y-3">
-                {mainCV.projects.map((project) => (
-                  <div 
-                    key={project.id} 
-                    className="p-3 border border-gray-100 rounded-lg hover:border-[#DAA520]/40 transition-all bg-white"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-medium text-sm">{project.title}</h3>
-                        {project.startDate && (
-                          <p className="text-gray-400 text-xs mt-0.5">
-                            {project.startDate}{project.endDate ? ` - ${project.endDate}` : ' - Present'}
-                          </p>
-                        )}
-                      </div>
-                      <div className="flex space-x-1">
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="h-7 w-7 p-0 text-gray-400 hover:text-[#DAA520] hover:bg-gray-50"
-                        >
-                          <LucidePencil className="w-3.5 h-3.5" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="h-7 w-7 p-0 text-gray-400 hover:text-red-500 hover:bg-gray-50"
-                          onClick={() => removeProject(project.id)}
-                        >
-                          <LucideTrash2 className="w-3.5 h-3.5" />
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <p className="mt-2 text-xs text-gray-600">{project.description}</p>
-                    
-                    {project.technologies && project.technologies.length > 0 && (
-                      <div className="mt-2 flex flex-wrap gap-1.5">
-                        {project.technologies.map((tech, i) => (
-                          <span key={i} className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded">
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                    
-                    {project.url && (
-                      <a 
-                        href={project.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className="mt-2 inline-flex items-center text-xs text-[#DAA520] hover:underline"
-                      >
-                        <LucideChevronRight className="w-3 h-3 mr-0.5" />
-                        View Project
-                      </a>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-10 border border-dashed border-gray-200 rounded-lg bg-gray-50/50">
-                <p className="text-gray-500 text-sm mb-3">No projects added yet</p>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={toggleAddProjectForm} 
-                  className="text-xs"
-                >
-                  <LucidePlus className="w-3.5 h-3.5 mr-1" />
-                  Add Your First Project
-                </Button>
-              </div>
-            )}
-          </motion.div>
-        )}
-        
+
         {/* Custom Section Form */}
         {activeSection === "custom" && (
           <motion.div
@@ -2246,6 +2376,298 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
                 >
                   <LucidePlus className="w-3.5 h-3.5 mr-1" />
                   Add Your First Reference
+                </Button>
+              </div>
+            )}
+          </motion.div>
+        )}
+
+        {/* Volunteer Section */}
+        {activeSection === "volunteer" && (
+          <motion.div
+            key="volunteer"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-medium">Volunteer Experience</h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex items-center gap-1 text-xs text-[#DAA520] hover:text-[#DAA520]/80 hover:bg-[#DAA520]/5"
+                onClick={toggleAddVolunteerForm}
+              >
+                <LucidePlus className="w-3 h-3 mr-1" />
+                Add Volunteer
+              </Button>
+            </div>
+
+            {showAddVolunteerForm && (
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-sm font-medium">Add Volunteer Experience</h3>
+                  <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600 hover:bg-gray-100/70 h-7 w-7 p-0" onClick={toggleAddVolunteerForm}>
+                    <LucideX className="w-4 h-4" />
+                  </Button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Organization</label>
+                    <Input type="text" name="organization" value={newVolunteer.organization} onChange={handleVolunteerChange} className="w-full h-9 focus-visible:ring-[#DAA520]" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Position</label>
+                    <Input type="text" name="position" value={newVolunteer.position} onChange={handleVolunteerChange} className="w-full h-9 focus-visible:ring-[#DAA520]" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Start Date</label>
+                    <Input type="month" name="startDate" value={newVolunteer.startDate} onChange={handleVolunteerChange} className="w-full h-9 focus-visible:ring-[#DAA520]" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">End Date</label>
+                    <Input type="month" name="endDate" value={newVolunteer.endDate} onChange={handleVolunteerChange} className="w-full h-9 focus-visible:ring-[#DAA520]" />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-medium text-gray-600 mb-1">URL (Optional)</label>
+                    <Input type="url" name="url" value={newVolunteer.url} onChange={handleVolunteerChange} className="w-full h-9 focus-visible:ring-[#DAA520]" placeholder="https://..." />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Summary</label>
+                    <Textarea name="summary" value={newVolunteer.summary} onChange={handleVolunteerChange} className="w-full min-h-[80px] focus-visible:ring-[#DAA520]" />
+                  </div>
+                </div>
+
+                <div className="flex justify-end mt-4 gap-2">
+                  <Button variant="outline" size="sm" onClick={toggleAddVolunteerForm} className="text-xs h-8">Cancel</Button>
+                  <Button size="sm" onClick={addVolunteer} className="text-xs h-8 bg-black hover:bg-black/80" disabled={!newVolunteer.organization || !newVolunteer.position}>
+                    <LucideCheck className="w-3 h-3 mr-1" />
+                    Save
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {mainCV.volunteer && mainCV.volunteer.length > 0 ? (
+              <div className="space-y-3">
+                {mainCV.volunteer.map((vol) => (
+                  <div key={vol.id} className="p-3 border border-gray-100 rounded-lg hover:border-[#DAA520]/40 transition-all bg-white">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-medium text-sm">{vol.position}</h3>
+                        <p className="text-gray-600 text-xs">{vol.organization}</p>
+                        <p className="text-gray-400 text-xs mt-0.5">{vol.startDate} - {vol.endDate}</p>
+                      </div>
+                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-red-500 hover:bg-gray-50" onClick={() => removeVolunteer(vol.id)}>
+                        <LucideTrash2 className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
+                    {vol.summary && <p className="mt-2 text-xs text-gray-600">{vol.summary}</p>}
+                    {vol.highlights && vol.highlights.length > 0 && (
+                      <ul className="mt-1 list-disc list-inside text-xs text-gray-600">
+                        {vol.highlights.map((h, i) => <li key={i}>{h}</li>)}
+                      </ul>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-10 border border-dashed border-gray-200 rounded-lg bg-gray-50/50">
+                <p className="text-gray-500 text-sm mb-3">No volunteer experience added yet</p>
+                <Button variant="outline" size="sm" onClick={toggleAddVolunteerForm} className="text-xs">
+                  <LucidePlus className="w-3.5 h-3.5 mr-1" />
+                  Add Volunteer Experience
+                </Button>
+              </div>
+            )}
+          </motion.div>
+        )}
+
+        {/* Awards Section */}
+        {activeSection === "awards" && (
+          <motion.div
+            key="awards"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-medium">Awards</h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex items-center gap-1 text-xs text-[#DAA520] hover:text-[#DAA520]/80 hover:bg-[#DAA520]/5"
+                onClick={toggleAddAwardForm}
+              >
+                <LucidePlus className="w-3 h-3 mr-1" />
+                Add Award
+              </Button>
+            </div>
+
+            {showAddAwardForm && (
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-sm font-medium">Add Award</h3>
+                  <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600 hover:bg-gray-100/70 h-7 w-7 p-0" onClick={toggleAddAwardForm}>
+                    <LucideX className="w-4 h-4" />
+                  </Button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Award Title</label>
+                    <Input type="text" name="title" value={newAward.title} onChange={handleAwardChange} className="w-full h-9 focus-visible:ring-[#DAA520]" placeholder="e.g. Employee of the Year" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Awarder</label>
+                    <Input type="text" name="awarder" value={newAward.awarder} onChange={handleAwardChange} className="w-full h-9 focus-visible:ring-[#DAA520]" placeholder="e.g. Company Name" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Date</label>
+                    <Input type="date" name="date" value={newAward.date} onChange={handleAwardChange} className="w-full h-9 focus-visible:ring-[#DAA520]" />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Summary (Optional)</label>
+                    <Textarea name="summary" value={newAward.summary} onChange={handleAwardChange} className="w-full min-h-[80px] focus-visible:ring-[#DAA520]" />
+                  </div>
+                </div>
+
+                <div className="flex justify-end mt-4 gap-2">
+                  <Button variant="outline" size="sm" onClick={toggleAddAwardForm} className="text-xs h-8">Cancel</Button>
+                  <Button size="sm" onClick={addAward} className="text-xs h-8 bg-black hover:bg-black/80" disabled={!newAward.title || !newAward.awarder || !newAward.date}>
+                    <LucideCheck className="w-3 h-3 mr-1" />
+                    Save Award
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {mainCV.awards && mainCV.awards.length > 0 ? (
+              <div className="space-y-3">
+                {mainCV.awards.map((award) => (
+                  <div key={award.id} className="p-3 border border-gray-100 rounded-lg hover:border-[#DAA520]/40 transition-all bg-white">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-medium text-sm">{award.title}</h3>
+                        <p className="text-gray-500 text-xs mt-0.5">{award.awarder} • {award.date}</p>
+                      </div>
+                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-red-500 hover:bg-gray-50" onClick={() => removeAward(award.id)}>
+                        <LucideTrash2 className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
+                    {award.summary && <p className="mt-2 text-xs text-gray-600">{award.summary}</p>}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-10 border border-dashed border-gray-200 rounded-lg bg-gray-50/50">
+                <p className="text-gray-500 text-sm mb-3">No awards added yet</p>
+                <Button variant="outline" size="sm" onClick={toggleAddAwardForm} className="text-xs">
+                  <LucidePlus className="w-3.5 h-3.5 mr-1" />
+                  Add Your First Award
+                </Button>
+              </div>
+            )}
+          </motion.div>
+        )}
+
+        {/* Interests Section */}
+        {activeSection === "interests" && (
+          <motion.div
+            key="interests"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-medium">Interests</h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex items-center gap-1 text-xs text-[#DAA520] hover:text-[#DAA520]/80 hover:bg-[#DAA520]/5"
+                onClick={toggleAddInterestForm}
+              >
+                <LucidePlus className="w-3 h-3 mr-1" />
+                Add Interest
+              </Button>
+            </div>
+
+            {showAddInterestForm && (
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-sm font-medium">Add Interest</h3>
+                  <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600 hover:bg-gray-100/70 h-7 w-7 p-0" onClick={toggleAddInterestForm}>
+                    <LucideX className="w-4 h-4" />
+                  </Button>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Interest Name</label>
+                  <Input type="text" name="name" value={newInterest.name} onChange={handleInterestChange} className="w-full h-9 focus-visible:ring-[#DAA520]" placeholder="e.g. Open Source, Photography, Gaming" />
+                </div>
+
+                <div className="flex justify-end mt-4 gap-2">
+                  <Button variant="outline" size="sm" onClick={toggleAddInterestForm} className="text-xs h-8">Cancel</Button>
+                  <Button size="sm" onClick={addInterest} className="text-xs h-8 bg-black hover:bg-black/80" disabled={!newInterest.name.trim()}>
+                    <LucideCheck className="w-3 h-3 mr-1" />
+                    Create Interest
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {mainCV.interests && mainCV.interests.length > 0 ? (
+              <div className="space-y-4">
+                {mainCV.interests.map((interest) => (
+                  <div key={interest.id} className="p-3 border border-gray-100 rounded-lg hover:border-[#DAA520]/40 transition-all bg-white">
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="font-medium text-sm">{interest.name}</h3>
+                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-red-500 hover:bg-gray-50" onClick={() => removeInterest(interest.id)}>
+                        <LucideTrash2 className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 mb-2">
+                      {interest.keywords.map((kw, i) => (
+                        <Badge key={i} variant="outline" className="bg-[#DAA520]/5 hover:bg-[#DAA520]/10 border-[#DAA520]/20 text-gray-700 py-0.5 px-2 rounded-full text-xs">
+                          {kw}
+                          <Button variant="ghost" size="sm" className="h-4 w-4 p-0 ml-1 text-gray-400 hover:text-red-500 hover:bg-transparent" onClick={() => removeInterestKeyword(interest.id, kw)}>
+                            <LucideX className="w-3 h-3" />
+                          </Button>
+                        </Badge>
+                      ))}
+                    </div>
+
+                    <div className="flex">
+                      <Input
+                        type="text"
+                        value={newInterestKeyword}
+                        onChange={(e) => setNewInterestKeyword(e.target.value)}
+                        className="w-full h-8 text-xs focus-visible:ring-[#DAA520]"
+                        placeholder="Add a keyword..."
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && newInterestKeyword.trim()) {
+                            addInterestKeyword(interest.id);
+                          }
+                        }}
+                      />
+                      <Button size="sm" onClick={() => addInterestKeyword(interest.id)} disabled={!newInterestKeyword.trim()} className="ml-2 h-8 bg-black hover:bg-black/80 text-xs">
+                        Add
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-10 border border-dashed border-gray-200 rounded-lg bg-gray-50/50">
+                <p className="text-gray-500 text-sm mb-3">No interests added yet</p>
+                <Button variant="outline" size="sm" onClick={toggleAddInterestForm} className="text-xs">
+                  <LucidePlus className="w-3.5 h-3.5 mr-1" />
+                  Add Your Interests
                 </Button>
               </div>
             )}

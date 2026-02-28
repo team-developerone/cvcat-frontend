@@ -8,13 +8,23 @@ export interface CV {
   personalInfo: PersonalInfo;
   experience: WorkExperience[];
   education: Education[];
-  skills: string[];
+  skills: SkillGroup[];
   projects?: Project[];
   certifications?: Certification[];
   languages?: Language[];
   references?: Reference[];
   publications?: Publication[];
+  volunteer?: Volunteer[];
+  awards?: Award[];
+  interests?: Interest[];
   customSections?: CustomSection[];
+}
+
+export interface SocialProfile {
+  id: string;
+  network: string;
+  username: string;
+  url: string;
 }
 
 export interface PersonalInfo {
@@ -24,6 +34,8 @@ export interface PersonalInfo {
   phone: string;
   location: string;
   summary: string;
+  url?: string;
+  profiles?: SocialProfile[];
 }
 
 export interface WorkExperience {
@@ -34,14 +46,53 @@ export interface WorkExperience {
   endDate: string;
   description: string;
   highlights?: string[];
+  location?: string;
+  url?: string;
 }
 
 export interface Education {
   id: string;
   institution: string;
-  degree: string;
-  period: string;
+  studyType: string;
+  area: string;
+  startDate: string;
+  endDate: string;
+  score?: string;
+  url?: string;
+  courses?: string[];
   description?: string;
+}
+
+export interface SkillGroup {
+  id: string;
+  name: string;
+  level?: string;
+  keywords: string[];
+}
+
+export interface Volunteer {
+  id: string;
+  organization: string;
+  position: string;
+  url?: string;
+  startDate: string;
+  endDate: string;
+  summary: string;
+  highlights?: string[];
+}
+
+export interface Award {
+  id: string;
+  title: string;
+  date: string;
+  awarder: string;
+  summary?: string;
+}
+
+export interface Interest {
+  id: string;
+  name: string;
+  keywords: string[];
 }
 
 export interface PricingTier {
@@ -75,6 +126,10 @@ export interface Project {
   url?: string;
   startDate?: string;
   endDate?: string;
+  highlights?: string[];
+  roles?: string[];
+  entity?: string;
+  type?: string;
 }
 
 export interface Certification {
@@ -152,6 +207,13 @@ export function backendCVToFrontendCV(bcv: BackendCV): CV {
       phone: basics.phone || "",
       location: locationParts.join(", ") || basics.location?.address || "",
       summary: basics.summary || bcv.data?.summary || "",
+      url: basics.url || undefined,
+      profiles: (basics.profiles || []).map((p, i) => ({
+        id: `profile-${i}`,
+        network: p.network || "",
+        username: p.username || "",
+        url: p.url || "",
+      })),
     },
     experience: (bcv.data?.work || []).map((w, i) => ({
       id: `work-${i}`,
@@ -161,22 +223,27 @@ export function backendCVToFrontendCV(bcv: BackendCV): CV {
       endDate: w.endDate || "",
       description: w.summary || "",
       highlights: w.highlights || [],
+      location: w.location || undefined,
+      url: w.url || undefined,
     })),
     education: (bcv.data?.education || []).map((e, i) => ({
       id: `edu-${i}`,
       institution: e.institution || "",
-      degree: [e.studyType, e.area].filter(Boolean).join(" in "),
-      period: [e.startDate, e.endDate].filter(Boolean).join(" - "),
-      description: e.score ? `GPA: ${e.score}` : undefined,
+      studyType: e.studyType || "",
+      area: e.area || "",
+      startDate: e.startDate || "",
+      endDate: e.endDate || "",
+      score: e.score || undefined,
+      url: e.url || undefined,
+      courses: e.courses || [],
+      description: undefined,
     })),
-    skills: (bcv.data?.skills || []).flatMap((s) => {
-      // If the skill group has keywords, use them (these are the actual skills).
-      // Only use the group name as a skill if there are no keywords (single-skill entry).
-      if (s.keywords && s.keywords.length > 0) {
-        return s.keywords;
-      }
-      return s.name ? [s.name] : [];
-    }),
+    skills: (bcv.data?.skills || []).map((s, i) => ({
+      id: `skill-${i}`,
+      name: s.name || "",
+      level: s.level || undefined,
+      keywords: s.keywords || [],
+    })),
     projects: (bcv.data?.projects || []).map((p, i) => ({
       id: `proj-${i}`,
       title: p.name || "",
@@ -185,6 +252,10 @@ export function backendCVToFrontendCV(bcv: BackendCV): CV {
       url: p.url,
       startDate: p.startDate,
       endDate: p.endDate,
+      highlights: p.highlights || [],
+      roles: p.roles || [],
+      entity: p.entity || undefined,
+      type: p.type || undefined,
     })),
     certifications: (bcv.data?.certificates || []).map((c, i) => ({
       id: `cert-${i}`,
@@ -213,6 +284,28 @@ export function backendCVToFrontendCV(bcv: BackendCV): CV {
       company: "",
       relationship: r.reference || "",
     })),
+    volunteer: (bcv.data?.volunteer || []).map((v, i) => ({
+      id: `vol-${i}`,
+      organization: v.organization || "",
+      position: v.position || "",
+      url: v.url || undefined,
+      startDate: v.startDate || "",
+      endDate: v.endDate || "",
+      summary: v.summary || "",
+      highlights: v.highlights || [],
+    })),
+    awards: (bcv.data?.awards || []).map((a, i) => ({
+      id: `award-${i}`,
+      title: a.title || "",
+      date: a.date || "",
+      awarder: a.awarder || "",
+      summary: a.summary || undefined,
+    })),
+    interests: (bcv.data?.interests || []).map((int, i) => ({
+      id: `interest-${i}`,
+      name: int.name || "",
+      keywords: int.keywords || [],
+    })),
     customSections: (bcv.data?.custom || []).map((cs, i) => ({
       id: `custom-${i}`,
       title: cs.sectionTitle || "",
@@ -228,23 +321,6 @@ export function backendCVToFrontendCV(bcv: BackendCV): CV {
 }
 
 export function frontendCVToBackendData(cv: CV): BackendCV["data"] {
-  // Parse the combined degree string back into studyType and area
-  // Format is "studyType in area" (e.g. "Bachelor's in Computer Science")
-  const parseEducationDegree = (degree: string) => {
-    const match = degree.match(/^(.+?)\s+in\s+(.+)$/);
-    if (match) {
-      return { studyType: match[1], area: match[2] };
-    }
-    return { studyType: degree, area: "" };
-  };
-
-  // Group skills into a single skill group with all skills as keywords
-  // This preserves them as a flat list while using the JSON Resume structure
-  const skillsData: BackendCV["data"]["skills"] =
-    cv.skills.length > 0
-      ? [{ name: "Skills", keywords: cv.skills }]
-      : [];
-
   return {
     basics: {
       name: cv.personalInfo.fullName,
@@ -252,9 +328,15 @@ export function frontendCVToBackendData(cv: CV): BackendCV["data"] {
       email: cv.personalInfo.email,
       phone: cv.personalInfo.phone,
       summary: cv.personalInfo.summary,
+      url: cv.personalInfo.url || undefined,
       location: {
         address: cv.personalInfo.location,
       },
+      profiles: (cv.personalInfo.profiles || []).map((p) => ({
+        network: p.network,
+        username: p.username,
+        url: p.url,
+      })),
     },
     work: cv.experience.map((e) => ({
       name: e.company,
@@ -263,20 +345,24 @@ export function frontendCVToBackendData(cv: CV): BackendCV["data"] {
       endDate: e.endDate,
       summary: e.description,
       highlights: e.highlights || [],
+      location: e.location || undefined,
+      url: e.url || undefined,
     })),
-    education: cv.education.map((e) => {
-      const { studyType, area } = parseEducationDegree(e.degree);
-      const periodParts = e.period.split(" - ");
-      return {
-        institution: e.institution,
-        studyType,
-        area,
-        startDate: periodParts[0]?.trim() || "",
-        endDate: periodParts[1]?.trim() || "",
-        score: e.description?.replace(/^GPA:\s*/, "") || undefined,
-      };
-    }),
-    skills: skillsData,
+    education: cv.education.map((e) => ({
+      institution: e.institution,
+      studyType: e.studyType,
+      area: e.area,
+      startDate: e.startDate,
+      endDate: e.endDate,
+      score: e.score || undefined,
+      url: e.url || undefined,
+      courses: e.courses || [],
+    })),
+    skills: cv.skills.map((s) => ({
+      name: s.name,
+      level: s.level || undefined,
+      keywords: s.keywords,
+    })),
     projects: (cv.projects || []).map((p) => ({
       name: p.title,
       description: p.description,
@@ -284,6 +370,10 @@ export function frontendCVToBackendData(cv: CV): BackendCV["data"] {
       url: p.url,
       startDate: p.startDate,
       endDate: p.endDate,
+      highlights: p.highlights || [],
+      roles: p.roles || [],
+      entity: p.entity || undefined,
+      type: p.type || undefined,
     })),
     certificates: (cv.certifications || []).map((c) => ({
       name: c.name,
@@ -305,6 +395,25 @@ export function frontendCVToBackendData(cv: CV): BackendCV["data"] {
     references: (cv.references || []).map((r) => ({
       name: r.name,
       reference: r.relationship,
+    })),
+    volunteer: (cv.volunteer || []).map((v) => ({
+      organization: v.organization,
+      position: v.position,
+      url: v.url || undefined,
+      startDate: v.startDate,
+      endDate: v.endDate,
+      summary: v.summary,
+      highlights: v.highlights || [],
+    })),
+    awards: (cv.awards || []).map((a) => ({
+      title: a.title,
+      date: a.date,
+      awarder: a.awarder,
+      summary: a.summary || undefined,
+    })),
+    interests: (cv.interests || []).map((int) => ({
+      name: int.name,
+      keywords: int.keywords,
     })),
     custom: (cv.customSections || []).map((cs) => ({
       sectionTitle: cs.title,
