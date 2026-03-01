@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from "react";
 import Layout from "@/components/Layout";
 import CVBuilderForm from "@/components/CVBuilderForm";
 import ChatBot from "@/components/ChatBot";
-import PDFDownloadModal from "@/components/PDFDownloadModal";
 import { Button } from "@/components/ui/button";
 import { useCV } from "@/lib/context";
 import { motion } from "framer-motion";
@@ -11,6 +10,7 @@ import { LucideFileText, LucideDownload, LucideShare2, LucideZap, LucideMessageC
 import { useLocation } from "wouter";
 import { toast } from "@/hooks/use-toast";
 import { renderCVToHTML } from "@/services/pdf-service";
+import pdfService from "@/services/pdf-service";
 
 // Available section types
 export type SectionType =
@@ -36,7 +36,28 @@ export default function CVBuilder() {
   const [activeColor, setActiveColor] = useState("golden");
   const [activeTab, setActiveTab] = useState<"edit" | "preview" | "chat">("edit");
   const [activeSection, setActiveSection] = useState<SectionType>("personal");
-  const [isPDFModalOpen, setIsPDFModalOpen] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownloadPDF = useCallback(async () => {
+    if (!mainCV || isDownloading) return;
+    try {
+      setIsDownloading(true);
+      toast({ title: 'Generating PDF...', description: 'Please wait while we prepare your CV.' });
+      const blob = await pdfService.generatePDF(mainCV, activeTemplate as any);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${mainCV.personalInfo.fullName || 'CV'}_${activeTemplate}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast({ title: 'PDF Downloaded!', description: 'Your CV has been saved.' });
+    } catch (err) {
+      console.error(err);
+      toast({ title: 'Download failed', description: 'Something went wrong generating the PDF.', variant: 'destructive' });
+    } finally {
+      setIsDownloading(false);
+    }
+  }, [mainCV, activeTemplate, isDownloading]);
 
   // Load specific CV by ID from query param
   useEffect(() => {
@@ -327,10 +348,11 @@ export default function CVBuilder() {
                               variant="ghost"
                               size="sm"
                               className="text-gray-500 hover:text-black hover:bg-gray-100"
-                              onClick={() => setIsPDFModalOpen(true)}
+                              onClick={handleDownloadPDF}
+                              disabled={isDownloading}
                             >
                               <LucideDownload className="w-4 h-4 mr-2" />
-                              Download
+                              {isDownloading ? 'Generating...' : 'Download'}
                             </Button>
                             <Button
                               variant="ghost"
@@ -685,10 +707,11 @@ export default function CVBuilder() {
                           <div className="space-y-2">
                             <Button
                               className="w-full bg-black text-white hover:bg-black/90 text-xs py-2 h-9"
-                              onClick={() => setIsPDFModalOpen(true)}
+                              onClick={handleDownloadPDF}
+                              disabled={isDownloading}
                             >
                               <LucideDownload className="w-3.5 h-3.5 mr-2" />
-                              Download as PDF
+                              {isDownloading ? 'Generating...' : 'Download as PDF'}
                             </Button>
                             <Button
                               variant="outline"
@@ -708,14 +731,6 @@ export default function CVBuilder() {
           </div>
         </div>
       </div>
-      {/* PDF Download Modal */}
-      {isPDFModalOpen && (
-        <PDFDownloadModal 
-          isOpen={isPDFModalOpen} 
-          onClose={() => setIsPDFModalOpen(false)}
-          cv={mainCV}
-        />
-      )}
     </Layout>
   );
 }
