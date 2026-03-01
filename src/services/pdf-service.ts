@@ -1022,6 +1022,36 @@ function renderTechnical(pi: PI, s: Sections): string {
 
 /* ─── PDF SERVICE ─── */
 export class PDFService {
+  /**
+   * Collect the bottom-edge (in CSS px) of every block-level descendant
+   * that has `break-inside: avoid` or is a direct child div. These are the
+   * safe positions where a page break can happen without cutting content.
+   */
+  private collectBreakPoints(container: HTMLElement): number[] {
+    const containerTop = container.getBoundingClientRect().top;
+    const points = new Set<number>();
+    points.add(0);
+
+    const walk = (el: HTMLElement, depth: number) => {
+      for (let i = 0; i < el.children.length; i++) {
+        const child = el.children[i] as HTMLElement;
+        if (!child.getBoundingClientRect) continue;
+        const rect = child.getBoundingClientRect();
+        if (rect.height === 0) continue;
+
+        // Bottom edge relative to container top
+        const bottom = Math.round(rect.bottom - containerTop);
+        points.add(bottom);
+
+        // Recurse up to 3 levels to catch nested items
+        if (depth < 3) walk(child, depth + 1);
+      }
+    };
+
+    walk(container, 0);
+    return Array.from(points).sort((a, b) => a - b);
+  }
+
   async generatePDF(cv: CV, layout: CVLayoutStyle = 'modern'): Promise<Blob> {
     const html = renderCVToHTML(cv, layout);
 
@@ -1035,8 +1065,12 @@ export class PDFService {
     document.body.appendChild(container);
 
     try {
+      // Collect element-aware break points BEFORE capturing canvas
+      const breakPointsCss = this.collectBreakPoints(container);
+
+      const canvasScale = 2;
       const canvas = await html2canvas(container, {
-        scale: 2,
+        scale: canvasScale,
         useCORS: true,
         backgroundColor: '#ffffff',
         width: 794,
@@ -1044,37 +1078,89 @@ export class PDFService {
       });
 
       const pdf = new jsPDF('p', 'mm', 'a4');
-      const pdfWidth = 210;
-      const pdfHeight = 297;
-      const margin = 10; // mm margin for footer
-      const usableHeight = pdfHeight - margin;
-      const imgWidth = pdfWidth;
-      const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+      const pdfWidth = 210;   // A4 mm
+      const pdfHeight = 297;  // A4 mm
+      const footerMargin = 8; // mm reserved for page number
+      const usableHeightMm = pdfHeight - footerMargin;
 
-      let heightLeft = imgHeight;
-      let position = 0;
-      let pageNum = 0;
-      const totalPages = Math.ceil(imgHeight / usableHeight);
+      // Conversion factors
+      const cssToCanvas = canvasScale;            // CSS px → canvas px
+      const canvasToMm = pdfWidth / canvas.width; // canvas px → mm
 
-      while (heightLeft > 0) {
-        if (pageNum > 0) {
-          pdf.addPage();
+      const usableHeightCss = usableHeightMm / canvasToMm / cssToCanvas; // usable height in CSS px
+
+      // Convert CSS break-points to canvas-pixel break-points
+      const breakPoints = breakPointsCss.map(bp => bp * cssToCanvas);
+      const pageHeightPx = usableHeightCss * cssToCanvas; // usable page height in canvas px
+
+      // Determine page slices using smart break points
+      const pages: { startPx: number; endPx: number }[] = [];
+      let pageStart = 0;
+      const totalPx = canvas.height;
+
+      while (pageStart < totalPx) {
+        const idealEnd = pageStart + pageHeightPx;
+
+        if (idealEnd >= totalPx) {
+          // Remaining content fits on this page
+          pages.push({ startPx: pageStart, endPx: totalPx });
+          break;
         }
-        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, position, imgWidth, imgHeight);
 
-        // Footer with page number
+        // Find the best break point: the largest one that doesn't exceed idealEnd
+        let bestBreak = pageStart + pageHeightPx; // fallback: hard cut
+        for (let i = breakPoints.length - 1; i >= 0; i--) {
+          if (breakPoints[i] <= idealEnd && breakPoints[i] > pageStart) {
+            bestBreak = breakPoints[i];
+            break;
+          }
+        }
+
+        // Safety: if bestBreak hasn't moved past pageStart, force a hard cut
+        if (bestBreak <= pageStart) {
+          bestBreak = pageStart + pageHeightPx;
+        }
+
+        pages.push({ startPx: pageStart, endPx: Math.min(bestBreak, totalPx) });
+        pageStart = bestBreak;
+      }
+
+      // Render each page by cropping the canvas
+      const totalPages = pages.length;
+
+      for (let p = 0; p < totalPages; p++) {
+        if (p > 0) pdf.addPage();
+
+        const { startPx, endPx } = pages[p];
+        const segH = endPx - startPx;
+
+        // Create a cropped canvas for this page
+        const pageCanvas = document.createElement('canvas');
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = Math.ceil(segH);
+        const ctx = pageCanvas.getContext('2d')!;
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+        ctx.drawImage(
+          canvas,
+          0, Math.floor(startPx), canvas.width, Math.ceil(segH),
+          0, 0, canvas.width, Math.ceil(segH),
+        );
+
+        const segHeightMm = segH * canvasToMm;
+        pdf.addImage(
+          pageCanvas.toDataURL('image/png'),
+          'PNG', 0, 0, pdfWidth, segHeightMm,
+        );
+
+        // Page number footer
         pdf.setFontSize(8);
         pdf.setTextColor(180, 180, 180);
         pdf.text(
-          `Page ${pageNum + 1} of ${totalPages}`,
-          pdfWidth / 2,
-          pdfHeight - 4,
-          { align: 'center' }
+          `Page ${p + 1} of ${totalPages}`,
+          pdfWidth / 2, pdfHeight - 3,
+          { align: 'center' },
         );
-
-        heightLeft -= usableHeight;
-        position -= usableHeight;
-        pageNum++;
       }
 
       return pdf.output('blob');
