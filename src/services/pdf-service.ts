@@ -1021,14 +1021,18 @@ function renderTechnical(pi: PI, s: Sections): string {
 /* ─── PDF SERVICE ─── */
 export class PDFService {
   /**
-   * Scan a horizontal row of pixels and return true if the row is
-   * entirely white (or near-white). Samples every 10th pixel for speed.
+   * Scan the middle 70% of a horizontal pixel row and return true only
+   * if every sampled pixel is pure white. This ignores sidebars/accents
+   * on the edges and won't be fooled by light background colors (#f9fafb etc).
    */
   private isRowBlank(ctx: CanvasRenderingContext2D, y: number, width: number): boolean {
-    const data = ctx.getImageData(0, y, width, 1).data;
-    // Sample every 10th pixel (stride 40 in RGBA)
-    for (let i = 0; i < data.length; i += 40) {
-      if (data[i] < 245 || data[i + 1] < 245 || data[i + 2] < 245) return false;
+    // Scan from 40% to 90% — clears sidebars (up to ~30%) and right-edge accents
+    const left = Math.floor(width * 0.4);
+    const scanWidth = Math.floor(width * 0.5);
+    const data = ctx.getImageData(left, y, scanWidth, 1).data;
+    // Sample every 8th pixel (stride 32 in RGBA), threshold 253 = only pure white
+    for (let i = 0; i < data.length; i += 32) {
+      if (data[i] < 253 || data[i + 1] < 253 || data[i + 2] < 253) return false;
     }
     return true;
   }
@@ -1045,7 +1049,7 @@ export class PDFService {
     idealY: number,
     searchRange: number,
   ): number {
-    const minBand = 4; // at least 4 consecutive blank rows = a real gap
+    const minBand = 10; // need a substantial gap (margins between sections are 16-40px at 2x scale)
 
     // Search backwards from idealY
     let y = Math.min(idealY, height - 1);
