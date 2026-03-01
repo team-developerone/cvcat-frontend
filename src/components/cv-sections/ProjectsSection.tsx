@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Project } from "@/lib/types";
 import { LucidePlus, LucideTrash2, LucidePencil, LucideX, LucideCheck, LucideChevronRight } from "lucide-react";
+import SortableList from "@/components/ui/sortable-list";
 
 export default function ProjectsSection() {
   const { mainCV, setMainCV } = useCV();
@@ -263,13 +264,11 @@ export default function ProjectsSection() {
       {showAddForm && !editingItemId && <div className="mb-6">{renderForm(false)}</div>}
 
       {mainCV.projects && mainCV.projects.length > 0 ? (
-        <div className="space-y-3">
-          {mainCV.projects.map((item) => (
-            <div key={item.id}>
-              {editingItemId === item.id ? renderForm(true) : renderItem(item)}
-            </div>
-          ))}
-        </div>
+        <SortableList
+          items={mainCV.projects}
+          onReorder={(reordered) => setMainCV({ ...mainCV, projects: reordered, lastUpdated: new Date() })}
+          renderItem={(item) => editingItemId === item.id ? renderForm(true) : renderItem(item)}
+        />
       ) : (
         <div className="flex flex-col items-center justify-center py-10 border border-dashed border-gray-200 rounded-lg bg-gray-50/50">
           <p className="text-gray-500 text-sm mb-3">No projects added yet</p>

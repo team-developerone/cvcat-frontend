@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Education } from "@/lib/types";
 import { LucidePlus, LucideTrash2, LucidePencil, LucideX, LucideCheck } from "lucide-react";
+import SortableList from "@/components/ui/sortable-list";
 
 export default function EducationSection() {
   const { mainCV, setMainCV } = useCV();
@@ -233,13 +234,11 @@ export default function EducationSection() {
       {showAddForm && !editingItemId && <div className="mb-6">{renderForm(false)}</div>}
 
       {mainCV.education.length > 0 ? (
-        <div className="space-y-3">
-          {mainCV.education.map((item) => (
-            <div key={item.id}>
-              {editingItemId === item.id ? renderForm(true) : renderItem(item)}
-            </div>
-          ))}
-        </div>
+        <SortableList
+          items={mainCV.education}
+          onReorder={(reordered) => setMainCV({ ...mainCV, education: reordered, lastUpdated: new Date() })}
+          renderItem={(item) => editingItemId === item.id ? renderForm(true) : renderItem(item)}
+        />
       ) : (
         <div className="flex flex-col items-center justify-center py-10 border border-dashed border-gray-200 rounded-lg bg-gray-50/50">
           <p className="text-gray-500 text-sm mb-3">No education added yet</p>

@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Certification } from "@/lib/types";
 import { LucidePlus, LucideTrash2, LucidePencil, LucideX, LucideCheck, LucideChevronRight } from "lucide-react";
+import SortableList from "@/components/ui/sortable-list";
 
 export default function CertificationsSection() {
   const { mainCV, setMainCV } = useCV();
@@ -171,13 +172,11 @@ export default function CertificationsSection() {
       {showAddForm && !editingItemId && <div className="mb-6">{renderForm(false)}</div>}
 
       {mainCV.certifications && mainCV.certifications.length > 0 ? (
-        <div className="space-y-3">
-          {mainCV.certifications.map((item) => (
-            <div key={item.id}>
-              {editingItemId === item.id ? renderForm(true) : renderItem(item)}
-            </div>
-          ))}
-        </div>
+        <SortableList
+          items={mainCV.certifications}
+          onReorder={(reordered) => setMainCV({ ...mainCV, certifications: reordered, lastUpdated: new Date() })}
+          renderItem={(item) => editingItemId === item.id ? renderForm(true) : renderItem(item)}
+        />
       ) : (
         <div className="flex flex-col items-center justify-center py-10 border border-dashed border-gray-200 rounded-lg bg-gray-50/50">
           <p className="text-gray-500 text-sm mb-3">No certifications added yet</p>

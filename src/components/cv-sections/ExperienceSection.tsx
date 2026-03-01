@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { WorkExperience } from "@/lib/types";
 import { LucidePlus, LucideTrash2, LucidePencil, LucideX, LucideCheck } from "lucide-react";
+import SortableList from "@/components/ui/sortable-list";
 
 export default function ExperienceSection() {
   const { mainCV, setMainCV } = useCV();
@@ -242,13 +243,11 @@ export default function ExperienceSection() {
       {showAddForm && !editingItemId && <div className="mb-6">{renderForm(false)}</div>}
 
       {mainCV.experience.length > 0 ? (
-        <div className="space-y-3">
-          {mainCV.experience.map((item) => (
-            <div key={item.id}>
-              {editingItemId === item.id ? renderForm(true) : renderItem(item)}
-            </div>
-          ))}
-        </div>
+        <SortableList
+          items={mainCV.experience}
+          onReorder={(reordered) => setMainCV({ ...mainCV, experience: reordered, lastUpdated: new Date() })}
+          renderItem={(item) => editingItemId === item.id ? renderForm(true) : renderItem(item)}
+        />
       ) : (
         <div className="flex flex-col items-center justify-center py-10 border border-dashed border-gray-200 rounded-lg bg-gray-50/50">
           <p className="text-gray-500 text-sm mb-3">No work experience added yet</p>
