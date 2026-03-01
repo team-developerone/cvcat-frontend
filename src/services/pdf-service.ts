@@ -1583,7 +1583,7 @@ export class PDFService {
     document.body.appendChild(container);
 
     try {
-      const canvasScale = 2;
+      const canvasScale = 1.5;
 
       // Step 1: Collect DOM break points BEFORE rendering to canvas
       const breakPoints = this.collectBreakPoints(container, canvasScale);
@@ -1597,7 +1597,7 @@ export class PDFService {
       });
 
       const fullCtx = canvas.getContext('2d')!;
-      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4', compress: true });
       const pdfWidth = 210;
       const pdfHeight = 297;
       const footerMargin = 10;
@@ -1667,7 +1667,7 @@ export class PDFService {
 
         const segHeightMm = segH * canvasToMm;
         const topMargin = index > 0 ? 8 : 0; // 8mm top margin on continuation pages
-        pdf.addImage(pageCanvas.toDataURL('image/png'), 'PNG', 0, topMargin, pdfWidth, segHeightMm);
+        pdf.addImage(pageCanvas.toDataURL('image/jpeg', 0.92), 'JPEG', 0, topMargin, pdfWidth, segHeightMm);
 
         // Page number footer
         pdf.setFontSize(8);
