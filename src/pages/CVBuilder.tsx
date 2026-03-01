@@ -290,13 +290,12 @@ export default function CVBuilder() {
 
               <div className="mt-6">
                 <div className="flex flex-col lg:flex-row lg:gap-6">
-                  {/* Left Panel: Section Navigation (visible only in edit mode) */}
-                  {activeTab === "edit" && (
-                    <motion.div 
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      className="w-full lg:w-64 flex-shrink-0 mb-4 lg:mb-0"
-                    >
+                  {/* Left Panel: Section Navigation (always mounted, hidden when not in edit mode) */}
+                  <motion.div 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: activeTab === "edit" ? 1 : 0, x: activeTab === "edit" ? 0 : -20 }}
+                    className={`w-full lg:w-64 flex-shrink-0 mb-4 lg:mb-0 ${activeTab !== "edit" ? 'hidden' : ''}`}
+                  >
                       <div className="bg-gray-900 p-4 rounded-xl shadow-sm">
                         <h3 className="text-xs font-medium uppercase tracking-wider text-gray-200 mb-3 ml-2">Sections</h3>
                         <div className="space-y-1">
@@ -327,15 +326,14 @@ export default function CVBuilder() {
                           </Button>
                         </div>
                       </div>
-                    </motion.div>
-                  )}
+                  </motion.div>
                   
                   {/* Middle Panel: CV Editor or Full Preview */}
                   <motion.div 
                     layout
                     className="flex-1"
                   >
-                    <TabsContent value="edit" className="mt-0">
+                    <TabsContent value="edit" className="mt-0" forceMount style={{ display: activeTab === 'edit' ? undefined : 'none' }}>
                       <CVBuilderForm activeSection={activeSection} />
                     </TabsContent>
                     
@@ -385,13 +383,12 @@ export default function CVBuilder() {
                     )}
                   </motion.div>
                   
-                  {/* Right Panel: Design Options (visible only in preview mode) */}
-                  {activeTab === "preview" && (
-                    <motion.div 
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      className="lg:w-80 flex-shrink-0 mt-4 lg:mt-0"
-                    >
+                  {/* Right Panel: Design Options (always mounted, hidden when not in preview mode) */}
+                  <motion.div 
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: activeTab === "preview" ? 1 : 0, x: activeTab === "preview" ? 0 : 20 }}
+                    className={`lg:w-80 flex-shrink-0 mt-4 lg:mt-0 ${activeTab !== "preview" ? 'hidden' : ''}`}
+                  >
                       <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
                         <div className="mb-5">
                           <h3 className="text-xs font-medium uppercase tracking-wider text-gray-500 mb-3 ml-2">Template</h3>
@@ -689,8 +686,7 @@ export default function CVBuilder() {
                           </div>
                         </div>
                       </div>
-                    </motion.div>
-                  )}
+                  </motion.div>
                 </div>
               </div>
             </Tabs>
