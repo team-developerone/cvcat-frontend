@@ -29,7 +29,7 @@ export type SectionType =
   | 'custom';
 
 export default function CVBuilder() {
-  const { mainCV, saveCV, savingCV, loadCVById } = useCV();
+  const { mainCV, setMainCV, saveCV, savingCV, loadCVById } = useCV();
   const [, navigate] = useLocation();
   const ENABLE_CV_ASSISTANT = false;
   const [activeTemplate, setActiveTemplate] = useState("modern");
@@ -59,12 +59,32 @@ export default function CVBuilder() {
     }
   }, [mainCV, activeTemplate, isDownloading]);
 
-  // Load specific CV by ID from query param
+  // Load specific CV by ID from query param, or create empty CV for fresh start
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const cvId = params.get("id");
     if (cvId) {
       loadCVById(cvId);
+    } else if (!mainCV) {
+      setMainCV({
+        id: '',
+        title: 'Untitled CV',
+        lastUpdated: new Date(),
+        isTailored: false,
+        personalInfo: { fullName: '', title: '', email: '', phone: '', location: '', summary: '' },
+        experience: [],
+        education: [],
+        skills: [],
+        projects: [],
+        certifications: [],
+        languages: [],
+        references: [],
+        publications: [],
+        volunteer: [],
+        awards: [],
+        interests: [],
+        customSections: [],
+      });
     }
   }, [loadCVById]);
 
