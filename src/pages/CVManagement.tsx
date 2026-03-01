@@ -5,7 +5,7 @@ import { Link, useLocation } from "wouter";
 import { useCV } from "@/lib/context";
 import { CV } from "@/lib/types";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PDFDownloadModal from "@/components/PDFDownloadModal";
 import { toast } from "@/hooks/use-toast";
 import { deleteCV } from "@/services/api";
@@ -17,6 +17,12 @@ export default function CVManagement() {
   const [pdfModalOpen, setPdfModalOpen] = useState(false);
   const [selectedCV, setSelectedCV] = useState<CV | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  // Dynamic page title
+  useEffect(() => {
+    document.title = 'My CVs | CVCat';
+    return () => { document.title = 'CVCat'; };
+  }, []);
 
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString('en-US', {

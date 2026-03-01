@@ -74,6 +74,13 @@ export default function CVBuilder() {
     }
   }, [ENABLE_CV_ASSISTANT, activeTab]);
 
+  // Dynamic page title
+  useEffect(() => {
+    const name = mainCV?.personalInfo?.fullName;
+    document.title = name ? `Edit CV - ${name} | CVCat` : 'CV Builder | CVCat';
+    return () => { document.title = 'CVCat'; };
+  }, [mainCV?.personalInfo?.fullName]);
+
   const handleSave = useCallback(async () => {
     if (!mainCV) return;
     try {
