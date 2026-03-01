@@ -1583,7 +1583,7 @@ export class PDFService {
     document.body.appendChild(container);
 
     try {
-      const canvasScale = 1.5;
+      const canvasScale = 2;
 
       // Step 1: Collect DOM break points BEFORE rendering to canvas
       const breakPoints = this.collectBreakPoints(container, canvasScale);
@@ -1667,7 +1667,7 @@ export class PDFService {
 
         const segHeightMm = segH * canvasToMm;
         const topMargin = index > 0 ? 8 : 0; // 8mm top margin on continuation pages
-        pdf.addImage(pageCanvas.toDataURL('image/jpeg', 0.92), 'JPEG', 0, topMargin, pdfWidth, segHeightMm);
+        pdf.addImage(pageCanvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, topMargin, pdfWidth, segHeightMm);
 
         // Page number footer
         pdf.setFontSize(8);
