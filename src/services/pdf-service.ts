@@ -1150,7 +1150,8 @@ export class PDFService {
         ctx.drawImage(canvas, 0, page.start, canvas.width, segH, 0, 0, canvas.width, segH);
 
         const segHeightMm = segH * canvasToMm;
-        pdf.addImage(pageCanvas.toDataURL('image/png'), 'PNG', 0, 0, pdfWidth, segHeightMm);
+        const topMargin = index > 0 ? 8 : 0; // 8mm top margin on continuation pages
+        pdf.addImage(pageCanvas.toDataURL('image/png'), 'PNG', 0, topMargin, pdfWidth, segHeightMm);
 
         // Page number footer
         pdf.setFontSize(8);
