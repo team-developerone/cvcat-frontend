@@ -345,7 +345,8 @@ function renderClassic(pi: PI, s: Sections): string {
             <span style="font-size:11px;color:#555;white-space:nowrap;">${exp.location || ''}</span>
           </div>
           <p style="font-size:11px;color:#666;margin:0 0 4px;">${exp.startDate} &mdash; ${exp.endDate}</p>
-          ${exp.highlights.length > 0 ? `<ul style="list-style:disc;padding-left:18px;margin:2px 0 0;">${exp.highlights.map(h => `<li style="font-size:11px;color:#333;line-height:1.6;margin-bottom:2px;">${h}</li>`).join('')}</ul>` : (exp.description ? `<p style="font-size:11px;color:#333;line-height:1.6;margin:2px 0 0;">${exp.description}</p>` : '')}
+          ${exp.description ? `<p style="font-size:11px;color:#333;line-height:1.6;margin:2px 0 0;">${exp.description}</p>` : ''}
+          ${exp.highlights.length > 0 ? `<ul style="list-style:disc;padding-left:18px;margin:2px 0 0;">${exp.highlights.map(h => `<li style="font-size:11px;color:#333;line-height:1.6;margin-bottom:2px;">${h}</li>`).join('')}</ul>` : ''}
         </div>`).join('')}`) : ''}
 
       <!-- Education -->
@@ -1025,7 +1026,8 @@ function renderProfessional(pi: PI, s: Sections): string {
         <p style="font-size:13px;font-weight:700;margin:0;">${exp.position}</p>
         <p style="font-size:12px;color:${accent};font-weight:600;margin:0;">${exp.company}</p>
         <p style="font-size:11px;color:#777;margin:0 0 4px;">&#128197; ${exp.startDate} - ${exp.endDate}${exp.location ? '&nbsp;&nbsp;&nbsp;&#9906; ' + exp.location : ''}</p>
-        ${exp.highlights.length > 0 ? `<ul style="list-style:none;padding:0;margin:4px 0 0;">${exp.highlights.map(h => `<li style="font-size:11px;color:#444;line-height:1.5;margin-bottom:2px;">&#8226; ${h}</li>`).join('')}</ul>` : (exp.description ? `<p style="font-size:11px;color:#444;line-height:1.5;margin:4px 0 0;">${exp.description}</p>` : '')}
+        ${exp.description ? `<p style="font-size:11px;color:#444;line-height:1.5;margin:4px 0 0;">${exp.description}</p>` : ''}
+        ${exp.highlights.length > 0 ? `<ul style="list-style:none;padding:0;margin:4px 0 0;">${exp.highlights.map(h => `<li style="font-size:11px;color:#444;line-height:1.5;margin-bottom:2px;">&#8226; ${h}</li>`).join('')}</ul>` : ''}
       </div>`).join('')}
     </div>` : ''}
 
@@ -1181,7 +1183,8 @@ function renderSimpleAts(pi: PI, s: Sections): string {
             <span style="font-size:12px;color:#555;">${exp.startDate} to ${exp.endDate}</span>
           </div>
           <p style="font-size:13px;color:${accent};margin:0 0 4px;">${exp.position}</p>
-          ${exp.highlights.length > 0 ? `<ul style="list-style:disc;padding-left:20px;margin:4px 0 0;">${exp.highlights.map(h => `<li style="font-size:12px;color:#333;line-height:1.6;margin-bottom:2px;">${h}</li>`).join('')}</ul>` : (exp.description ? `<p style="font-size:12px;color:#333;line-height:1.6;margin:4px 0 0;">${exp.description}</p>` : '')}
+          ${exp.description ? `<p style="font-size:12px;color:#333;line-height:1.6;margin:4px 0 0;">${exp.description}</p>` : ''}
+          ${exp.highlights.length > 0 ? `<ul style="list-style:disc;padding-left:20px;margin:4px 0 0;">${exp.highlights.map(h => `<li style="font-size:12px;color:#333;line-height:1.6;margin-bottom:2px;">${h}</li>`).join('')}</ul>` : ''}
         </div>`).join('')}` : ''}
 
       <!-- Education -->
@@ -1295,7 +1298,8 @@ function renderPureAts(pi: PI, s: Sections): string {
         ${s.experience.map(exp => `<div style="margin-bottom:14px;break-inside:avoid;">
           <p style="font-size:13px;font-weight:700;margin:0;">${exp.position}, ${exp.company}${exp.location ? ', ' + exp.location : ''}</p>
           <p style="font-size:11px;color:#666;margin:0 0 4px;">${exp.startDate} to ${exp.endDate}</p>
-          ${exp.highlights.length > 0 ? `<ul style="list-style:disc;padding-left:20px;margin:2px 0 0;">${exp.highlights.map(h => `<li style="font-size:11px;color:#000;line-height:1.5;margin-bottom:2px;">${h}</li>`).join('')}</ul>` : (exp.description ? `<p style="font-size:11px;color:#000;line-height:1.5;margin:2px 0 0;">${exp.description}</p>` : '')}
+          ${exp.description ? `<p style="font-size:11px;color:#000;line-height:1.5;margin:2px 0 0;">${exp.description}</p>` : ''}
+          ${exp.highlights.length > 0 ? `<ul style="list-style:disc;padding-left:20px;margin:2px 0 0;">${exp.highlights.map(h => `<li style="font-size:11px;color:#000;line-height:1.5;margin-bottom:2px;">${h}</li>`).join('')}</ul>` : ''}
         </div>`).join('')}` : ''}
 
       <!-- Education -->
@@ -1412,7 +1416,8 @@ function renderTraditional(pi: PI, s: Sections): string {
             <span style="font-size:11px;color:#555;white-space:nowrap;">${exp.startDate} — ${exp.endDate}</span>
           </div>
           ${exp.location ? `<p style="font-size:11px;color:#555;margin:0;text-align:right;">${exp.location}</p>` : ''}
-          ${exp.highlights.length > 0 ? `<ul style="list-style:disc;padding-left:28px;margin:4px 0 0;">${exp.highlights.map(h => `<li style="font-size:11px;color:#333;line-height:1.6;margin-bottom:2px;">${h}</li>`).join('')}</ul>` : (exp.description ? `<p style="font-size:11px;color:#333;line-height:1.6;margin:4px 0 0;padding-left:16px;">${exp.description}</p>` : '')}
+          ${exp.description ? `<p style="font-size:11px;color:#333;line-height:1.6;margin:4px 0 0;padding-left:16px;">${exp.description}</p>` : ''}
+          ${exp.highlights.length > 0 ? `<ul style="list-style:disc;padding-left:28px;margin:4px 0 0;">${exp.highlights.map(h => `<li style="font-size:11px;color:#333;line-height:1.6;margin-bottom:2px;">${h}</li>`).join('')}</ul>` : ''}
         </div>`).join('')}` : ''}
 
       <!-- Education -->
