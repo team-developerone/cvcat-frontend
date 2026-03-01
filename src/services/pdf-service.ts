@@ -145,14 +145,14 @@ function sectionBlock(content: string): string {
 }
 
 function modernHeading(title: string): string {
-  return `<h2 style="font-size: 15px; font-weight: 600; color: #333; margin: 0 0 8px; display: flex; align-items: center;">
-    <span style="display: inline-block; width: 24px; height: 2px; background: #DAA520; margin-right: 8px;"></span>${title}</h2>`;
+  return `<h2 style="font-size: 15px; font-weight: 600; color: #333; margin: 0 0 8px; line-height: 1.25;">
+    <span style="display: inline-block; width: 24px; height: 2px; background: #DAA520; margin-right: 8px; vertical-align: middle; position: relative; top: -1px;"></span><span style="vertical-align: middle;">${title}</span></h2>`;
 }
 
 function highlightsList(highlights: string[], fontSize = '12px', color = '#666'): string {
   if (highlights.length === 0) return '';
-  return `<ul style="list-style: disc; padding-left: 16px; margin: 4px 0 0;">
-    ${highlights.map(h => `<li style="font-size: ${fontSize}; color: ${color}; margin-bottom: 2px;">${h}</li>`).join('')}</ul>`;
+  return `<ul style="list-style: none; padding-left: 4px; margin: 6px 0 0;">
+    ${highlights.map(h => `<li style="font-size: ${fontSize}; color: ${color}; margin-bottom: 3px; padding-left: 12px; position: relative; line-height: 1.5;"><span style="position: absolute; left: 0; top: 7px; width: 4px; height: 4px; border-radius: 50%; background: ${color};"></span>${h}</li>`).join('')}</ul>`;
 }
 
 /* ─── MODERN ─── */
@@ -572,8 +572,8 @@ function renderMinimalist(pi: PI, s: Sections): string {
 /* ─── CREATIVE ─── */
 function renderCreative(pi: PI, s: Sections): string {
   const heading = (t: string) => `<h2 style="font-size: 18px; font-weight: 600; margin: 0 0 12px;">${t}</h2>`;
-  const timelineItem = (content: string) => `<div style="padding-left: 16px; border-left: 2px solid rgba(218,165,32,0.3); margin-bottom: 16px; position: relative; break-inside: avoid;">
-    <div style="position: absolute; left: -5px; top: 0; width: 8px; height: 8px; border-radius: 50%; background: #DAA520;"></div>${content}</div>`;
+  const timelineItem = (content: string) => `<div style="padding-left: 20px; border-left: 2px solid rgba(218,165,32,0.3); margin-bottom: 16px; position: relative; break-inside: avoid;">
+    <div style="position: absolute; left: -5px; top: 6px; width: 8px; height: 8px; border-radius: 50%; background: #DAA520;"></div>${content}</div>`;
 
   return `
     <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #000; max-width: 800px; margin: 0 auto;">
@@ -585,10 +585,8 @@ function renderCreative(pi: PI, s: Sections): string {
       </div>
 
       <div style="padding: 32px 40px;">
-        <div style="display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; font-size: 13px;">
-          ${[pi.email, pi.phone, pi.location].map(v => `<div style="display: flex; align-items: center; gap: 4px;">
-            <span style="width: 8px; height: 8px; border-radius: 50%; background: #DAA520; display: inline-block;"></span><span>${v}</span>
-          </div>`).join('')}
+        <div style="margin-bottom: 24px; font-size: 13px; line-height: 20px;">
+          ${[pi.email, pi.phone, pi.location].filter(v => v).map(v => `<span style="margin-right: 16px; white-space: nowrap;"><span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #DAA520; vertical-align: middle; position: relative; top: 2px; margin-right: 6px;"></span><span style="display: inline-block; vertical-align: middle; line-height: 20px;">${v}</span></span>`).join('')}
         </div>
 
         ${s.summary ? `<p style="font-size: 13px; margin: 0 0 24px; line-height: 1.5;">${s.summary}</p>` : ''}
@@ -618,8 +616,8 @@ function renderCreative(pi: PI, s: Sections): string {
 
         ${s.skills.length > 0 ? `<div style="margin-bottom: 24px; break-inside: avoid;">
           ${heading('Skills')}
-          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-            ${s.skills.map(skill => `<span style="padding: 4px 12px; background: rgba(218,165,32,0.1); border-radius: 20px; font-size: 12px;">${skill}</span>`).join('')}
+          <div style="line-height: 2.2;">
+            ${s.skills.map(skill => `<span style="display: inline-block; padding: 2px 10px; background: rgba(218,165,32,0.1); border-radius: 12px; font-size: 11px; line-height: 1.6; margin: 0 4px 4px 0; vertical-align: middle;">${skill}</span>`).join('')}
           </div>
         </div>` : ''}
 
@@ -1023,33 +1021,54 @@ function renderTechnical(pi: PI, s: Sections): string {
 /* ─── PDF SERVICE ─── */
 export class PDFService {
   /**
-   * Collect the bottom-edge (in CSS px) of every block-level descendant
-   * that has `break-inside: avoid` or is a direct child div. These are the
-   * safe positions where a page break can happen without cutting content.
+   * Scan a horizontal row of pixels and return true if the row is
+   * entirely white (or near-white). Samples every 10th pixel for speed.
    */
-  private collectBreakPoints(container: HTMLElement): number[] {
-    const containerTop = container.getBoundingClientRect().top;
-    const points = new Set<number>();
-    points.add(0);
+  private isRowBlank(ctx: CanvasRenderingContext2D, y: number, width: number): boolean {
+    const data = ctx.getImageData(0, y, width, 1).data;
+    // Sample every 10th pixel (stride 40 in RGBA)
+    for (let i = 0; i < data.length; i += 40) {
+      if (data[i] < 245 || data[i + 1] < 245 || data[i + 2] < 245) return false;
+    }
+    return true;
+  }
 
-    const walk = (el: HTMLElement, depth: number) => {
-      for (let i = 0; i < el.children.length; i++) {
-        const child = el.children[i] as HTMLElement;
-        if (!child.getBoundingClientRect) continue;
-        const rect = child.getBoundingClientRect();
-        if (rect.height === 0) continue;
+  /**
+   * Near idealY, search backwards for a band of consecutive blank rows
+   * (visual gap between content blocks). Returns the Y coordinate of
+   * the middle of the first suitable gap found.
+   */
+  private findWhitespaceBreak(
+    ctx: CanvasRenderingContext2D,
+    width: number,
+    height: number,
+    idealY: number,
+    searchRange: number,
+  ): number {
+    const minBand = 4; // at least 4 consecutive blank rows = a real gap
 
-        // Bottom edge relative to container top
-        const bottom = Math.round(rect.bottom - containerTop);
-        points.add(bottom);
+    // Search backwards from idealY
+    let y = Math.min(idealY, height - 1);
+    const lowerBound = Math.max(0, idealY - searchRange);
 
-        // Recurse up to 3 levels to catch nested items
-        if (depth < 3) walk(child, depth + 1);
+    while (y > lowerBound) {
+      if (this.isRowBlank(ctx, y, width)) {
+        // Found a blank row — expand to find full band
+        let bandEnd = y;
+        let bandStart = y;
+        while (bandStart > 0 && this.isRowBlank(ctx, bandStart - 1, width)) bandStart--;
+        const bandSize = bandEnd - bandStart + 1;
+        if (bandSize >= minBand) {
+          return bandStart + Math.floor(bandSize / 2); // middle of gap
+        }
+        y = bandStart - 1; // skip past this small gap
+      } else {
+        y--;
       }
-    };
+    }
 
-    walk(container, 0);
-    return Array.from(points).sort((a, b) => a - b);
+    // Nothing found backwards — fallback to hard cut at idealY
+    return Math.min(idealY, height);
   }
 
   async generatePDF(cv: CV, layout: CVLayoutStyle = 'modern'): Promise<Blob> {
@@ -1065,9 +1084,6 @@ export class PDFService {
     document.body.appendChild(container);
 
     try {
-      // Collect element-aware break points BEFORE capturing canvas
-      const breakPointsCss = this.collectBreakPoints(container);
-
       const canvasScale = 2;
       const canvas = await html2canvas(container, {
         scale: canvasScale,
@@ -1077,90 +1093,65 @@ export class PDFService {
         windowWidth: 794,
       });
 
+      const fullCtx = canvas.getContext('2d')!;
       const pdf = new jsPDF('p', 'mm', 'a4');
-      const pdfWidth = 210;   // A4 mm
-      const pdfHeight = 297;  // A4 mm
-      const footerMargin = 8; // mm reserved for page number
+      const pdfWidth = 210;
+      const pdfHeight = 297;
+      const footerMargin = 10;
       const usableHeightMm = pdfHeight - footerMargin;
 
-      // Conversion factors
-      const cssToCanvas = canvasScale;            // CSS px → canvas px
-      const canvasToMm = pdfWidth / canvas.width; // canvas px → mm
+      const canvasToMm = pdfWidth / canvas.width;
+      const pageHeightPx = Math.floor(usableHeightMm / canvasToMm);
+      // How far back from the ideal cut to search for whitespace
+      const searchRange = Math.floor(pageHeightPx * 0.25);
 
-      const usableHeightCss = usableHeightMm / canvasToMm / cssToCanvas; // usable height in CSS px
+      // Build page list using pixel scanning
+      const pages: Array<{ start: number; end: number }> = [];
+      let start = 0;
 
-      // Convert CSS break-points to canvas-pixel break-points
-      const breakPoints = breakPointsCss.map(bp => bp * cssToCanvas);
-      const pageHeightPx = usableHeightCss * cssToCanvas; // usable page height in canvas px
+      while (start < canvas.height) {
+        const idealEnd = start + pageHeightPx;
 
-      // Determine page slices using smart break points
-      const pages: { startPx: number; endPx: number }[] = [];
-      let pageStart = 0;
-      const totalPx = canvas.height;
-
-      while (pageStart < totalPx) {
-        const idealEnd = pageStart + pageHeightPx;
-
-        if (idealEnd >= totalPx) {
-          // Remaining content fits on this page
-          pages.push({ startPx: pageStart, endPx: totalPx });
+        if (idealEnd >= canvas.height) {
+          pages.push({ start, end: canvas.height });
           break;
         }
 
-        // Find the best break point: the largest one that doesn't exceed idealEnd
-        let bestBreak = pageStart + pageHeightPx; // fallback: hard cut
-        for (let i = breakPoints.length - 1; i >= 0; i--) {
-          if (breakPoints[i] <= idealEnd && breakPoints[i] > pageStart) {
-            bestBreak = breakPoints[i];
-            break;
-          }
-        }
+        const breakY = this.findWhitespaceBreak(fullCtx, canvas.width, canvas.height, idealEnd, searchRange);
 
-        // Safety: if bestBreak hasn't moved past pageStart, force a hard cut
-        if (bestBreak <= pageStart) {
-          bestBreak = pageStart + pageHeightPx;
-        }
+        // Progress guard: always advance by at least half a page
+        const end = breakY > start + pageHeightPx * 0.5 ? breakY : Math.min(idealEnd, canvas.height);
 
-        pages.push({ startPx: pageStart, endPx: Math.min(bestBreak, totalPx) });
-        pageStart = bestBreak;
+        pages.push({ start, end });
+        start = end;
       }
 
-      // Render each page by cropping the canvas
+      // Render each page
       const totalPages = pages.length;
+      for (let index = 0; index < totalPages; index++) {
+        if (index > 0) pdf.addPage();
 
-      for (let p = 0; p < totalPages; p++) {
-        if (p > 0) pdf.addPage();
+        const page = pages[index];
+        const segH = Math.max(1, page.end - page.start);
 
-        const { startPx, endPx } = pages[p];
-        const segH = endPx - startPx;
-
-        // Create a cropped canvas for this page
         const pageCanvas = document.createElement('canvas');
         pageCanvas.width = canvas.width;
         pageCanvas.height = Math.ceil(segH);
-        const ctx = pageCanvas.getContext('2d')!;
+
+        const ctx = pageCanvas.getContext('2d');
+        if (!ctx) continue;
+
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
-        ctx.drawImage(
-          canvas,
-          0, Math.floor(startPx), canvas.width, Math.ceil(segH),
-          0, 0, canvas.width, Math.ceil(segH),
-        );
+        ctx.drawImage(canvas, 0, page.start, canvas.width, segH, 0, 0, canvas.width, segH);
 
         const segHeightMm = segH * canvasToMm;
-        pdf.addImage(
-          pageCanvas.toDataURL('image/png'),
-          'PNG', 0, 0, pdfWidth, segHeightMm,
-        );
+        pdf.addImage(pageCanvas.toDataURL('image/png'), 'PNG', 0, 0, pdfWidth, segHeightMm);
 
         // Page number footer
         pdf.setFontSize(8);
         pdf.setTextColor(180, 180, 180);
-        pdf.text(
-          `Page ${p + 1} of ${totalPages}`,
-          pdfWidth / 2, pdfHeight - 3,
-          { align: 'center' },
-        );
+        pdf.text(`Page ${index + 1} of ${totalPages}`, pdfWidth / 2, pdfHeight - 3, { align: 'center' });
       }
 
       return pdf.output('blob');
