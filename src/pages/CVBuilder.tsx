@@ -354,14 +354,6 @@ export default function CVBuilder() {
                               <LucideDownload className="w-4 h-4 mr-2" />
                               {isDownloading ? 'Generating...' : 'Download'}
                             </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-gray-500 hover:text-black hover:bg-gray-100"
-                            >
-                              <LucideShare2 className="w-4 h-4 mr-2" />
-                              Share
-                            </Button>
                           </div>
                         </div>
                         
@@ -398,12 +390,12 @@ export default function CVBuilder() {
                     <motion.div 
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      className="lg:w-64 flex-shrink-0 mt-4 lg:mt-0"
+                      className="lg:w-80 flex-shrink-0 mt-4 lg:mt-0"
                     >
                       <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
                         <div className="mb-5">
                           <h3 className="text-xs font-medium uppercase tracking-wider text-gray-500 mb-3 ml-2">Template</h3>
-                          <div className="grid grid-cols-2 gap-3">
+                          <div className="grid grid-cols-3 gap-2">
                             {templates.map((template) => (
                               <div 
                                 key={template.id}
@@ -682,25 +674,6 @@ export default function CVBuilder() {
                           </div>
                         </div>
                         
-                        <div className="mb-5">
-                          <h3 className="text-xs font-medium uppercase tracking-wider text-gray-500 mb-3 ml-2">Color</h3>
-                          <div className="flex flex-wrap gap-2">
-                            {colors.map((color) => (
-                              <button 
-                                key={color.id}
-                                className="relative w-7 h-7 rounded-full transition-all"
-                                style={{ 
-                                  backgroundColor: color.color,
-                                }}
-                                onClick={() => setActiveColor(color.id)}
-                              >
-                                {activeColor === color.id && (
-                                  <span className="absolute inset-0 rounded-full ring-2 ring-black/10 ring-offset-2 ring-offset-white"></span>
-                                )}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
                         
                         <div className="pb-2">
                           <h3 className="text-xs font-medium uppercase tracking-wider text-gray-500 mb-3 ml-2">Actions</h3>
@@ -712,13 +685,6 @@ export default function CVBuilder() {
                             >
                               <LucideDownload className="w-3.5 h-3.5 mr-2" />
                               {isDownloading ? 'Generating...' : 'Download as PDF'}
-                            </Button>
-                            <Button
-                              variant="outline"
-                              className="w-full text-xs py-2 h-9"
-                            >
-                              <LucideShare2 className="w-3.5 h-3.5 mr-2" />
-                              Share CV Link
                             </Button>
                           </div>
                         </div>
