@@ -227,20 +227,20 @@ export default function CVBuilder() {
                       className="w-full lg:w-64 flex-shrink-0 mb-4 lg:mb-0"
                     >
                       <div className="bg-gray-900 p-4 rounded-xl shadow-sm">
-                        <h3 className="text-xs font-medium uppercase tracking-wider text-gray-400 mb-3 ml-2">Sections</h3>
+                        <h3 className="text-xs font-medium uppercase tracking-wider text-gray-200 mb-3 ml-2">Sections</h3>
                         <div className="space-y-1">
                           {sections.map((section) => (
                             <button
                               key={section.id}
                               className={`w-full text-left flex items-center px-3 py-2 rounded-lg text-sm transition-colors ${
                                 activeSection === section.id
-                                  ? 'bg-[#DAA520]/10 font-medium text-white'
-                                  : 'text-gray-50 hover:bg-gray-800 hover:text-white'
+                                  ? 'bg-[#DAA520]/10 font-medium !text-white'
+                                  : '!text-white hover:bg-gray-800 hover:!text-white'
                               }`}
                               onClick={() => setActiveSection(section.id as SectionType)}
                             >
                               <i className={`fas fa-${section.icon} text-[#DAA520] w-5 text-center mr-2`}></i>
-                              <span>{section.name}</span>
+                              <span className="!text-white !opacity-100">{section.name}</span>
                             </button>
                           ))}
                         </div>
@@ -248,7 +248,7 @@ export default function CVBuilder() {
                         <div className="mt-6 pt-6 border-t border-gray-700">
                           <Button
                             variant="outline"
-                            className="w-full flex items-center justify-center text-sm border-dashed border-gray-700 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white"
+                            className="w-full flex items-center justify-center text-sm border-dashed border-gray-700 bg-gray-800 hover:bg-gray-700 !text-white/90 hover:!text-white"
                             onClick={() => setActiveSection("custom")}
                           >
                             <i className="fas fa-plus-circle mr-2 text-[#DAA520]"></i>

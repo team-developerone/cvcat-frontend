@@ -80,7 +80,7 @@ export default function InterestsSection() {
           </div>
           <div className="flex justify-end mt-4 gap-2">
             <Button variant="outline" size="sm" onClick={toggleAddForm} className="text-xs h-8">Cancel</Button>
-            <Button size="sm" onClick={addInterest} className="text-xs h-8 bg-black hover:bg-black/80" disabled={!newInterest.name.trim()}>
+            <Button size="sm" onClick={addInterest} className="text-xs h-8 bg-black hover:bg-black/80 !text-white" disabled={!newInterest.name.trim()}>
               <LucideCheck className="w-3 h-3 mr-1" />Create Interest
             </Button>
           </div>
@@ -116,7 +116,7 @@ export default function InterestsSection() {
                   placeholder="Add a keyword..."
                   onKeyDown={(e) => { if (e.key === "Enter" && newInterestKeyword.trim()) { e.preventDefault(); addInterestKeyword(interest.id); } }}
                 />
-                <Button size="sm" onClick={() => addInterestKeyword(interest.id)} disabled={!newInterestKeyword.trim()} className="ml-2 h-8 bg-black hover:bg-black/80 text-xs">Add</Button>
+                <Button size="sm" onClick={() => addInterestKeyword(interest.id)} disabled={!newInterestKeyword.trim()} className="ml-2 h-8 bg-black hover:bg-black/80 text-xs !text-white">Add</Button>
               </div>
             </div>
           ))}

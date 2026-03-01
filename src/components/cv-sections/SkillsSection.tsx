@@ -94,7 +94,7 @@ export default function SkillsSection() {
           </div>
           <div className="flex justify-end mt-4 gap-2">
             <Button variant="outline" size="sm" onClick={toggleAddForm} className="text-xs h-8">Cancel</Button>
-            <Button size="sm" onClick={addSkillGroup} className="text-xs h-8 bg-black hover:bg-black/80" disabled={!newSkillGroup.name.trim()}>
+            <Button size="sm" onClick={addSkillGroup} className="text-xs h-8 bg-black hover:bg-black/80 !text-white" disabled={!newSkillGroup.name.trim()}>
               <LucideCheck className="w-3 h-3 mr-1" />Create Group
             </Button>
           </div>
@@ -135,7 +135,7 @@ export default function SkillsSection() {
                   placeholder="Add a skill..."
                   onKeyDown={(e) => { if (e.key === "Enter" && newSkillKeyword.trim()) { e.preventDefault(); addSkillKeyword(group.id); } }}
                 />
-                <Button size="sm" onClick={() => addSkillKeyword(group.id)} disabled={!newSkillKeyword.trim()} className="ml-2 h-8 bg-black hover:bg-black/80 text-xs">Add</Button>
+                <Button size="sm" onClick={() => addSkillKeyword(group.id)} disabled={!newSkillKeyword.trim()} className="ml-2 h-8 bg-black hover:bg-black/80 text-xs !text-white">Add</Button>
               </div>
             </div>
           ))}

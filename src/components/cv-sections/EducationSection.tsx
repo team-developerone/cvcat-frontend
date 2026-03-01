@@ -173,14 +173,14 @@ export default function EducationSection() {
               placeholder="Add a course..."
               onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCourse(); } }}
             />
-            <Button size="sm" onClick={addCourse} disabled={!newCourse.trim()} className="h-8 bg-black hover:bg-black/80 text-xs px-3">Add</Button>
+            <Button size="sm" onClick={addCourse} disabled={!newCourse.trim()} className="h-8 bg-black hover:bg-black/80 text-xs px-3 !text-white">Add</Button>
           </div>
         </div>
       </div>
 
       <div className="flex justify-end mt-4 gap-2">
         <Button variant="outline" size="sm" onClick={toggleAddForm} className="text-xs h-8">Cancel</Button>
-        <Button size="sm" onClick={save} className="text-xs h-8 bg-black hover:bg-black/80">
+        <Button size="sm" onClick={save} className="text-xs h-8 bg-black hover:bg-black/80 !text-white">
           <LucideCheck className="w-3 h-3 mr-1" />
           {isEdit ? "Update" : "Save"}
         </Button>

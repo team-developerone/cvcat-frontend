@@ -108,7 +108,7 @@ export default function ReferencesSection() {
       </div>
       <div className="flex justify-end mt-4 gap-2">
         <Button variant="outline" size="sm" onClick={toggleAddForm} className="text-xs h-8">Cancel</Button>
-        <Button size="sm" onClick={save} className="text-xs h-8 bg-black hover:bg-black/80" disabled={!formData.name || !formData.position || !formData.company || !formData.relationship}>
+        <Button size="sm" onClick={save} className="text-xs h-8 bg-black hover:bg-black/80 !text-white" disabled={!formData.name || !formData.position || !formData.company || !formData.relationship}>
           <LucideCheck className="w-3 h-3 mr-1" />{isEdit ? "Update" : "Save"}
         </Button>
       </div>

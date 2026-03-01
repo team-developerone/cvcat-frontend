@@ -138,13 +138,13 @@ export default function VolunteerSection() {
           <div className="flex gap-2">
             <Input type="text" value={newHighlight} onChange={(e) => setNewHighlight(e.target.value)} className="w-full h-8 text-xs focus-visible:ring-[#DAA520]" placeholder="Add a highlight..."
               onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addHighlight(); } }} />
-            <Button size="sm" onClick={addHighlight} disabled={!newHighlight.trim()} className="h-8 bg-black hover:bg-black/80 text-xs px-3">Add</Button>
+            <Button size="sm" onClick={addHighlight} disabled={!newHighlight.trim()} className="h-8 bg-black hover:bg-black/80 text-xs px-3 !text-white">Add</Button>
           </div>
         </div>
       </div>
       <div className="flex justify-end mt-4 gap-2">
         <Button variant="outline" size="sm" onClick={toggleAddForm} className="text-xs h-8">Cancel</Button>
-        <Button size="sm" onClick={save} className="text-xs h-8 bg-black hover:bg-black/80" disabled={!formData.organization || !formData.position}>
+        <Button size="sm" onClick={save} className="text-xs h-8 bg-black hover:bg-black/80 !text-white" disabled={!formData.organization || !formData.position}>
           <LucideCheck className="w-3 h-3 mr-1" />{isEdit ? "Update" : "Save"}
         </Button>
       </div>

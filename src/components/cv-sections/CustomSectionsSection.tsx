@@ -101,7 +101,7 @@ export default function CustomSectionsSection() {
           </div>
           <div className="flex justify-end mt-4 gap-2">
             <Button variant="outline" size="sm" onClick={toggleAddSectionForm} className="text-xs h-8">Cancel</Button>
-            <Button size="sm" onClick={addSection} className="text-xs h-8 bg-black hover:bg-black/80" disabled={!newSection.title.trim()}>
+            <Button size="sm" onClick={addSection} className="text-xs h-8 bg-black hover:bg-black/80 !text-white" disabled={!newSection.title.trim()}>
               <LucideCheck className="w-3 h-3 mr-1" />Create Section
             </Button>
           </div>
@@ -173,7 +173,7 @@ export default function CustomSectionsSection() {
                   </div>
                   <div className="flex justify-end mt-3 gap-2">
                     <Button variant="outline" size="sm" onClick={() => toggleAddItemForm(null)} className="text-xs h-7">Cancel</Button>
-                    <Button size="sm" onClick={() => addItem(section.id)} className="text-xs h-7 bg-black hover:bg-black/80" disabled={!newItem.title.trim()}>
+                    <Button size="sm" onClick={() => addItem(section.id)} className="text-xs h-7 bg-black hover:bg-black/80 !text-white" disabled={!newItem.title.trim()}>
                       <LucideCheck className="w-3 h-3 mr-1" />Add Item
                     </Button>
                   </div>
