@@ -147,6 +147,42 @@ export default function CVBuilder() {
       accentStyle: "brackets",
       fontFamily: "Roboto Mono, monospace",
       spacing: "compact"
+    },
+    { 
+      id: "professional", 
+      name: "Professional",
+      description: "Two-column layout with clean lines and text only",
+      headerStyle: "left-aligned",
+      accentStyle: "line",
+      fontFamily: "Arial, sans-serif",
+      spacing: "compact"
+    },
+    { 
+      id: "simple-ats", 
+      name: "Simple ATS",
+      description: "ATS-friendly single-column with blue headings",
+      headerStyle: "left-aligned",
+      accentStyle: "line",
+      fontFamily: "Arial, sans-serif",
+      spacing: "normal"
+    },
+    { 
+      id: "pure-ats", 
+      name: "Pure ATS",
+      description: "Plain text-only layout, maximum ATS compatibility",
+      headerStyle: "left-aligned",
+      accentStyle: "line",
+      fontFamily: "Times New Roman, serif",
+      spacing: "compact"
+    },
+    { 
+      id: "traditional", 
+      name: "Traditional",
+      description: "Classic centered layout with gray banners",
+      headerStyle: "centered",
+      accentStyle: "banner",
+      fontFamily: "Georgia, serif",
+      spacing: "normal"
     }
   ];
   

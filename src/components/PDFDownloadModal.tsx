@@ -19,7 +19,7 @@ interface PDFDownloadModalProps {
   cv: CV | null;
 }
 
-type CVLayoutStyle = 'modern' | 'classic' | 'minimalist' | 'creative' | 'executive' | 'technical';
+type CVLayoutStyle = 'modern' | 'classic' | 'minimalist' | 'creative' | 'executive' | 'technical' | 'professional' | 'simple-ats' | 'pure-ats' | 'traditional';
 
 export default function PDFDownloadModal({ isOpen, onClose, cv }: PDFDownloadModalProps) {
   const [selectedLayout, setSelectedLayout] = useState<CVLayoutStyle>('modern');
@@ -55,6 +55,26 @@ export default function PDFDownloadModal({ isOpen, onClose, cv }: PDFDownloadMod
       value: 'technical', 
       label: 'Technical', 
       description: 'Structured layout ideal for technical roles'
+    },
+    { 
+      value: 'professional', 
+      label: 'Professional', 
+      description: 'Two-column layout with clean lines and text only'
+    },
+    { 
+      value: 'simple-ats', 
+      label: 'Simple ATS', 
+      description: 'ATS-friendly single-column with blue headings'
+    },
+    { 
+      value: 'pure-ats', 
+      label: 'Pure ATS', 
+      description: 'Plain text-only layout, maximum ATS compatibility'
+    },
+    { 
+      value: 'traditional', 
+      label: 'Traditional', 
+      description: 'Classic centered layout with gray banners'
     }
   ];
   
