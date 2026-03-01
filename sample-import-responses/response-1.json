@@ -1,0 +1,1 @@
+Issue with the cv editing UI: When I am clicking in a block to edit it, the expected behaviour is: It should replace that block with the editor form. But currently it's keeping all the blocks and showing the edit form at the top of the section

@@ -22,6 +22,7 @@ export default function ImportAnimationModal({
   const [progress, setProgress] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
   const uploadStarted = useRef(false);
+  const importedCVId = useRef<string | null>(null);
 
   // Reset state when modal opens
   useEffect(() => {
@@ -30,6 +31,7 @@ export default function ImportAnimationModal({
       setProgress(0);
       setErrorMessage("");
       uploadStarted.current = false;
+      importedCVId.current = null;
     }
   }, [isOpen]);
 
@@ -49,6 +51,9 @@ export default function ImportAnimationModal({
         clearInterval(progressInterval);
         setProgress(100);
         setCurrentStage("scanning");
+        if (res.data?._id) {
+          importedCVId.current = res.data._id;
+        }
 
         // Simulate scanning stage
         let scanProgress = 0;
@@ -132,7 +137,8 @@ export default function ImportAnimationModal({
   useEffect(() => {
     if (currentStage === "completed") {
       const timer = setTimeout(() => {
-        navigate('/cv-builder');
+        const cvId = importedCVId.current;
+        navigate(cvId ? `/cv-builder?id=${cvId}` : '/cv-builder');
       }, 2000);
 
       return () => clearTimeout(timer);

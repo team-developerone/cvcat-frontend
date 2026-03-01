@@ -337,11 +337,16 @@ export default function CVBuilder() {
                                             </div>
                                             <p className="text-gray-600 mb-1">{exp.company}</p>
                                             <p className="text-gray-600 text-xs">{exp.description}</p>
+                                            {exp.highlights && exp.highlights.length > 0 && (
+                                              <ul className="list-disc list-inside text-xs text-gray-600 mt-1">
+                                                {exp.highlights.map((h, j) => <li key={j}>{h}</li>)}
+                                              </ul>
+                                            )}
                                           </div>
                                         ))}
                                       </div>
                                     </div>
-                                    
+
                                     {/* Education */}
                                     <div>
                                       <h3 className="font-semibold text-gray-800 mb-2 flex items-center">
@@ -401,6 +406,11 @@ export default function CVBuilder() {
                                                 )}
                                               </div>
                                               <p className="text-gray-600 text-xs mb-1">{project.description}</p>
+                                              {project.highlights && project.highlights.length > 0 && (
+                                                <ul className="list-disc list-inside text-xs text-gray-600 mb-1">
+                                                  {project.highlights.map((h, j) => <li key={j}>{h}</li>)}
+                                                </ul>
+                                              )}
                                               <div className="flex flex-wrap gap-1">
                                                 {project.technologies.map((tech, j) => (
                                                   <span key={j} className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded">
@@ -629,11 +639,16 @@ export default function CVBuilder() {
                                               <p>{exp.startDate} - {exp.endDate}</p>
                                             </div>
                                             <p className="text-gray-700">{exp.description}</p>
+                                            {exp.highlights && exp.highlights.length > 0 && (
+                                              <ul className="list-disc list-inside text-gray-700 mt-1">
+                                                {exp.highlights.map((h, j) => <li key={j}>{h}</li>)}
+                                              </ul>
+                                            )}
                                           </div>
                                         ))}
                                       </div>
                                     </div>
-                                    
+
                                     {/* Education */}
                                     <div>
                                       <h3 className="font-bold text-gray-800 mb-3 uppercase tracking-wide">EDUCATION</h3>
@@ -678,6 +693,11 @@ export default function CVBuilder() {
                                                 )}
                                               </div>
                                               <p className="text-gray-700">{project.description}</p>
+                                              {project.highlights && project.highlights.length > 0 && (
+                                                <ul className="list-disc list-inside text-gray-700 mt-1">
+                                                  {project.highlights.map((h, j) => <li key={j}>{h}</li>)}
+                                                </ul>
+                                              )}
                                               {project.technologies && project.technologies.length > 0 && (
                                                 <p className="text-xs text-gray-600 mt-1">
                                                   <span className="font-medium">Technologies:</span> {project.technologies.join(', ')}
@@ -911,11 +931,16 @@ export default function CVBuilder() {
                                                 <p>{exp.startDate} - {exp.endDate}</p>
                                               </div>
                                               <p className="text-gray-600">{exp.description}</p>
+                                              {exp.highlights && exp.highlights.length > 0 && (
+                                                <ul className="list-disc list-inside text-gray-600 mt-1">
+                                                  {exp.highlights.map((h, j) => <li key={j}>{h}</li>)}
+                                                </ul>
+                                              )}
                                             </div>
                                           ))}
                                         </div>
                                       </div>
-                                      
+
                                       <div>
                                         <h3 className="text-sm font-medium border-b border-gray-200 pb-1 mb-3">
                                           Education
@@ -952,6 +977,11 @@ export default function CVBuilder() {
                                                   )}
                                                 </div>
                                                 <p className="text-gray-600">{project.description}</p>
+                                                {project.highlights && project.highlights.length > 0 && (
+                                                  <ul className="list-disc list-inside text-gray-600 mt-1">
+                                                    {project.highlights.map((h, j) => <li key={j}>{h}</li>)}
+                                                  </ul>
+                                                )}
                                                 {project.technologies && project.technologies.length > 0 && (
                                                   <p className="text-xs text-gray-500 mt-1">
                                                     <span className="font-medium">Tech:</span> {project.technologies.join(', ')}
@@ -1152,6 +1182,11 @@ export default function CVBuilder() {
                                                 <p>{exp.startDate} - {exp.endDate}</p>
                                               </div>
                                               <p className="text-sm text-gray-600">{exp.description}</p>
+                                              {exp.highlights && exp.highlights.length > 0 && (
+                                                <ul className="list-disc list-inside text-sm text-gray-600 mt-1">
+                                                  {exp.highlights.map((h, j) => <li key={j}>{h}</li>)}
+                                                </ul>
+                                              )}
                                             </div>
                                           ))}
                                         </div>
@@ -1206,6 +1241,11 @@ export default function CVBuilder() {
                                                   </p>
                                                 )}
                                                 <p className="text-sm text-gray-600 mb-2">{project.description}</p>
+                                                {project.highlights && project.highlights.length > 0 && (
+                                                  <ul className="list-disc list-inside text-sm text-gray-600 mb-2">
+                                                    {project.highlights.map((h, j) => <li key={j}>{h}</li>)}
+                                                  </ul>
+                                                )}
                                                 {project.technologies && project.technologies.length > 0 && (
                                                   <div className="flex flex-wrap gap-1">
                                                     {project.technologies.map((tech, j) => (
@@ -1435,11 +1475,16 @@ export default function CVBuilder() {
                                             </div>
                                             <p className="text-sm font-semibold mb-1">{exp.company}</p>
                                             <p className="text-sm text-gray-700">{exp.description}</p>
+                                            {exp.highlights && exp.highlights.length > 0 && (
+                                              <ul className="list-disc list-inside text-sm text-gray-700 mt-1">
+                                                {exp.highlights.map((h, j) => <li key={j}>{h}</li>)}
+                                              </ul>
+                                            )}
                                           </div>
                                         ))}
                                       </div>
                                     </div>
-                                    
+
                                     {/* Education */}
                                     <div>
                                       <h3 className="text-lg font-bold uppercase tracking-wide border-b-2 border-[#DAA520]/30 pb-1 mb-3">EDUCATION</h3>
@@ -1491,6 +1536,11 @@ export default function CVBuilder() {
                                                 )}
                                               </div>
                                               <p className="text-sm text-gray-700 mb-1">{project.description}</p>
+                                              {project.highlights && project.highlights.length > 0 && (
+                                                <ul className="list-disc list-inside text-sm text-gray-700 mb-1">
+                                                  {project.highlights.map((h, j) => <li key={j}>{h}</li>)}
+                                                </ul>
+                                              )}
                                               {project.technologies && project.technologies.length > 0 && (
                                                 <p className="text-xs">
                                                   <span className="font-semibold">Technologies:</span> {project.technologies.join(', ')}
