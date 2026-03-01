@@ -19,7 +19,7 @@ interface PDFDownloadModalProps {
   cv: CV | null;
 }
 
-type CVLayoutStyle = 'modern' | 'classic' | 'minimalist' | 'creative' | 'executive';
+type CVLayoutStyle = 'modern' | 'classic' | 'minimalist' | 'creative' | 'executive' | 'technical';
 
 export default function PDFDownloadModal({ isOpen, onClose, cv }: PDFDownloadModalProps) {
   const [selectedLayout, setSelectedLayout] = useState<CVLayoutStyle>('modern');
@@ -50,6 +50,11 @@ export default function PDFDownloadModal({ isOpen, onClose, cv }: PDFDownloadMod
       value: 'executive', 
       label: 'Executive', 
       description: 'Formal layout ideal for senior positions'
+    },
+    { 
+      value: 'technical', 
+      label: 'Technical', 
+      description: 'Structured layout ideal for technical roles'
     }
   ];
   

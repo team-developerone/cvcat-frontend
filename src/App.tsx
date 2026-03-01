@@ -18,6 +18,8 @@ import { CVProvider } from "@/lib/context";
 import { AuthProvider } from "@/lib/auth-context";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
+const ENABLE_FLOATING_CV_ASSISTANT = false;
+
 function Router() {
   return (
     <>
@@ -60,7 +62,7 @@ function Router() {
       </Switch>
 
       {/* Chat bot is now visible on all routes */}
-      <ChatBot />
+      {ENABLE_FLOATING_CV_ASSISTANT && <ChatBot />}
     </>
   );
 }
