@@ -544,6 +544,110 @@ export default function CVBuilder() {
                                       </div>
                                     </div>
                                   )}
+                                  {template.id === "professional" && (
+                                    <div className="absolute inset-0 flex flex-col p-2">
+                                      <div className="mb-1 pb-1 border-b-2 border-blue-500">
+                                        <div className="w-12 h-1.5 bg-gray-800 rounded-sm mb-0.5"></div>
+                                        <div className="w-16 h-0.5 bg-blue-400"></div>
+                                      </div>
+                                      <div className="flex flex-1 mt-1">
+                                        <div className="w-3/5 border-r border-gray-200 pr-1 space-y-1">
+                                          <div className="w-10 h-0.5 bg-blue-400 border-b border-blue-400 pb-0.5 mb-0.5"></div>
+                                          <div className="w-full h-0.5 bg-gray-100"></div>
+                                          <div className="w-full h-0.5 bg-gray-100"></div>
+                                          <div className="w-10 h-0.5 bg-blue-400 mt-1 border-b border-blue-400 pb-0.5 mb-0.5"></div>
+                                          <div className="w-full h-0.5 bg-gray-100"></div>
+                                          <div className="w-3/4 h-0.5 bg-gray-100"></div>
+                                        </div>
+                                        <div className="w-2/5 pl-1 space-y-1">
+                                          <div className="w-8 h-0.5 bg-blue-400 border-b border-blue-400 pb-0.5 mb-0.5"></div>
+                                          <div className="w-full h-0.5 bg-gray-100"></div>
+                                          <div className="w-8 h-0.5 bg-blue-400 mt-1 border-b border-blue-400 pb-0.5 mb-0.5"></div>
+                                          <div className="w-full h-0.5 bg-gray-100"></div>
+                                          <div className="w-2/3 h-0.5 bg-gray-100"></div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )}
+                                  {template.id === "simple-ats" && (
+                                    <div className="absolute inset-0 flex flex-col p-2">
+                                      <div className="flex justify-between items-start mb-1">
+                                        <div>
+                                          <div className="w-10 h-1 bg-blue-400 rounded-sm mb-0.5"></div>
+                                          <div className="w-14 h-0.5 bg-blue-300"></div>
+                                        </div>
+                                        <div className="text-right space-y-0.5">
+                                          <div className="w-10 h-0.5 bg-gray-200"></div>
+                                          <div className="w-8 h-0.5 bg-gray-200"></div>
+                                        </div>
+                                      </div>
+                                      <div className="w-8 h-0.5 bg-blue-300 mb-0.5 mt-1"></div>
+                                      <div className="w-full h-px bg-gray-200 mb-1"></div>
+                                      <div className="w-full h-0.5 bg-gray-100 mb-0.5"></div>
+                                      <div className="w-8 h-0.5 bg-blue-300 mb-0.5 mt-1"></div>
+                                      <div className="w-full h-px bg-gray-200 mb-1"></div>
+                                      <div className="flex flex-wrap gap-1">
+                                        {[1,2,3].map(i => (
+                                          <div key={i} className="flex items-center gap-0.5">
+                                            <div className="w-0.5 h-0.5 rounded-full bg-gray-400"></div>
+                                            <div className="w-4 h-0.5 bg-gray-100"></div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                      <div className="w-8 h-0.5 bg-blue-300 mb-0.5 mt-1"></div>
+                                      <div className="w-full h-px bg-gray-200 mb-1"></div>
+                                      <div className="w-full h-0.5 bg-gray-100"></div>
+                                      <div className="w-3/4 h-0.5 bg-gray-100 mt-0.5"></div>
+                                    </div>
+                                  )}
+                                  {template.id === "pure-ats" && (
+                                    <div className="absolute inset-0 flex flex-col p-2">
+                                      <div className="mb-1">
+                                        <div className="w-12 h-1.5 bg-gray-800 rounded-sm mb-0.5"></div>
+                                        <div className="w-20 h-0.5 bg-gray-300"></div>
+                                      </div>
+                                      <div className="w-6 h-0.5 bg-gray-400 mb-0.5 mt-1"></div>
+                                      <div className="w-full h-px bg-gray-300 mb-1"></div>
+                                      <div className="w-full h-0.5 bg-gray-100 mb-0.5"></div>
+                                      <div className="w-3/4 h-0.5 bg-gray-100 mb-1"></div>
+                                      <div className="w-6 h-0.5 bg-gray-400 mb-0.5"></div>
+                                      <div className="w-full h-px bg-gray-300 mb-1"></div>
+                                      <div className="flex flex-wrap gap-1 mb-1">
+                                        {[1,2,3,4].map(i => (
+                                          <div key={i} className="w-5 h-0.5 bg-gray-100"></div>
+                                        ))}
+                                      </div>
+                                      <div className="w-6 h-0.5 bg-gray-400 mb-0.5"></div>
+                                      <div className="w-full h-px bg-gray-300 mb-1"></div>
+                                      <div className="w-full h-0.5 bg-gray-100"></div>
+                                      <div className="w-full h-0.5 bg-gray-100 mt-0.5"></div>
+                                    </div>
+                                  )}
+                                  {template.id === "traditional" && (
+                                    <div className="absolute inset-0 flex flex-col p-2">
+                                      <div className="text-center mb-1">
+                                        <div className="w-12 h-1.5 bg-gray-800 mx-auto rounded-sm mb-0.5"></div>
+                                        <div className="w-8 h-0.5 bg-gray-400 mx-auto mb-0.5"></div>
+                                        <div className="w-14 h-0.5 bg-gray-200 mx-auto"></div>
+                                      </div>
+                                      <div className="w-full h-3 bg-gray-100 flex items-center justify-center mb-1">
+                                        <div className="w-6 h-0.5 bg-gray-400"></div>
+                                      </div>
+                                      <div className="w-full h-0.5 bg-gray-100 mb-0.5"></div>
+                                      <div className="w-3/4 h-0.5 bg-gray-100 mb-1"></div>
+                                      <div className="w-full h-3 bg-gray-100 flex items-center justify-center mb-1">
+                                        <div className="w-4 h-0.5 bg-gray-400"></div>
+                                      </div>
+                                      <div className="flex flex-wrap gap-1 mb-1">
+                                        {[1,2,3,4].map(i => (
+                                          <div key={i} className="w-5 h-0.5 bg-gray-200"></div>
+                                        ))}
+                                      </div>
+                                      <div className="w-full h-3 bg-gray-100 flex items-center justify-center">
+                                        <div className="w-8 h-0.5 bg-gray-400"></div>
+                                      </div>
+                                    </div>
+                                  )}
                                 </div>
                                 <div className="p-1.5">
                                   <p className={`text-xs ${activeTemplate === template.id ? 'text-[#DAA520] font-medium' : 'text-gray-600'}`}>
