@@ -13,6 +13,8 @@ export default function CustomSectionsSection() {
   const [showAddItemForm, setShowAddItemForm] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<{ sectionId: string; itemId: string } | null>(null);
   const [editItemData, setEditItemData] = useState({ title: "", subtitle: "", date: "", description: "" });
+  const [editingSectionId, setEditingSectionId] = useState<string | null>(null);
+  const [editSectionTitle, setEditSectionTitle] = useState("");
 
   const { formData: newSection, handleChange: handleSectionChange, resetForm: resetSectionForm } = useFormState({ title: "" });
   const { formData: newItem, handleChange: handleItemChange, resetForm: resetItemForm } = useFormState({
@@ -48,6 +50,23 @@ export default function CustomSectionsSection() {
   const removeSection = (id: string) => {
     if (!mainCV.customSections) return;
     setMainCV({ ...mainCV, customSections: mainCV.customSections.filter((s) => s.id !== id), lastUpdated: new Date() });
+  };
+
+  const startEditSection = (section: CustomSection) => {
+    setEditingSectionId(section.id);
+    setEditSectionTitle(section.title);
+  };
+
+  const saveEditSection = () => {
+    if (!mainCV.customSections || !editingSectionId || !editSectionTitle.trim()) return;
+    setMainCV({
+      ...mainCV,
+      customSections: mainCV.customSections.map((s) =>
+        s.id === editingSectionId ? { ...s, title: editSectionTitle.trim() } : s
+      ),
+      lastUpdated: new Date(),
+    });
+    setEditingSectionId(null);
   };
 
   const addItem = (sectionId: string) => {
@@ -138,10 +157,36 @@ export default function CustomSectionsSection() {
           {mainCV.customSections.map((section) => (
             <div key={section.id} className="border border-gray-100 rounded-lg p-4">
               <div className="flex justify-between items-center mb-3">
-                <h3 className="font-medium text-gray-800">{section.title}</h3>
-                <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-red-500 hover:bg-gray-50" onClick={() => removeSection(section.id)}>
-                  <LucideTrash2 className="w-3.5 h-3.5" />
-                </Button>
+                {editingSectionId === section.id ? (
+                  <div className="flex items-center gap-2 flex-1 mr-2">
+                    <Input
+                      type="text"
+                      value={editSectionTitle}
+                      onChange={(e) => setEditSectionTitle(e.target.value)}
+                      className="h-8 text-sm font-medium focus-visible:ring-[#DAA520]"
+                      onKeyDown={(e) => { if (e.key === 'Enter') saveEditSection(); if (e.key === 'Escape') setEditingSectionId(null); }}
+                      autoFocus
+                    />
+                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-green-600 hover:bg-gray-100" onClick={saveEditSection}>
+                      <LucideCheck className="w-3.5 h-3.5" />
+                    </Button>
+                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100" onClick={() => setEditingSectionId(null)}>
+                      <LucideX className="w-3.5 h-3.5" />
+                    </Button>
+                  </div>
+                ) : (
+                  <h3 className="font-medium text-gray-800">{section.title}</h3>
+                )}
+                {editingSectionId !== section.id && (
+                  <div className="flex space-x-1">
+                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-blue-500 hover:bg-gray-50" onClick={() => startEditSection(section)}>
+                      <LucidePencil className="w-3.5 h-3.5" />
+                    </Button>
+                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-red-500 hover:bg-gray-50" onClick={() => removeSection(section.id)}>
+                      <LucideTrash2 className="w-3.5 h-3.5" />
+                    </Button>
+                  </div>
+                )}
               </div>
 
               {section.items.length > 0 ? (
