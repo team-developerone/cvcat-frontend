@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CustomSection, CustomSectionItem } from "@/lib/types";
-import { LucidePlus, LucideTrash2, LucideX, LucideCheck } from "lucide-react";
+import { LucidePlus, LucideTrash2, LucideX, LucideCheck, LucidePencil } from "lucide-react";
 
 export default function CustomSectionsSection() {
   const { mainCV, setMainCV } = useCV();
   const [showAddSectionForm, setShowAddSectionForm] = useState(false);
   const [showAddItemForm, setShowAddItemForm] = useState<string | null>(null);
+  const [editingItem, setEditingItem] = useState<{ sectionId: string; itemId: string } | null>(null);
+  const [editItemData, setEditItemData] = useState({ title: "", subtitle: "", date: "", description: "" });
 
   const { formData: newSection, handleChange: handleSectionChange, resetForm: resetSectionForm } = useFormState({ title: "" });
   const { formData: newItem, handleChange: handleItemChange, resetForm: resetItemForm } = useFormState({
@@ -78,6 +80,29 @@ export default function CustomSectionsSection() {
     });
   };
 
+  const startEditItem = (sectionId: string, item: CustomSectionItem) => {
+    setEditingItem({ sectionId, itemId: item.id });
+    setEditItemData({ title: item.title, subtitle: item.subtitle || "", date: item.date || "", description: item.description || "" });
+  };
+
+  const saveEditItem = () => {
+    if (!mainCV.customSections || !editingItem) return;
+    setMainCV({
+      ...mainCV,
+      customSections: mainCV.customSections.map((s) =>
+        s.id === editingItem.sectionId
+          ? { ...s, items: s.items.map((i) => i.id === editingItem.itemId ? { ...i, title: editItemData.title, subtitle: editItemData.subtitle || undefined, date: editItemData.date || undefined, description: editItemData.description || undefined } : i) }
+          : s
+      ),
+      lastUpdated: new Date(),
+    });
+    setEditingItem(null);
+  };
+
+  const handleEditItemChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setEditItemData({ ...editItemData, [e.target.name]: e.target.value });
+  };
+
   return (
     <>
       <div className="flex justify-between items-center mb-4">
@@ -123,17 +148,49 @@ export default function CustomSectionsSection() {
                 <div className="space-y-2">
                   {section.items.map((item) => (
                     <div key={item.id} className="p-2 bg-gray-50 rounded-md text-sm">
-                      <div className="flex justify-between">
-                        <span className="font-medium">{item.title}</span>
-                        <div className="flex space-x-1">
-                          {item.date && <span className="text-gray-500 text-xs mr-2 self-center">{item.date}</span>}
-                          <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-gray-400 hover:text-red-500 hover:bg-gray-100" onClick={() => removeItem(section.id, item.id)}>
-                            <LucideTrash2 className="w-3 h-3" />
-                          </Button>
+                      {editingItem?.sectionId === section.id && editingItem?.itemId === item.id ? (
+                        <div className="p-2 space-y-2">
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Title</label>
+                            <Input type="text" name="title" value={editItemData.title} onChange={handleEditItemChange} className="w-full h-8 text-sm focus-visible:ring-[#DAA520]" />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Subtitle</label>
+                            <Input type="text" name="subtitle" value={editItemData.subtitle} onChange={handleEditItemChange} className="w-full h-8 text-sm focus-visible:ring-[#DAA520]" />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Date</label>
+                            <Input type="text" name="date" value={editItemData.date} onChange={handleEditItemChange} className="w-full h-8 text-sm focus-visible:ring-[#DAA520]" />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Description</label>
+                            <Textarea name="description" value={editItemData.description} onChange={handleEditItemChange} className="w-full min-h-[60px] text-sm focus-visible:ring-[#DAA520]" />
+                          </div>
+                          <div className="flex justify-end gap-2 mt-2">
+                            <Button variant="outline" size="sm" onClick={() => setEditingItem(null)} className="text-xs h-7">Cancel</Button>
+                            <Button size="sm" onClick={saveEditItem} className="text-xs h-7 bg-black hover:bg-black/80 !text-white" disabled={!editItemData.title.trim()}>
+                              <LucideCheck className="w-3 h-3 mr-1" />Save
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                      {item.subtitle && <p className="text-gray-600 text-xs">{item.subtitle}</p>}
-                      {item.description && <p className="text-gray-600 text-xs mt-1">{item.description}</p>}
+                      ) : (
+                        <>
+                          <div className="flex justify-between">
+                            <span className="font-medium">{item.title}</span>
+                            <div className="flex space-x-1">
+                              {item.date && <span className="text-gray-500 text-xs mr-2 self-center">{item.date}</span>}
+                              <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-gray-400 hover:text-blue-500 hover:bg-gray-100" onClick={() => startEditItem(section.id, item)}>
+                                <LucidePencil className="w-3 h-3" />
+                              </Button>
+                              <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-gray-400 hover:text-red-500 hover:bg-gray-100" onClick={() => removeItem(section.id, item.id)}>
+                                <LucideTrash2 className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          </div>
+                          {item.subtitle && <p className="text-gray-600 text-xs">{item.subtitle}</p>}
+                          {item.description && <p className="text-gray-600 text-xs mt-1">{item.description}</p>}
+                        </>
+                      )}
                     </div>
                   ))}
                 </div>
