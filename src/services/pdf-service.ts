@@ -1498,58 +1498,76 @@ function renderTraditional(pi: PI, s: Sections): string {
 /* ─── PDF SERVICE ─── */
 export class PDFService {
   /**
-   * Scan the middle 70% of a horizontal pixel row and return true only
-   * if every sampled pixel is pure white. This ignores sidebars/accents
-   * on the edges and won't be fooled by light background colors (#f9fafb etc).
+   * Collect the TOP-edge Y positions of elements that have margin-top gaps,
+   * i.e., places where there's a visual gap BEFORE the element starts.
+   * These are ideal break points because the break falls in whitespace.
    */
-  private isRowBlank(ctx: CanvasRenderingContext2D, y: number, width: number): boolean {
-    // Scan from 40% to 90% — clears sidebars (up to ~30%) and right-edge accents
-    const left = Math.floor(width * 0.4);
-    const scanWidth = Math.floor(width * 0.5);
-    const data = ctx.getImageData(left, y, scanWidth, 1).data;
-    // Sample every 8th pixel (stride 32 in RGBA), threshold 253 = only pure white
-    for (let i = 0; i < data.length; i += 32) {
-      if (data[i] < 253 || data[i + 1] < 253 || data[i + 2] < 253) return false;
-    }
-    return true;
-  }
+  private collectBreakPoints(container: HTMLElement, canvasScale: number): number[] {
+    const containerTop = container.getBoundingClientRect().top;
+    const points = new Set<number>();
 
-  /**
-   * Near idealY, search backwards for a band of consecutive blank rows
-   * (visual gap between content blocks). Returns the Y coordinate of
-   * the middle of the first suitable gap found.
-   */
-  private findWhitespaceBreak(
-    ctx: CanvasRenderingContext2D,
-    width: number,
-    height: number,
-    idealY: number,
-    searchRange: number,
-  ): number {
-    const minBand = 10; // need a substantial gap (margins between sections are 16-40px at 2x scale)
+    // Collect top edges of block elements that have margin/gap before them
+    const els = container.querySelectorAll<HTMLElement>('div, h1, h2, h3, section');
+    for (let i = 0; i < els.length; i++) {
+      const el = els[i];
+      const rect = el.getBoundingClientRect();
+      if (rect.height < 8) continue;
 
-    // Search backwards from idealY
-    let y = Math.min(idealY, height - 1);
-    const lowerBound = Math.max(0, idealY - searchRange);
+      const style = window.getComputedStyle(el);
+      const marginTop = parseFloat(style.marginTop) || 0;
+      const marginBottom = parseFloat(style.marginBottom) || 0;
 
-    while (y > lowerBound) {
-      if (this.isRowBlank(ctx, y, width)) {
-        // Found a blank row — expand to find full band
-        let bandEnd = y;
-        let bandStart = y;
-        while (bandStart > 0 && this.isRowBlank(ctx, bandStart - 1, width)) bandStart--;
-        const bandSize = bandEnd - bandStart + 1;
-        if (bandSize >= minBand) {
-          return bandStart + Math.floor(bandSize / 2); // middle of gap
-        }
-        y = bandStart - 1; // skip past this small gap
-      } else {
-        y--;
+      // Top edge of element (in the margin gap above it) = safe break
+      if (marginTop >= 4) {
+        const breakY = Math.round((rect.top - containerTop - marginTop / 2) * canvasScale);
+        if (breakY > 0) points.add(breakY);
+      }
+
+      // Bottom edge + half of margin-bottom = break in the gap below
+      if (marginBottom >= 8) {
+        const breakY = Math.round((rect.bottom - containerTop + marginBottom / 2) * canvasScale);
+        if (breakY > 0) points.add(breakY);
       }
     }
 
-    // Nothing found backwards — fallback to hard cut at idealY
-    return Math.min(idealY, height);
+    return Array.from(points).sort((a, b) => a - b);
+  }
+
+  /**
+   * Pixel-scan a small window around candidateY to find actual whitespace.
+   * Returns the best Y or candidateY if no whitespace found nearby.
+   */
+  private refineBreakWithPixels(
+    ctx: CanvasRenderingContext2D,
+    width: number,
+    height: number,
+    candidateY: number,
+    windowSize: number,
+  ): number {
+    const scanLeft = Math.floor(width * 0.15);
+    const scanWidth = Math.floor(width * 0.7);
+
+    const isBlank = (y: number): boolean => {
+      if (y < 0 || y >= height) return false;
+      const data = ctx.getImageData(scanLeft, y, scanWidth, 1).data;
+      for (let i = 0; i < data.length; i += 32) {
+        if (data[i] < 250 || data[i + 1] < 250 || data[i + 2] < 250) return false;
+      }
+      return true;
+    };
+
+    // Search around candidateY for a run of 3+ blank rows
+    const lo = Math.max(0, candidateY - windowSize);
+    const hi = Math.min(height - 1, candidateY + windowSize);
+
+    for (let y = candidateY; y >= lo; y--) {
+      if (isBlank(y) && isBlank(y - 1) && isBlank(y + 1)) return y;
+    }
+    for (let y = candidateY + 1; y <= hi; y++) {
+      if (isBlank(y) && isBlank(y - 1) && isBlank(y + 1)) return y;
+    }
+
+    return candidateY;
   }
 
   async generatePDF(cv: CV, layout: CVLayoutStyle = 'modern'): Promise<Blob> {
@@ -1566,6 +1584,10 @@ export class PDFService {
 
     try {
       const canvasScale = 2;
+
+      // Step 1: Collect DOM break points BEFORE rendering to canvas
+      const breakPoints = this.collectBreakPoints(container, canvasScale);
+
       const canvas = await html2canvas(container, {
         scale: canvasScale,
         useCORS: true,
@@ -1583,10 +1605,8 @@ export class PDFService {
 
       const canvasToMm = pdfWidth / canvas.width;
       const pageHeightPx = Math.floor(usableHeightMm / canvasToMm);
-      // How far back from the ideal cut to search for whitespace
-      const searchRange = Math.floor(pageHeightPx * 0.25);
 
-      // Build page list using pixel scanning
+      // Step 2: Build pages using DOM break points refined by pixel scanning
       const pages: Array<{ start: number; end: number }> = [];
       let start = 0;
 
@@ -1598,13 +1618,32 @@ export class PDFService {
           break;
         }
 
-        const breakY = this.findWhitespaceBreak(fullCtx, canvas.width, canvas.height, idealEnd, searchRange);
+        // Find the best DOM break point: largest one ≤ idealEnd
+        let bestBreak = 0;
+        for (let i = breakPoints.length - 1; i >= 0; i--) {
+          const bp = breakPoints[i];
+          if (bp > start + 40 && bp <= idealEnd) {
+            bestBreak = bp;
+            break;
+          }
+        }
 
-        // Progress guard: always advance by at least half a page
-        const end = breakY > start + pageHeightPx * 0.5 ? breakY : Math.min(idealEnd, canvas.height);
+        let end: number;
+        if (bestBreak > start + pageHeightPx * 0.4) {
+          // Refine the DOM break point with pixel scanning (±30px window)
+          end = this.refineBreakWithPixels(fullCtx, canvas.width, canvas.height, bestBreak, 30);
+        } else {
+          end = Math.min(idealEnd, canvas.height);
+        }
 
-        pages.push({ start, end });
-        start = end;
+        // Safety: always advance
+        if (end <= start) {
+          pages.push({ start, end: Math.min(start + pageHeightPx, canvas.height) });
+          start = start + pageHeightPx;
+        } else {
+          pages.push({ start, end });
+          start = end;
+        }
       }
 
       // Render each page
