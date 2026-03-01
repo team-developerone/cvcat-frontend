@@ -235,7 +235,7 @@ export default function CVBuilder() {
                               className={`w-full text-left flex items-center px-3 py-2 rounded-lg text-sm transition-colors ${
                                 activeSection === section.id
                                   ? 'bg-[#DAA520]/10 font-medium text-white'
-                                  : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                                  : 'text-gray-50 hover:bg-gray-800 hover:text-white'
                               }`}
                               onClick={() => setActiveSection(section.id as SectionType)}
                             >
