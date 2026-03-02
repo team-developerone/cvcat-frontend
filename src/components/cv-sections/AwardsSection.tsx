@@ -3,7 +3,7 @@ import { useCV } from "@/lib/context";
 import { useFormState } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import AITextInput from "@/components/ui/ai-text-input";
 import { Award } from "@/lib/types";
 import { LucidePlus, LucideTrash2, LucidePencil, LucideX, LucideCheck } from "lucide-react";
 
@@ -85,7 +85,14 @@ export default function AwardsSection() {
         </div>
         <div className="md:col-span-2">
           <label className="block text-xs font-medium text-gray-600 mb-1">Summary (Optional)</label>
-          <Textarea name="summary" value={formData.summary} onChange={handleChange} className="w-full min-h-[60px] focus-visible:ring-[#DAA520]" />
+          <AITextInput
+            variant="textarea"
+            name="summary"
+            value={formData.summary}
+            onChange={handleChange}
+            onValueChange={(val) => setFormData({ ...formData, summary: val })}
+            className="w-full min-h-[60px] focus-visible:ring-[#DAA520]"
+          />
         </div>
       </div>
       <div className="flex justify-end mt-4 gap-2">

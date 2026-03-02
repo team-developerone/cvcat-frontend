@@ -1,7 +1,7 @@
 import { useCV } from "@/lib/context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import AITextInput from "@/components/ui/ai-text-input";
 
 export default function PersonalInfoSection() {
   const { mainCV, setMainCV } = useCV();
@@ -71,7 +71,15 @@ export default function PersonalInfoSection() {
         </div>
         <div className="md:col-span-2">
           <label className="block text-xs font-medium text-gray-600 mb-1">Professional Summary</label>
-          <Textarea name="summary" value={mainCV.personalInfo.summary} onChange={updatePersonalInfo} className="w-full min-h-[100px] focus-visible:ring-[#DAA520]" placeholder="Brief overview of your professional background..." />
+          <AITextInput
+            variant="textarea"
+            name="summary"
+            value={mainCV.personalInfo.summary}
+            onChange={updatePersonalInfo}
+            onValueChange={(val) => setMainCV({ ...mainCV, personalInfo: { ...mainCV.personalInfo, summary: val }, lastUpdated: new Date() })}
+            className="w-full min-h-[100px] focus-visible:ring-[#DAA520]"
+            placeholder="Brief overview of your professional background..."
+          />
         </div>
       </div>
     </div>

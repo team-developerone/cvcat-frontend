@@ -3,7 +3,7 @@ import { useCV } from "@/lib/context";
 import { useFormState } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import AITextInput from "@/components/ui/ai-text-input";
 import { Education } from "@/lib/types";
 import { LucidePlus, LucideTrash2, LucidePencil, LucideX, LucideCheck } from "lucide-react";
 import SortableList from "@/components/ui/sortable-list";
@@ -149,7 +149,14 @@ export default function EducationSection() {
         </div>
         <div className="md:col-span-2">
           <label className="block text-xs font-medium text-gray-600 mb-1">Description (Optional)</label>
-          <Textarea name="description" value={formData.description} onChange={handleChange} className="w-full min-h-[60px] focus-visible:ring-[#DAA520]" />
+          <AITextInput
+            variant="textarea"
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            onValueChange={(val) => setFormData({ ...formData, description: val })}
+            className="w-full min-h-[60px] focus-visible:ring-[#DAA520]"
+          />
         </div>
         <div className="md:col-span-2">
           <label className="block text-xs font-medium text-gray-600 mb-1">Courses</label>

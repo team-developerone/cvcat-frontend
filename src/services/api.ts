@@ -332,3 +332,32 @@ export async function deleteCV(
     method: "DELETE",
   });
 }
+
+// --- Writing Assistant ---
+
+export type WritingAction = "fix" | "simplify" | "short" | "long" | "tone";
+
+export interface WritingAssistantRequest {
+  action: WritingAction;
+  text: string;
+  changePercentage?: number;
+  tone?: string;
+}
+
+export interface WritingAssistantResponse {
+  error: boolean;
+  data: {
+    originalText: string;
+    alteredText: string;
+  };
+  quotaRemaining: number;
+}
+
+export async function writingAssistant(
+  payload: WritingAssistantRequest
+): Promise<WritingAssistantResponse> {
+  return apiClient<WritingAssistantResponse>("/cv/writing-assistant", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}

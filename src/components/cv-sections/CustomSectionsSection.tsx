@@ -3,7 +3,7 @@ import { useCV } from "@/lib/context";
 import { useFormState } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import AITextInput from "@/components/ui/ai-text-input";
 import { CustomSection, CustomSectionItem } from "@/lib/types";
 import { LucidePlus, LucideTrash2, LucideX, LucideCheck, LucidePencil } from "lucide-react";
 
@@ -209,7 +209,14 @@ export default function CustomSectionsSection() {
                           </div>
                           <div>
                             <label className="block text-xs font-medium text-gray-600 mb-1">Description</label>
-                            <Textarea name="description" value={editItemData.description} onChange={handleEditItemChange} className="w-full min-h-[60px] text-sm focus-visible:ring-[#DAA520]" />
+                            <AITextInput
+                              variant="textarea"
+                              name="description"
+                              value={editItemData.description}
+                              onChange={handleEditItemChange}
+                              onValueChange={(val) => setEditItemData({ ...editItemData, description: val })}
+                              className="w-full min-h-[60px] text-sm focus-visible:ring-[#DAA520]"
+                            />
                           </div>
                           <div className="flex justify-end gap-2 mt-2">
                             <Button variant="outline" size="sm" onClick={() => setEditingItem(null)} className="text-xs h-7">Cancel</Button>
@@ -270,7 +277,17 @@ export default function CustomSectionsSection() {
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-gray-600 mb-1">Description (Optional)</label>
-                      <Textarea name="description" value={newItem.description} onChange={handleItemChange} className="w-full min-h-[60px] text-sm focus-visible:ring-[#DAA520]" />
+                      <AITextInput
+                        variant="textarea"
+                        name="description"
+                        value={newItem.description}
+                        onChange={handleItemChange}
+                        onValueChange={(val) => {
+                          const ev = { target: { name: 'description', value: val } } as React.ChangeEvent<HTMLTextAreaElement>;
+                          handleItemChange(ev);
+                        }}
+                        className="w-full min-h-[60px] text-sm focus-visible:ring-[#DAA520]"
+                      />
                     </div>
                   </div>
                   <div className="flex justify-end mt-3 gap-2">

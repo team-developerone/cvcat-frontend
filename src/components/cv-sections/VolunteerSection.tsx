@@ -3,7 +3,7 @@ import { useCV } from "@/lib/context";
 import { useFormState } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import AITextInput from "@/components/ui/ai-text-input";
 import { Volunteer } from "@/lib/types";
 import { LucidePlus, LucideTrash2, LucidePencil, LucideX, LucideCheck } from "lucide-react";
 
@@ -13,6 +13,8 @@ export default function VolunteerSection() {
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [highlights, setHighlights] = useState<string[]>([]);
   const [newHighlight, setNewHighlight] = useState("");
+  const [editingHighlightIndex, setEditingHighlightIndex] = useState<number | null>(null);
+  const [editingHighlightValue, setEditingHighlightValue] = useState("");
 
   const { formData, handleChange, setFormData, resetForm } = useFormState({
     organization: "",
@@ -86,7 +88,19 @@ export default function VolunteerSection() {
   };
 
   const addHighlight = () => { if (newHighlight.trim()) { setHighlights([...highlights, newHighlight.trim()]); setNewHighlight(""); } };
-  const removeHighlight = (index: number) => { setHighlights(highlights.filter((_, i) => i !== index)); };
+  const removeHighlight = (index: number) => {
+    setHighlights(highlights.filter((_, i) => i !== index));
+    if (editingHighlightIndex === index) { setEditingHighlightIndex(null); setEditingHighlightValue(""); }
+  };
+
+  const startEditHighlight = (index: number) => { setEditingHighlightIndex(index); setEditingHighlightValue(highlights[index]); };
+  const saveEditHighlight = () => {
+    if (editingHighlightIndex !== null && editingHighlightValue.trim()) {
+      setHighlights(highlights.map((h, i) => i === editingHighlightIndex ? editingHighlightValue.trim() : h));
+    }
+    setEditingHighlightIndex(null); setEditingHighlightValue("");
+  };
+  const cancelEditHighlight = () => { setEditingHighlightIndex(null); setEditingHighlightValue(""); };
 
   const renderForm = (isEdit: boolean) => (
     <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
@@ -119,7 +133,14 @@ export default function VolunteerSection() {
         </div>
         <div className="md:col-span-2">
           <label className="block text-xs font-medium text-gray-600 mb-1">Summary</label>
-          <Textarea name="summary" value={formData.summary} onChange={handleChange} className="w-full min-h-[80px] focus-visible:ring-[#DAA520]" />
+          <AITextInput
+            variant="textarea"
+            name="summary"
+            value={formData.summary}
+            onChange={handleChange}
+            onValueChange={(val) => setFormData({ ...formData, summary: val })}
+            className="w-full min-h-[80px] focus-visible:ring-[#DAA520]"
+          />
         </div>
         <div className="md:col-span-2">
           <label className="block text-xs font-medium text-gray-600 mb-1">Highlights</label>
@@ -127,17 +148,50 @@ export default function VolunteerSection() {
             <ul className="mb-2 space-y-1">
               {highlights.map((h, i) => (
                 <li key={i} className="flex items-center gap-2 text-xs bg-white border border-gray-100 rounded px-2 py-1.5">
-                  <span className="flex-1">{h}</span>
-                  <Button variant="ghost" size="sm" className="h-5 w-5 p-0 text-gray-400 hover:text-red-500" onClick={() => removeHighlight(i)}>
-                    <LucideX className="w-3 h-3" />
-                  </Button>
+                  {editingHighlightIndex === i ? (
+                    <div className="flex-1 flex items-center gap-1.5">
+                      <AITextInput
+                        variant="input"
+                        type="text"
+                        value={editingHighlightValue}
+                        onChange={(e) => setEditingHighlightValue(e.target.value)}
+                        onValueChange={(val) => setEditingHighlightValue(val)}
+                        className="w-full h-7 text-xs focus-visible:ring-[#DAA520]"
+                        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); saveEditHighlight(); } if (e.key === "Escape") cancelEditHighlight(); }}
+                      />
+                      <Button variant="ghost" size="sm" className="h-5 w-5 p-0 text-gray-400 hover:text-green-600 flex-shrink-0" onClick={saveEditHighlight}>
+                        <LucideCheck className="w-3 h-3" />
+                      </Button>
+                      <Button variant="ghost" size="sm" className="h-5 w-5 p-0 text-gray-400 hover:text-gray-600 flex-shrink-0" onClick={cancelEditHighlight}>
+                        <LucideX className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <>
+                      <span className="flex-1 cursor-pointer hover:text-gray-900" onClick={() => startEditHighlight(i)}>{h}</span>
+                      <Button variant="ghost" size="sm" className="h-5 w-5 p-0 text-gray-400 hover:text-[#DAA520] flex-shrink-0" onClick={() => startEditHighlight(i)}>
+                        <LucidePencil className="w-3 h-3" />
+                      </Button>
+                      <Button variant="ghost" size="sm" className="h-5 w-5 p-0 text-gray-400 hover:text-red-500 flex-shrink-0" onClick={() => removeHighlight(i)}>
+                        <LucideX className="w-3 h-3" />
+                      </Button>
+                    </>
+                  )}
                 </li>
               ))}
             </ul>
           )}
           <div className="flex gap-2">
-            <Input type="text" value={newHighlight} onChange={(e) => setNewHighlight(e.target.value)} className="w-full h-8 text-xs focus-visible:ring-[#DAA520]" placeholder="Add a highlight..."
-              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addHighlight(); } }} />
+            <AITextInput
+              variant="input"
+              type="text"
+              value={newHighlight}
+              onChange={(e) => setNewHighlight(e.target.value)}
+              onValueChange={(val) => setNewHighlight(val)}
+              className="w-full h-8 text-xs focus-visible:ring-[#DAA520]"
+              placeholder="Add a highlight..."
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addHighlight(); } }}
+            />
             <Button size="sm" onClick={addHighlight} disabled={!newHighlight.trim()} className="h-8 bg-black hover:bg-black/80 text-xs px-3 !text-white">Add</Button>
           </div>
         </div>

@@ -1,0 +1,841 @@
+{
+  "info": {
+    "name": "CV Cats REST API",
+    "description": "A comprehensive API for CV parsing, management, and processing using AI technology.\n\nAll endpoints (except authentication) require a valid JWT token obtained through Firebase authentication.\n\n## Setup\n1. Set the `BASE_URL` variable to your API server URL\n2. Set the `FIREBASE_TOKEN` variable to your Firebase ID token\n3. Run the **Login** request — the JWT token will be auto-saved to `JWT_TOKEN`\n4. All other requests will use `JWT_TOKEN` automatically",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "https://cvcat-api-dev-phhm2.ondigitalocean.app/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "JWT_TOKEN",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "FIREBASE_TOKEN",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "description": "Endpoints for authenticating with the API using Firebase tokens.",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.token) {",
+                  "        pm.collectionVariables.set(\"JWT_TOKEN\", jsonData.token);",
+                  "        console.log(\"JWT_TOKEN has been set successfully.\");",
+                  "    }",
+                  "    if (jsonData.user && jsonData.user._id) {",
+                  "        pm.collectionVariables.set(\"USER_ID\", jsonData.user._id);",
+                  "        console.log(\"USER_ID has been set successfully.\");",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"{{FIREBASE_TOKEN}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/login",
+              "host": ["{{BASE_URL}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Authenticate with a Firebase ID token and receive a JWT for API access.\n\nAlternatively, you can send the Firebase token in the Authorization header:\n`Authorization: Bearer <firebase-id-token>`\n\n**Post-script:** On success, the returned JWT is automatically saved to the `JWT_TOKEN` collection variable."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": false,\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"user\": {\n    \"_id\": \"60f1b2b2b2b2b2b2b2b2b2b2\",\n    \"uid\": \"firebase-user-uid\",\n    \"email\": \"user@example.com\",\n    \"name\": {\n      \"first\": \"John\",\n      \"last\": \"Doe\",\n      \"full\": \"John Doe\"\n    },\n    \"meta\": {},\n    \"createdAt\": \"2023-05-27T10:30:00.000Z\",\n    \"updatedAt\": \"2023-05-27T10:30:00.000Z\"\n  },\n  \"isFirstTime\": false\n}"
+            },
+            {
+              "name": "Error - No Token",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": true,\n  \"reason\": \"No token provided\"\n}"
+            },
+            {
+              "name": "Error - Invalid Token",
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": true,\n  \"reason\": \"Invalid or expired token: <error-details>\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CV Management",
+      "description": "Endpoints for creating, reading, updating, and deleting CVs.",
+      "item": [
+        {
+          "name": "Parse CV",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "",
+                  "description": "CV file to parse (PDF, DOC, DOCX, or TXT — max 10MB)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/cv/parse",
+              "host": ["{{BASE_URL}}"],
+              "path": ["cv", "parse"]
+            },
+            "description": "Upload and parse a CV file using AI to extract structured data.\n\n⚠️ This endpoint can take 15-30 seconds to process.\n\n**Supported formats:** PDF, DOC, DOCX, TXT\n**Max file size:** 10MB\n\nReturns parsed data only — does NOT save to collection. Use `/cv/import` to parse and save."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": false,\n  \"message\": \"CV parsed successfully\",\n  \"data\": {\n    \"basics\": {\n      \"name\": \"John Doe\",\n      \"label\": \"Software Engineer\",\n      \"email\": \"john.doe@example.com\",\n      \"phone\": \"+1-555-123-4567\",\n      \"url\": \"https://johndoe.com\",\n      \"summary\": \"Experienced software engineer with 5+ years...\",\n      \"location\": {\n        \"address\": \"123 Main St\",\n        \"postalCode\": \"12345\",\n        \"city\": \"San Francisco\",\n        \"countryCode\": \"US\",\n        \"region\": \"California\"\n      },\n      \"profiles\": [\n        {\n          \"network\": \"LinkedIn\",\n          \"username\": \"johndoe\",\n          \"url\": \"https://linkedin.com/in/johndoe\"\n        }\n      ]\n    },\n    \"work\": [\n      {\n        \"name\": \"Tech Corp\",\n        \"location\": \"San Francisco, CA\",\n        \"description\": \"Leading technology company\",\n        \"position\": \"Senior Software Engineer\",\n        \"url\": \"https://techcorp.com\",\n        \"startDate\": \"2020-01-15\",\n        \"endDate\": \"2023-05-20\",\n        \"summary\": \"Led development of microservices architecture...\",\n        \"highlights\": [\n          \"Improved system performance by 40%\",\n          \"Mentored 3 junior developers\"\n        ]\n      }\n    ],\n    \"education\": [\n      {\n        \"institution\": \"University of California\",\n        \"url\": \"https://berkeley.edu\",\n        \"area\": \"Computer Science\",\n        \"studyType\": \"Bachelor of Science\",\n        \"startDate\": \"2015-08-20\",\n        \"endDate\": \"2019-05-15\",\n        \"score\": \"3.8/4.0\",\n        \"courses\": [\"Data Structures\", \"Algorithms\", \"Database Systems\"]\n      }\n    ],\n    \"skills\": [\n      {\n        \"name\": \"Programming Languages\",\n        \"level\": \"Expert\",\n        \"keywords\": [\"JavaScript\", \"Python\", \"Java\", \"TypeScript\"]\n      }\n    ],\n    \"languages\": [\n      {\n        \"language\": \"English\",\n        \"fluency\": \"Native\"\n      }\n    ]\n  }\n}"
+            },
+            {
+              "name": "Error - No File",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": true,\n  \"reason\": \"No file uploaded. Please upload a CV file.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Import CV",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "",
+                  "description": "CV file to import (PDF, DOC, DOCX, or TXT — max 10MB)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/cv/import",
+              "host": ["{{BASE_URL}}"],
+              "path": ["cv", "import"]
+            },
+            "description": "Upload and parse a CV file using AI, then automatically save it to your CV collection.\n\n⚠️ This endpoint can take 15-30 seconds to process.\n\n**Supported formats:** PDF, DOC, DOCX, TXT\n**Max file size:** 10MB\n\n**Auto-verification:** When a valid email is found in the parsed CV, a verification email is sent in the background."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Created",
+              "code": 201,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": false,\n  \"message\": \"CV imported successfully\",\n  \"data\": {\n    \"_id\": \"60f1b2b2b2b2b2b2b2b2b2b4\",\n    \"title\": \"John Doe's CV\",\n    \"description\": \"Imported CV data\",\n    \"cvSource\": \"parsed\",\n    \"isParsedByAi\": true,\n    \"isDraft\": true,\n    \"cvType\": \"base\",\n    \"data\": {\n      \"basics\": {\n        \"name\": \"John Doe\",\n        \"label\": \"Software Engineer\",\n        \"email\": \"john.doe@example.com\"\n      }\n    },\n    \"versionNumber\": \"1.0\",\n    \"_parent\": null,\n    \"_user\": \"60f1b2b2b2b2b2b2b2b2b2b1\",\n    \"createdAt\": \"2023-05-27T10:30:00.000Z\",\n    \"updatedAt\": \"2023-05-27T10:30:00.000Z\",\n    \"_versions\": [],\n    \"_exportHistory\": []\n  }\n}"
+            },
+            {
+              "name": "Error - Duplicate Email",
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": true,\n  \"reason\": \"CV email already exists for another user\",\n  \"data\": {\n    \"signal\": \"cv_email_duplicate\"\n  }\n}"
+            },
+            {
+              "name": "Error - Creation Limit",
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": true,\n  \"reason\": \"CV creation limit reached. Maximum allowed CVs: 1\",\n  \"data\": {\n    \"signal\": \"cv_creation_limit_reached\",\n    \"maxCvsPerUser\": 1,\n    \"existingCvCount\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Add CV",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"John Doe's Software Engineer CV\",\n  \"description\": \"Tailored CV for software engineering positions\",\n  \"cvSource\": \"manual\",\n  \"isDraft\": false,\n  \"cvType\": \"base\",\n  \"data\": {\n    \"basics\": {\n      \"name\": \"John Doe\",\n      \"label\": \"Software Engineer\",\n      \"email\": \"john.doe@example.com\",\n      \"phone\": \"+1-555-123-4567\",\n      \"url\": \"https://johndoe.com\",\n      \"summary\": \"Experienced software engineer with 5+ years in full-stack development...\",\n      \"location\": {\n        \"address\": \"123 Main St\",\n        \"postalCode\": \"12345\",\n        \"city\": \"San Francisco\",\n        \"countryCode\": \"US\",\n        \"region\": \"California\"\n      },\n      \"profiles\": [\n        {\n          \"network\": \"LinkedIn\",\n          \"username\": \"johndoe\",\n          \"url\": \"https://linkedin.com/in/johndoe\"\n        },\n        {\n          \"network\": \"GitHub\",\n          \"username\": \"johndoe\",\n          \"url\": \"https://github.com/johndoe\"\n        }\n      ]\n    },\n    \"work\": [\n      {\n        \"name\": \"Tech Corp\",\n        \"location\": \"San Francisco, CA\",\n        \"description\": \"Leading technology company\",\n        \"position\": \"Senior Software Engineer\",\n        \"url\": \"https://techcorp.com\",\n        \"startDate\": \"2020-01-15\",\n        \"endDate\": \"2023-05-20\",\n        \"summary\": \"Led development of microservices architecture...\",\n        \"highlights\": [\n          \"Improved system performance by 40%\",\n          \"Mentored 3 junior developers\",\n          \"Designed and implemented RESTful API layer\"\n        ]\n      }\n    ],\n    \"education\": [\n      {\n        \"institution\": \"University of California\",\n        \"url\": \"https://berkeley.edu\",\n        \"area\": \"Computer Science\",\n        \"studyType\": \"Bachelor of Science\",\n        \"startDate\": \"2015-08-20\",\n        \"endDate\": \"2019-05-15\",\n        \"score\": \"3.8/4.0\",\n        \"courses\": [\n          \"Data Structures\",\n          \"Algorithms\",\n          \"Database Systems\"\n        ]\n      }\n    ],\n    \"skills\": [\n      {\n        \"name\": \"Programming Languages\",\n        \"level\": \"Expert\",\n        \"keywords\": [\n          \"JavaScript\",\n          \"Python\",\n          \"Java\",\n          \"TypeScript\"\n        ]\n      },\n      {\n        \"name\": \"Frameworks\",\n        \"level\": \"Advanced\",\n        \"keywords\": [\n          \"React\",\n          \"Node.js\",\n          \"Express\",\n          \"Django\"\n        ]\n      }\n    ],\n    \"languages\": [\n      {\n        \"language\": \"English\",\n        \"fluency\": \"Native\"\n      },\n      {\n        \"language\": \"Spanish\",\n        \"fluency\": \"Intermediate\"\n      }\n    ],\n    \"certifications\": [\n      {\n        \"name\": \"AWS Certified Solutions Architect\",\n        \"date\": \"2022-03-15\",\n        \"awarder\": \"Amazon Web Services\",\n        \"url\": \"https://aws.amazon.com/certification/\"\n      }\n    ],\n    \"awards\": [\n      {\n        \"title\": \"Employee of the Year\",\n        \"date\": \"2022-12-31\",\n        \"awarder\": \"Tech Corp\",\n        \"summary\": \"Recognized for outstanding performance and leadership\"\n      }\n    ],\n    \"publications\": [\n      {\n        \"name\": \"Modern JavaScript Patterns\",\n        \"publisher\": \"Tech Journal\",\n        \"releaseDate\": \"2022-06-15\",\n        \"url\": \"https://techjournal.com/article/123\",\n        \"summary\": \"An exploration of modern JavaScript design patterns\"\n      }\n    ],\n    \"volunteer\": [\n      {\n        \"organization\": \"Code for Good\",\n        \"position\": \"Volunteer Developer\",\n        \"url\": \"https://codeforgood.org\",\n        \"startDate\": \"2021-01-01\",\n        \"endDate\": \"2023-01-01\",\n        \"summary\": \"Developed web applications for non-profit organizations\",\n        \"highlights\": [\n          \"Built donation platform for local charity\",\n          \"Mentored new volunteers\"\n        ]\n      }\n    ]\n  },\n  \"versionNumber\": \"1.0\",\n  \"_parent\": null,\n  \"generatedSummary\": \"Software engineer with strong technical skills and 5+ years of experience...\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/cv/add",
+              "host": ["{{BASE_URL}}"],
+              "path": ["cv", "add"]
+            },
+            "description": "Create a new CV with structured JSON Resume data.\n\n**Auto-verification:** When a valid `data.basics.email` is present, a verification email is automatically sent in the background."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Created",
+              "code": 201,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": false,\n  \"message\": \"CV created successfully\",\n  \"data\": {\n    \"_id\": \"60f1b2b2b2b2b2b2b2b2b2b3\",\n    \"title\": \"John Doe's Software Engineer CV\",\n    \"description\": \"Tailored CV for software engineering positions\",\n    \"cvSource\": \"manual\",\n    \"isDraft\": false,\n    \"cvType\": \"base\",\n    \"data\": {\n      \"basics\": {\n        \"name\": \"John Doe\",\n        \"label\": \"Software Engineer\"\n      }\n    },\n    \"versionNumber\": \"1.0\",\n    \"_parent\": null,\n    \"generatedSummary\": \"Software engineer with strong technical skills...\",\n    \"_user\": \"60f1b2b2b2b2b2b2b2b2b2b1\",\n    \"createdAt\": \"2023-05-27T10:35:00.000Z\",\n    \"updatedAt\": \"2023-05-27T10:35:00.000Z\",\n    \"_versions\": [],\n    \"_exportHistory\": []\n  }\n}"
+            },
+            {
+              "name": "Error - Empty Data",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": true,\n  \"reason\": \"Empty CV data not allowed!\"\n}"
+            },
+            {
+              "name": "Error - Missing Name",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": true,\n  \"reason\": \"basics.name is required and cannot be empty!\"\n}"
+            },
+            {
+              "name": "Error - Duplicate Email",
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": true,\n  \"reason\": \"CV email already exists for another user\",\n  \"data\": {\n    \"signal\": \"cv_email_duplicate\"\n  }\n}"
+            },
+            {
+              "name": "Error - Creation Limit",
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": true,\n  \"reason\": \"CV creation limit reached. Maximum allowed CVs: 1\",\n  \"data\": {\n    \"signal\": \"cv_creation_limit_reached\",\n    \"maxCvsPerUser\": 1,\n    \"existingCvCount\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Fetch All CVs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/cv/fetchAll?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
+              "host": ["{{BASE_URL}}"],
+              "path": ["cv", "fetchAll"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number for pagination (default: 1)"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Number of items per page (default: 10)"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "description": "Sort field: createdAt, updatedAt, title, versionNumber, cvType, isDraft (default: createdAt)"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "description": "Sort order: asc or desc (default: desc)"
+                },
+                {
+                  "key": "isDraft",
+                  "value": "",
+                  "description": "Filter by draft status (true/false)",
+                  "disabled": true
+                },
+                {
+                  "key": "cvType",
+                  "value": "",
+                  "description": "Filter by CV type: base or tailored",
+                  "disabled": true
+                },
+                {
+                  "key": "parentId",
+                  "value": "",
+                  "description": "Filter by parent CV ID",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Retrieve all CVs for the authenticated user with pagination, sorting, and filtering.\n\nOptional filters (`isDraft`, `cvType`, `parentId`) are disabled by default — enable them as needed."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": false,\n  \"message\": \"CVs fetched successfully\",\n  \"data\": [\n    {\n      \"_id\": \"60f1b2b2b2b2b2b2b2b2b2b2\",\n      \"title\": \"John Doe's CV\",\n      \"description\": \"Main CV for software engineer positions\",\n      \"isParsedByAi\": true,\n      \"isEmailVerified\": true,\n      \"isDraft\": false,\n      \"cvType\": \"base\",\n      \"versionNumber\": \"1.0\",\n      \"_parent\": null,\n      \"generatedSummary\": \"Experienced software engineer with expertise in...\",\n      \"_user\": \"60f1b2b2b2b2b2b2b2b2b2b1\",\n      \"createdAt\": \"2023-05-27T10:30:00.000Z\",\n      \"updatedAt\": \"2023-05-27T10:30:00.000Z\",\n      \"data\": {\n        \"basics\": {\n          \"name\": \"John Doe\",\n          \"label\": \"Software Engineer\",\n          \"email\": \"john.doe@example.com\",\n          \"phone\": \"+1-555-123-4567\",\n          \"summary\": \"Experienced software engineer...\"\n        }\n      },\n      \"_versions\": [],\n      \"_exportHistory\": []\n    }\n  ],\n  \"pagination\": {\n    \"currentPage\": 1,\n    \"totalPages\": 3,\n    \"totalCount\": 25,\n    \"limit\": 10,\n    \"hasNextPage\": true,\n    \"hasPrevPage\": false\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get CV Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/cv/getDetails/:id",
+              "host": ["{{BASE_URL}}"],
+              "path": ["cv", "getDetails", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "",
+                  "description": "The CV ID"
+                }
+              ]
+            },
+            "description": "Get detailed information for a specific CV by its ID."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": false,\n  \"message\": \"CV details fetched successfully\",\n  \"data\": {\n    \"_id\": \"60f1b2b2b2b2b2b2b2b2b2b2\",\n    \"title\": \"John Doe's CV\",\n    \"description\": \"Main CV for software engineer positions\",\n    \"cvSource\": \"parsed\",\n    \"isEmailVerified\": true,\n    \"originalFile\": {\n      \"name\": \"john_doe_resume.pdf\",\n      \"url\": \"https://s3.amazonaws.com/bucket/file.pdf\",\n      \"metadata\": {\n        \"size\": 1024000,\n        \"mimetype\": \"application/pdf\",\n        \"uploadedAt\": \"2023-05-27T10:30:00.000Z\",\n        \"s3Key\": \"uploads/user123/file.pdf\",\n        \"s3UploadedAt\": \"2023-05-27T10:30:00.000Z\",\n        \"fileExtension\": \".pdf\"\n      }\n    },\n    \"isDraft\": false,\n    \"cvType\": \"base\",\n    \"data\": {\n      \"basics\": {\n        \"name\": \"John Doe\",\n        \"label\": \"Software Engineer\",\n        \"email\": \"john.doe@example.com\",\n        \"phone\": \"+1-555-123-4567\",\n        \"url\": \"https://johndoe.com\",\n        \"summary\": \"Experienced software engineer with 5+ years...\",\n        \"location\": {\n          \"address\": \"123 Main St\",\n          \"postalCode\": \"12345\",\n          \"city\": \"San Francisco\",\n          \"countryCode\": \"US\",\n          \"region\": \"California\"\n        },\n        \"profiles\": [\n          {\n            \"network\": \"LinkedIn\",\n            \"username\": \"johndoe\",\n            \"url\": \"https://linkedin.com/in/johndoe\"\n          }\n        ]\n      },\n      \"work\": [\n        {\n          \"name\": \"Tech Corp\",\n          \"location\": \"San Francisco, CA\",\n          \"description\": \"Leading technology company\",\n          \"position\": \"Senior Software Engineer\",\n          \"url\": \"https://techcorp.com\",\n          \"startDate\": \"2020-01-15\",\n          \"endDate\": \"2023-05-20\",\n          \"summary\": \"Led development of microservices architecture...\",\n          \"highlights\": [\n            \"Improved system performance by 40%\",\n            \"Mentored 3 junior developers\"\n          ]\n        }\n      ],\n      \"education\": [\n        {\n          \"institution\": \"University of California\",\n          \"url\": \"https://berkeley.edu\",\n          \"area\": \"Computer Science\",\n          \"studyType\": \"Bachelor of Science\",\n          \"startDate\": \"2015-08-20\",\n          \"endDate\": \"2019-05-15\",\n          \"score\": \"3.8/4.0\",\n          \"courses\": [\"Data Structures\", \"Algorithms\", \"Database Systems\"]\n        }\n      ],\n      \"skills\": [\n        {\n          \"name\": \"Programming Languages\",\n          \"level\": \"Expert\",\n          \"keywords\": [\"JavaScript\", \"Python\", \"Java\", \"TypeScript\"]\n        }\n      ],\n      \"languages\": [\n        {\n          \"language\": \"English\",\n          \"fluency\": \"Native\"\n        }\n      ],\n      \"certifications\": [\n        {\n          \"name\": \"AWS Certified Solutions Architect\",\n          \"date\": \"2022-03-15\",\n          \"awarder\": \"Amazon Web Services\",\n          \"url\": \"https://aws.amazon.com/certification/\"\n        }\n      ],\n      \"awards\": [\n        {\n          \"title\": \"Employee of the Year\",\n          \"date\": \"2022-12-31\",\n          \"awarder\": \"Tech Corp\",\n          \"summary\": \"Recognized for outstanding performance...\"\n        }\n      ],\n      \"publications\": [\n        {\n          \"name\": \"Modern JavaScript Patterns\",\n          \"publisher\": \"Tech Journal\",\n          \"releaseDate\": \"2022-06-15\",\n          \"url\": \"https://techjournal.com/article/123\",\n          \"summary\": \"An exploration of modern JavaScript design patterns...\"\n        }\n      ],\n      \"volunteer\": [\n        {\n          \"organization\": \"Code for Good\",\n          \"position\": \"Volunteer Developer\",\n          \"url\": \"https://codeforgood.org\",\n          \"startDate\": \"2021-01-01\",\n          \"endDate\": \"2023-01-01\",\n          \"summary\": \"Developed web applications for non-profit organizations\",\n          \"highlights\": [\n            \"Built donation platform for local charity\",\n            \"Mentored new volunteers\"\n          ]\n        }\n      ]\n    },\n    \"versionNumber\": \"1.0\",\n    \"_parent\": null,\n    \"generatedSummary\": \"Experienced software engineer with expertise in...\",\n    \"_user\": \"60f1b2b2b2b2b2b2b2b2b2b1\",\n    \"createdAt\": \"2023-05-27T10:30:00.000Z\",\n    \"updatedAt\": \"2023-05-27T10:30:00.000Z\",\n    \"_versions\": [],\n    \"_exportHistory\": []\n  }\n}"
+            },
+            {
+              "name": "Error - Not Found",
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": true,\n  \"reason\": \"CV not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update CV",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated CV Title\",\n  \"description\": \"Updated description\",\n  \"data\": {\n    \"basics\": {\n      \"name\": \"John Doe\",\n      \"email\": \"newemail@example.com\",\n      \"label\": \"Senior Software Engineer\",\n      \"summary\": \"Updated summary with more experience...\",\n      \"phone\": \"+1-555-123-4567\",\n      \"url\": \"https://johndoe.com\",\n      \"location\": {\n        \"address\": \"456 Oak Ave\",\n        \"postalCode\": \"54321\",\n        \"city\": \"New York\",\n        \"countryCode\": \"US\",\n        \"region\": \"New York\"\n      },\n      \"profiles\": [\n        {\n          \"network\": \"LinkedIn\",\n          \"username\": \"johndoe\",\n          \"url\": \"https://linkedin.com/in/johndoe\"\n        }\n      ]\n    },\n    \"work\": [\n      {\n        \"name\": \"New Corp\",\n        \"location\": \"New York, NY\",\n        \"description\": \"Innovative startup\",\n        \"position\": \"Lead Engineer\",\n        \"url\": \"https://newcorp.com\",\n        \"startDate\": \"2023-06-01\",\n        \"endDate\": \"\",\n        \"summary\": \"Leading engineering team...\",\n        \"highlights\": [\n          \"Built product from scratch\",\n          \"Grew team from 2 to 10 engineers\"\n        ]\n      }\n    ],\n    \"skills\": [\n      {\n        \"name\": \"Programming Languages\",\n        \"level\": \"Expert\",\n        \"keywords\": [\n          \"JavaScript\",\n          \"TypeScript\",\n          \"Go\",\n          \"Python\"\n        ]\n      }\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/cv/update/:id",
+              "host": ["{{BASE_URL}}"],
+              "path": ["cv", "update", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "",
+                  "description": "The CV ID to update"
+                }
+              ]
+            },
+            "description": "Update an existing CV by ID. Supports partial updates — only include fields you want to change.\n\n**Email updates:** If `data.basics.email` is changed, `isEmailVerified` resets to `false` and a verification email is sent to the new address."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": false,\n  \"message\": \"CV updated successfully\",\n  \"data\": {\n    \"_id\": \"60f1b2b2b2b2b2b2b2b2b2b2\",\n    \"title\": \"Updated CV Title\",\n    \"description\": \"Updated description\",\n    \"isEmailVerified\": false,\n    \"cvSource\": \"modified\",\n    \"data\": {\n      \"basics\": {\n        \"name\": \"John Doe\",\n        \"email\": \"newemail@example.com\",\n        \"label\": \"Senior Software Engineer\",\n        \"summary\": \"Updated summary with more experience...\"\n      }\n    },\n    \"updatedAt\": \"2023-05-27T11:00:00.000Z\",\n    \"_versions\": [],\n    \"_exportHistory\": []\n  }\n}"
+            },
+            {
+              "name": "Error - Not Found",
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": true,\n  \"reason\": \"CV not found\"\n}"
+            },
+            {
+              "name": "Error - Email Removal",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": true,\n  \"reason\": \"CV email cannot be removed\",\n  \"data\": {\n    \"signal\": \"cv_email_removal_not_allowed\"\n  }\n}"
+            },
+            {
+              "name": "Error - Invalid Email",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": true,\n  \"reason\": \"Invalid email address\",\n  \"data\": {\n    \"signal\": \"cv_email_invalid\"\n  }\n}"
+            },
+            {
+              "name": "Error - Duplicate Email",
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": true,\n  \"reason\": \"CV email already exists for another user\",\n  \"data\": {\n    \"signal\": \"cv_email_duplicate\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete CV",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/cv/delete/:id",
+              "host": ["{{BASE_URL}}"],
+              "path": ["cv", "delete", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "",
+                  "description": "The CV ID to delete"
+                }
+              ]
+            },
+            "description": "Delete a CV by its ID."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": false,\n  \"message\": \"CV deleted successfully\"\n}"
+            },
+            {
+              "name": "Error - Not Found",
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": true,\n  \"reason\": \"CV not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Verify Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/cv/verify-email/:cvid",
+              "host": ["{{BASE_URL}}"],
+              "path": ["cv", "verify-email", ":cvid"],
+              "variable": [
+                {
+                  "key": "cvid",
+                  "value": "",
+                  "description": "The CV ID to verify email for"
+                }
+              ]
+            },
+            "description": "Manually trigger email verification for a CV. Sends a verification link to the email address in `data.basics.email`.\n\nIf a verification email was previously sent, this invalidates all prior tokens and sends a fresh link."
+          },
+          "response": [
+            {
+              "name": "Success - Email Sent",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": false,\n  \"message\": \"Verification email sent successfully\",\n  \"data\": {\n    \"signal\": \"verification_email_sent\",\n    \"isEmailVerified\": false,\n    \"tokenExpiresAt\": \"2026-02-27T12:34:56.789Z\"\n  }\n}"
+            },
+            {
+              "name": "Success - Already Verified",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": false,\n  \"message\": \"CV email is already verified\",\n  \"data\": {\n    \"signal\": \"already_verified\",\n    \"isEmailVerified\": true\n  }\n}"
+            },
+            {
+              "name": "Error - No Email",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": true,\n  \"reason\": \"CV has no email to verify\"\n}"
+            },
+            {
+              "name": "Error - Not Found",
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": true,\n  \"reason\": \"CV not found\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Writing Assistant",
+      "description": "AI-powered text improvement endpoints for CV content.",
+      "item": [
+        {
+          "name": "Fix Grammar & Spelling",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"fix\",\n  \"text\": \"Led a team of engeneers to delivered the new platform on time.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/cv/writing-assistant",
+              "host": ["{{BASE_URL}}"],
+              "path": ["cv", "writing-assistant"]
+            },
+            "description": "Correct grammar, spelling, punctuation, and clarity issues in CV text."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": false,\n  \"data\": {\n    \"originalText\": \"Led a team of engeneers to delivered the new platform on time.\",\n    \"alteredText\": \"Led a team of engineers to deliver the new platform on time.\"\n  },\n  \"quotaRemaining\": 19\n}"
+            }
+          ]
+        },
+        {
+          "name": "Simplify Text",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"simplify\",\n  \"text\": \"Spearheaded the conceptualization, architectural design, and subsequent implementation of a highly performant, horizontally scalable microservices ecosystem.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/cv/writing-assistant",
+              "host": ["{{BASE_URL}}"],
+              "path": ["cv", "writing-assistant"]
+            },
+            "description": "Rewrite text using plainer language while retaining key information."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": false,\n  \"data\": {\n    \"originalText\": \"Spearheaded the conceptualization, architectural design, and subsequent implementation of a highly performant, horizontally scalable microservices ecosystem.\",\n    \"alteredText\": \"Led the design and development of a scalable microservices system.\"\n  },\n  \"quotaRemaining\": 18\n}"
+            }
+          ]
+        },
+        {
+          "name": "Shorten Text",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"short\",\n  \"text\": \"Responsible for the design, development, and maintenance of scalable backend services that handle millions of requests per day.\",\n  \"changePercentage\": 30\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/cv/writing-assistant",
+              "host": ["{{BASE_URL}}"],
+              "path": ["cv", "writing-assistant"]
+            },
+            "description": "Shorten text by approximately the specified percentage (1–99, default: 10)."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": false,\n  \"data\": {\n    \"originalText\": \"Responsible for the design, development, and maintenance of scalable backend services that handle millions of requests per day.\",\n    \"alteredText\": \"Designed and maintained scalable backend services handling millions of daily requests.\"\n  },\n  \"quotaRemaining\": 17\n}"
+            }
+          ]
+        },
+        {
+          "name": "Lengthen Text",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"long\",\n  \"text\": \"Built REST APIs using Node.js.\",\n  \"changePercentage\": 50\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/cv/writing-assistant",
+              "host": ["{{BASE_URL}}"],
+              "path": ["cv", "writing-assistant"]
+            },
+            "description": "Expand text by approximately the specified percentage (1–99, default: 10)."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": false,\n  \"data\": {\n    \"originalText\": \"Built REST APIs using Node.js.\",\n    \"alteredText\": \"Designed and built production-grade RESTful APIs using Node.js and Express, serving multiple front-end clients.\"\n  },\n  \"quotaRemaining\": 16\n}"
+            }
+          ]
+        },
+        {
+          "name": "Change Tone",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"tone\",\n  \"text\": \"I did some backend work and fixed a few bugs.\",\n  \"tone\": \"confident\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/cv/writing-assistant",
+              "host": ["{{BASE_URL}}"],
+              "path": ["cv", "writing-assistant"]
+            },
+            "description": "Rewrite text in a specified tone (e.g. formal, friendly, confident, professional)."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": false,\n  \"data\": {\n    \"originalText\": \"I did some backend work and fixed a few bugs.\",\n    \"alteredText\": \"Drove backend development initiatives and resolved critical software defects.\"\n  },\n  \"quotaRemaining\": 15\n}"
+            },
+            {
+              "name": "Error - Quota Exceeded",
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": true,\n  \"reason\": \"Writing assistant quota exceeded\",\n  \"quotaResetAt\": \"2026-02-27T18:42:10.123Z\",\n  \"quotaRemaining\": 0\n}"
+            },
+            {
+              "name": "Error - Invalid Action",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"error\": true,\n  \"reason\": \"\\\"action\\\" must be one of: fix, simplify, short, long, tone\",\n  \"quotaRemaining\": 20\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
