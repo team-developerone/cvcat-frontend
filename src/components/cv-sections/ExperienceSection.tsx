@@ -197,13 +197,12 @@ export default function ExperienceSection() {
                   {editingHighlightIndex === i ? (
                     <div className="flex-1 flex items-center gap-1.5">
                       <AITextInput
-                        variant="input"
-                        type="text"
+                        variant="textarea"
                         value={editingHighlightValue}
                         onChange={(e) => setEditingHighlightValue(e.target.value)}
                         onValueChange={(val) => setEditingHighlightValue(val)}
-                        className="w-full h-7 text-xs focus-visible:ring-[#DAA520]"
-                        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); saveEditHighlight(); } if (e.key === "Escape") cancelEditHighlight(); }}
+                        className="w-full min-h-[60px] text-xs focus-visible:ring-[#DAA520]"
+                        onKeyDown={(e) => { if (e.key === "Escape") cancelEditHighlight(); }}
                       />
                       <Button variant="ghost" size="sm" className="h-5 w-5 p-0 text-gray-400 hover:text-green-600 flex-shrink-0" onClick={saveEditHighlight}>
                         <LucideCheck className="w-3 h-3" />
@@ -229,14 +228,12 @@ export default function ExperienceSection() {
           )}
           <div className="flex gap-2">
             <AITextInput
-              variant="input"
-              type="text"
+              variant="textarea"
               value={newHighlight}
               onChange={(e) => setNewHighlight(e.target.value)}
               onValueChange={(val) => setNewHighlight(val)}
-              className="w-full h-8 text-xs focus-visible:ring-[#DAA520]"
+              className="w-full min-h-[60px] text-xs focus-visible:ring-[#DAA520]"
               placeholder="Add a highlight..."
-              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addHighlight(); } }}
             />
             <Button size="sm" onClick={addHighlight} disabled={!newHighlight.trim()} className="h-8 bg-black hover:bg-black/80 text-xs px-3 !text-white">
               Add
