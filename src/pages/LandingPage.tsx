@@ -197,7 +197,7 @@ export default function LandingPage() {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-gray-900 mb-1">Actually Free. Not "Freemium"</h3>
+                    <h3 className="text-sm font-bold text-gray-900 mb-1">Actually Free</h3>
                     <p className="text-xs text-gray-700 leading-relaxed"><strong>All features. Forever.</strong> No trial expiring in 7 days. No surprise charges. No "upgrade to export" nonsense.</p>
                   </div>
                 </motion.div>
