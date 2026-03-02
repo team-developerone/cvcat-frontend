@@ -1549,15 +1549,13 @@ export default function LandingPage() {
                   </div>
                   <p className="text-sm text-gray-600 mt-1">Clean design with gold accents</p>
                 </div>
-                <div className="h-96 overflow-hidden bg-gray-50 relative">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="transform scale-[0.38]">
-                      <CVPreview 
-                        cv={mockCVData} 
-                        template="modern"
-                        style={{ minHeight: '800px', width: '600px' }}
-                      />
-                    </div>
+                <div className="h-96 overflow-hidden bg-gray-50">
+                  <div className="w-full">
+                    <CVPreview 
+                      cv={mockCVData} 
+                      template="modern"
+                      style={{ width: '100%' }}
+                    />
                   </div>
                 </div>
               </div>
@@ -1581,15 +1579,13 @@ export default function LandingPage() {
                   </div>
                   <p className="text-sm text-gray-600 mt-1">Eye-catching design with purple accents</p>
                 </div>
-                <div className="h-96 overflow-hidden bg-gray-50 relative">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="transform scale-[0.38]">
-                      <CVPreview 
-                        cv={mockCVVariants.creative} 
-                        template="creative"
-                        style={{ minHeight: '800px', width: '600px' }}
-                      />
-                    </div>
+                <div className="h-96 overflow-hidden bg-gray-50">
+                  <div className="w-full">
+                    <CVPreview 
+                      cv={mockCVVariants.creative} 
+                      template="creative"
+                      style={{ width: '100%' }}
+                    />
                   </div>
                 </div>
               </div>
@@ -1613,15 +1609,13 @@ export default function LandingPage() {
                   </div>
                   <p className="text-sm text-gray-600 mt-1">Formal layout for senior positions</p>
                 </div>
-                <div className="h-96 overflow-hidden bg-gray-50 relative">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="transform scale-[0.38]">
-                      <CVPreview 
-                        cv={mockCVVariants.executive} 
-                        template="executive"
-                        style={{ minHeight: '800px', width: '600px' }}
-                      />
-                    </div>
+                <div className="h-96 overflow-hidden bg-gray-50">
+                  <div className="w-full">
+                    <CVPreview 
+                      cv={mockCVVariants.executive} 
+                      template="executive"
+                      style={{ width: '100%' }}
+                    />
                   </div>
                 </div>
               </div>
