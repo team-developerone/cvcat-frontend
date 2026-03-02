@@ -124,17 +124,17 @@ export default function CustomSectionsSection() {
 
   return (
     <>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-medium">Custom Sections</h2>
+      <div className="flex justify-between items-center mb-2 md:mb-4">
+        <h2 className="text-base md:text-lg font-medium">Custom Sections</h2>
         <Button variant="ghost" size="sm" className="flex items-center gap-1 text-xs text-[#DAA520] hover:text-[#DAA520]/80 hover:bg-[#DAA520]/5" onClick={toggleAddSectionForm}>
           <LucidePlus className="w-3 h-3 mr-1" />Add Section
         </Button>
       </div>
 
       {showAddSectionForm && (
-        <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="text-sm font-medium">Create New Section</h3>
+        <div className="mb-3 md:mb-6 p-2.5 md:p-4 bg-gray-50 rounded-lg border border-gray-100">
+          <div className="flex justify-between items-center mb-2 md:mb-3">
+            <h3 className="text-xs md:text-sm font-medium">Create New Section</h3>
             <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600 hover:bg-gray-100/70 h-7 w-7 p-0" onClick={toggleAddSectionForm}>
               <LucideX className="w-4 h-4" />
             </Button>
@@ -143,7 +143,7 @@ export default function CustomSectionsSection() {
             <label className="block text-xs font-medium text-gray-600 mb-1">Section Title</label>
             <Input type="text" name="title" value={newSection.title} onChange={handleSectionChange} className="w-full h-9 focus-visible:ring-[#DAA520]" placeholder="e.g. Hobbies, Side Projects, etc." />
           </div>
-          <div className="flex justify-end mt-4 gap-2">
+          <div className="flex justify-end mt-3 md:mt-4 gap-2">
             <Button variant="outline" size="sm" onClick={toggleAddSectionForm} className="text-xs h-8">Cancel</Button>
             <Button size="sm" onClick={addSection} className="text-xs h-8 bg-black hover:bg-black/80 !text-white" disabled={!newSection.title.trim()}>
               <LucideCheck className="w-3 h-3 mr-1" />Create Section

@@ -85,15 +85,15 @@ export default function CertificationsSection() {
   };
 
   const renderForm = (isEdit: boolean) => (
-    <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
-      <div className="flex justify-between items-center mb-3">
-        <h3 className="text-sm font-medium">{isEdit ? "Edit" : "Add"} Certification</h3>
+    <div className="p-2.5 md:p-4 bg-gray-50 rounded-lg border border-gray-100">
+      <div className="flex justify-between items-center mb-2 md:mb-3">
+        <h3 className="text-xs md:text-sm font-medium">{isEdit ? "Edit" : "Add"} Certification</h3>
         <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600 hover:bg-gray-100/70 h-7 w-7 p-0" onClick={toggleAddForm}>
           <LucideX className="w-4 h-4" />
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 md:gap-4">
         <div className="md:col-span-2">
           <label className="block text-xs font-medium text-gray-600 mb-1">Certification Name</label>
           <Input type="text" name="name" value={formData.name} onChange={handleChange} className="w-full h-9 focus-visible:ring-[#DAA520]" placeholder="e.g. AWS Certified Solutions Architect" />
@@ -128,7 +128,7 @@ export default function CertificationsSection() {
         </div>
       </div>
 
-      <div className="flex justify-end mt-4 gap-2">
+      <div className="flex justify-end mt-3 md:mt-4 gap-2">
         <Button variant="outline" size="sm" onClick={toggleAddForm} className="text-xs h-8">Cancel</Button>
         <Button size="sm" onClick={save} className="text-xs h-8 bg-black hover:bg-black/80 !text-white" disabled={!formData.name || !formData.issuer || !formData.date}>
           <LucideCheck className="w-3 h-3 mr-1" />
@@ -169,15 +169,15 @@ export default function CertificationsSection() {
 
   return (
     <>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-medium">Certifications</h2>
+      <div className="flex justify-between items-center mb-2 md:mb-4">
+        <h2 className="text-base md:text-lg font-medium">Certifications</h2>
         <Button variant="ghost" size="sm" className="flex items-center gap-1 text-xs text-[#DAA520] hover:text-[#DAA520]/80 hover:bg-[#DAA520]/5" onClick={toggleAddForm}>
           <LucidePlus className="w-3 h-3 mr-1" />
           Add Certification
         </Button>
       </div>
 
-      {showAddForm && !editingItemId && <div className="mb-6">{renderForm(false)}</div>}
+      {showAddForm && !editingItemId && <div className="mb-3 md:mb-6">{renderForm(false)}</div>}
 
       {mainCV.certifications && mainCV.certifications.length > 0 ? (
         <SortableList

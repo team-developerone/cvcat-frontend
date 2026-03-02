@@ -51,3 +51,13 @@
     @apply border border-gray-200 rounded-sm focus:border-[#DAA520] focus:ring-0 shadow-none;
   }
 }
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

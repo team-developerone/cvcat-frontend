@@ -11,6 +11,7 @@ import { useLocation } from "wouter";
 import { toast } from "@/hooks/use-toast";
 import CVPreview from "@/components/CVPreview";
 import pdfService from "@/services/pdf-service";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Available section types
 export type SectionType =
@@ -32,6 +33,7 @@ export default function CVBuilder() {
   const { mainCV, setMainCV, saveCV, savingCV, loadCVById } = useCV();
   const [, navigate] = useLocation();
   const ENABLE_CV_ASSISTANT = false;
+  const isMobile = useIsMobile();
   const [activeTemplate, setActiveTemplate] = useState("modern");
   const [activeColor, setActiveColor] = useState("golden");
   const [activeTab, setActiveTab] = useState<"edit" | "preview" | "chat">("edit");
@@ -264,7 +266,7 @@ export default function CVBuilder() {
     <Layout>
       <div className="bg-gray-50 min-h-screen">
         <div className="max-w-screen-2xl mx-auto">
-          <div className="p-4 md:p-6">
+          <div className="p-2 md:p-6">
             <Tabs 
               defaultValue="edit" 
               value={activeTab} 
@@ -273,30 +275,30 @@ export default function CVBuilder() {
                 if (!ENABLE_CV_ASSISTANT && next === "chat") return;
                 setActiveTab(next);
               }}
-              className="w-full mb-6"
+              className="w-full mb-2 md:mb-6"
             >
-              <div className="flex items-center gap-3 mb-2">
-                <TabsList className={`grid flex-1 ${ENABLE_CV_ASSISTANT ? "grid-cols-3" : "grid-cols-2"} rounded-full h-12 p-1 bg-gray-100`}>
+              <div className="flex items-center gap-2 md:gap-3 mb-1 md:mb-2">
+                <TabsList className={`grid flex-1 ${ENABLE_CV_ASSISTANT ? "grid-cols-3" : "grid-cols-2"} rounded-full h-9 md:h-12 p-0.5 md:p-1 bg-gray-100`}>
                 <TabsTrigger
                   value="edit"
-                  className="rounded-full data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm h-10"
+                  className="rounded-full data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm h-8 md:h-10 text-xs md:text-sm"
                 >
-                  <LucideFileText className="w-4 h-4 mr-2" />
+                  <LucideFileText className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1 md:mr-2" />
                   Edit CV
                 </TabsTrigger>
                 <TabsTrigger
                   value="preview"
-                  className="rounded-full data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm h-10"
+                  className="rounded-full data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm h-8 md:h-10 text-xs md:text-sm"
                 >
-                  <LucideZap className="w-4 h-4 mr-2" />
+                  <LucideZap className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1 md:mr-2" />
                   Preview
                 </TabsTrigger>
                 {ENABLE_CV_ASSISTANT && (
                   <TabsTrigger
                     value="chat"
-                    className="rounded-full data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm h-10"
+                    className="rounded-full data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm h-8 md:h-10 text-xs md:text-sm"
                   >
-                    <LucideMessageCircle className="w-4 h-4 mr-2" />
+                    <LucideMessageCircle className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1 md:mr-2" />
                     CV Assistant
                   </TabsTrigger>
                 )}
@@ -304,56 +306,79 @@ export default function CVBuilder() {
                 <Button
                   onClick={handleSave}
                   disabled={savingCV || !mainCV}
-                  className="bg-[#DAA520] hover:bg-[#B8860B] text-white rounded-full h-12 px-5 text-sm font-medium shadow-sm transition-all flex-shrink-0"
+                  className="bg-[#DAA520] hover:bg-[#B8860B] text-white rounded-full h-9 md:h-12 px-3 md:px-5 text-xs md:text-sm font-medium shadow-sm transition-all flex-shrink-0"
                 >
                   {savingCV ? (
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                    <div className="w-3.5 h-3.5 md:w-4 md:h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-1 md:mr-2" />
                   ) : (
-                    <LucideSave className="w-4 h-4 mr-2" />
+                    <LucideSave className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1 md:mr-2" />
                   )}
                   {savingCV ? "Saving..." : "Save"}
                 </Button>
               </div>
 
-              <div className="mt-6">
+              <div className="mt-2 md:mt-6">
                 <div className="flex flex-col lg:flex-row lg:gap-6">
-                  {/* Left Panel: Section Navigation (always mounted, hidden when not in edit mode) */}
-                  <motion.div 
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: activeTab === "edit" ? 1 : 0, x: activeTab === "edit" ? 0 : -20 }}
-                    className={`w-full lg:w-64 flex-shrink-0 mb-4 lg:mb-0 ${activeTab !== "edit" ? 'hidden' : ''}`}
-                  >
-                      <div className="bg-gray-900 p-4 rounded-xl shadow-sm">
-                        <h3 className="text-xs font-medium uppercase tracking-wider text-gray-200 mb-3 ml-2">Sections</h3>
-                        <div className="space-y-1">
-                          {sections.map((section) => (
-                            <button
-                              key={section.id}
-                              className={`w-full text-left flex items-center px-3 py-2 rounded-lg text-sm transition-colors ${
-                                activeSection === section.id
-                                  ? 'bg-[#DAA520]/10 font-medium !text-white'
-                                  : '!text-white hover:bg-gray-800 hover:!text-white'
-                              }`}
-                              onClick={() => setActiveSection(section.id as SectionType)}
-                            >
-                              <i className={`fas fa-${section.icon} text-[#DAA520] w-5 text-center mr-2`}></i>
-                              <span className="!text-white !opacity-100">{section.name}</span>
-                            </button>
-                          ))}
-                        </div>
-                        
-                        <div className="mt-6 pt-6 border-t border-gray-700">
-                          <Button
-                            variant="outline"
-                            className="w-full flex items-center justify-center text-sm border-dashed border-gray-700 bg-gray-800 hover:bg-gray-700 !text-white/90 hover:!text-white"
-                            onClick={() => setActiveSection("custom")}
+                  {/* Left Panel: Section Navigation */}
+                  {/* Mobile: Horizontal scrollable pills */}
+                  {isMobile && activeTab === "edit" && (
+                    <div className="mb-2 -mx-2 px-2">
+                      <div className="flex gap-1.5 overflow-x-auto pb-2 scrollbar-hide" style={{ WebkitOverflowScrolling: 'touch' }}>
+                        {sections.map((section) => (
+                          <button
+                            key={section.id}
+                            className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors whitespace-nowrap ${
+                              activeSection === section.id
+                                ? 'bg-gray-900 text-white'
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            }`}
+                            onClick={() => setActiveSection(section.id as SectionType)}
                           >
-                            <i className="fas fa-plus-circle mr-2 text-[#DAA520]"></i>
-                            Add Custom Section
-                          </Button>
-                        </div>
+                            {section.name}
+                          </button>
+                        ))}
                       </div>
-                  </motion.div>
+                    </div>
+                  )}
+                  {/* Desktop: Vertical sidebar (always mounted, hidden when not in edit mode) */}
+                  {!isMobile && (
+                    <motion.div 
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: activeTab === "edit" ? 1 : 0, x: activeTab === "edit" ? 0 : -20 }}
+                      className={`w-full lg:w-64 flex-shrink-0 mb-4 lg:mb-0 ${activeTab !== "edit" ? 'hidden' : ''}`}
+                    >
+                        <div className="bg-gray-900 p-4 rounded-xl shadow-sm">
+                          <h3 className="text-xs font-medium uppercase tracking-wider text-gray-200 mb-3 ml-2">Sections</h3>
+                          <div className="space-y-1">
+                            {sections.map((section) => (
+                              <button
+                                key={section.id}
+                                className={`w-full text-left flex items-center px-3 py-2 rounded-lg text-sm transition-colors ${
+                                  activeSection === section.id
+                                    ? 'bg-[#DAA520]/10 font-medium !text-white'
+                                    : '!text-white hover:bg-gray-800 hover:!text-white'
+                                }`}
+                                onClick={() => setActiveSection(section.id as SectionType)}
+                              >
+                                <i className={`fas fa-${section.icon} text-[#DAA520] w-5 text-center mr-2`}></i>
+                                <span className="!text-white !opacity-100">{section.name}</span>
+                              </button>
+                            ))}
+                          </div>
+                          
+                          <div className="mt-6 pt-6 border-t border-gray-700">
+                            <Button
+                              variant="outline"
+                              className="w-full flex items-center justify-center text-sm border-dashed border-gray-700 bg-gray-800 hover:bg-gray-700 !text-white/90 hover:!text-white"
+                              onClick={() => setActiveSection("custom")}
+                            >
+                              <i className="fas fa-plus-circle mr-2 text-[#DAA520]"></i>
+                              Add Custom Section
+                            </Button>
+                          </div>
+                        </div>
+                    </motion.div>
+                  )}
                   
                   {/* Middle Panel: CV Editor or Full Preview */}
                   <motion.div 
@@ -365,18 +390,18 @@ export default function CVBuilder() {
                     </TabsContent>
                     
                     <TabsContent value="preview" className="mt-0">
-                      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                        <div className="flex justify-between items-center mb-4">
-                          <h2 className="text-xl font-bold">CV Preview</h2>
+                      <div className={`bg-white rounded-xl shadow-sm border border-gray-100 ${isMobile ? 'p-2 pb-16' : 'p-6'}`}>
+                        <div className="flex justify-between items-center mb-2 md:mb-4">
+                          <h2 className="text-base md:text-xl font-bold">CV Preview</h2>
                           <div className="flex gap-2">
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="text-gray-500 hover:text-black hover:bg-gray-100"
+                              className="text-gray-500 hover:text-black hover:bg-gray-100 text-xs md:text-sm"
                               onClick={handleDownloadPDF}
                               disabled={isDownloading}
                             >
-                              <LucideDownload className="w-4 h-4 mr-2" />
+                              <LucideDownload className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1 md:mr-2" />
                               {isDownloading ? 'Generating...' : 'Download'}
                             </Button>
                           </div>
@@ -386,10 +411,30 @@ export default function CVBuilder() {
                           <CVPreview 
                             cv={mainCV} 
                             template={activeTemplate as any}
-                            style={{ minHeight: '400px' }}
+                            style={{ minHeight: isMobile ? '300px' : '400px' }}
                           />
                         )}
                       </div>
+                      {/* Mobile floating download bar */}
+                      {isMobile && (
+                        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-2 flex gap-2 z-50 shadow-lg">
+                          <Button
+                            onClick={handleDownloadPDF}
+                            disabled={isDownloading}
+                            className="flex-1 bg-black text-white hover:bg-[#DAA520] h-10 text-xs font-medium"
+                          >
+                            <LucideDownload className="w-3.5 h-3.5 mr-1.5" />
+                            {isDownloading ? 'Generating...' : 'Download PDF'}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() => setActiveTab("edit")}
+                            className="h-10 text-xs px-4"
+                          >
+                            Edit
+                          </Button>
+                        </div>
+                      )}
                     </TabsContent>
                     
                     {ENABLE_CV_ASSISTANT && (
@@ -413,12 +458,12 @@ export default function CVBuilder() {
                   <motion.div 
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: activeTab === "preview" ? 1 : 0, x: activeTab === "preview" ? 0 : 20 }}
-                    className={`lg:w-80 flex-shrink-0 mt-4 lg:mt-0 ${activeTab !== "preview" ? 'hidden' : ''}`}
+                    className={`lg:w-80 flex-shrink-0 mt-2 lg:mt-0 ${activeTab !== "preview" ? 'hidden' : ''}`}
                   >
-                      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                        <div className="mb-5">
-                          <h3 className="text-xs font-medium uppercase tracking-wider text-gray-500 mb-3 ml-2">Template</h3>
-                          <div className="grid grid-cols-3 gap-2">
+                      <div className={`bg-white rounded-xl shadow-sm border border-gray-100 ${isMobile ? 'p-3' : 'p-4'}`}>
+                        <div className="mb-3 md:mb-5">
+                          <h3 className="text-xs font-medium uppercase tracking-wider text-gray-500 mb-2 md:mb-3 ml-2">Template</h3>
+                          <div className={`grid gap-1.5 md:gap-2 ${isMobile ? 'grid-cols-4' : 'grid-cols-3'}`}>
                             {templates.map((template) => (
                               <div 
                                 key={template.id}

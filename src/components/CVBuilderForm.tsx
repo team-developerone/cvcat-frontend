@@ -43,7 +43,7 @@ export default function CVBuilderForm({ activeSection }: CVBuilderFormProps) {
   const SectionComponent = sectionComponents[activeSection];
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-3 md:p-5">
       <AnimatePresence mode="wait">
         <motion.div
           key={activeSection}
