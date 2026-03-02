@@ -229,14 +229,14 @@ export default function EmailVerificationBanner({
                 </div>
 
                 {/* Dismiss Button */}
-                <Button
+                {/* <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsDismissed(true)}
                   className="h-6 w-6 p-0 text-amber-600 hover:text-amber-800 hover:bg-amber-100"
                 >
                   <X className="w-4 h-4" />
-                </Button>
+                </Button> */}
               </div>
             </div>
           </div>
