@@ -147,9 +147,9 @@ export default function VolunteerSection() {
           {highlights.length > 0 && (
             <ul className="mb-2 space-y-1">
               {highlights.map((h, i) => (
-                <li key={i} className="flex items-center gap-2 text-xs bg-white border border-gray-100 rounded px-2 py-1.5">
+                <li key={i} className="text-xs bg-white border border-gray-100 rounded px-2 py-1.5">
                   {editingHighlightIndex === i ? (
-                    <div className="flex-1 flex items-center gap-1.5">
+                    <div className="space-y-2">
                       <AITextInput
                         variant="textarea"
                         value={editingHighlightValue}
@@ -158,15 +158,17 @@ export default function VolunteerSection() {
                         className="w-full min-h-[60px] text-xs focus-visible:ring-[#DAA520]"
                         onKeyDown={(e) => { if (e.key === "Escape") cancelEditHighlight(); }}
                       />
-                      <Button variant="ghost" size="sm" className="h-5 w-5 p-0 text-gray-400 hover:text-green-600 flex-shrink-0" onClick={saveEditHighlight}>
-                        <LucideCheck className="w-3 h-3" />
-                      </Button>
-                      <Button variant="ghost" size="sm" className="h-5 w-5 p-0 text-gray-400 hover:text-gray-600 flex-shrink-0" onClick={cancelEditHighlight}>
-                        <LucideX className="w-3 h-3" />
-                      </Button>
+                      <div className="flex justify-end gap-1.5">
+                        <Button variant="outline" size="sm" className="h-6 text-xs px-2" onClick={cancelEditHighlight}>
+                          Cancel
+                        </Button>
+                        <Button size="sm" className="h-6 text-xs px-2 bg-black hover:bg-black/80 !text-white" onClick={saveEditHighlight}>
+                          <LucideCheck className="w-3 h-3 mr-1" />Save
+                        </Button>
+                      </div>
                     </div>
                   ) : (
-                    <>
+                    <div className="flex items-center gap-2">
                       <span className="flex-1 cursor-pointer hover:text-gray-900" onClick={() => startEditHighlight(i)}>{h}</span>
                       <Button variant="ghost" size="sm" className="h-5 w-5 p-0 text-gray-400 hover:text-[#DAA520] flex-shrink-0" onClick={() => startEditHighlight(i)}>
                         <LucidePencil className="w-3 h-3" />
@@ -174,13 +176,13 @@ export default function VolunteerSection() {
                       <Button variant="ghost" size="sm" className="h-5 w-5 p-0 text-gray-400 hover:text-red-500 flex-shrink-0" onClick={() => removeHighlight(i)}>
                         <LucideX className="w-3 h-3" />
                       </Button>
-                    </>
+                    </div>
                   )}
                 </li>
               ))}
             </ul>
           )}
-          <div className="flex gap-2">
+          <div className="space-y-2">
             <AITextInput
               variant="textarea"
               value={newHighlight}
@@ -189,7 +191,11 @@ export default function VolunteerSection() {
               className="w-full min-h-[60px] text-xs focus-visible:ring-[#DAA520]"
               placeholder="Add a highlight..."
             />
-            <Button size="sm" onClick={addHighlight} disabled={!newHighlight.trim()} className="h-8 bg-black hover:bg-black/80 text-xs px-3 !text-white">Add</Button>
+            <div className="flex justify-end">
+              <Button size="sm" onClick={addHighlight} disabled={!newHighlight.trim()} className="h-7 bg-black hover:bg-black/80 text-xs px-3 !text-white">
+                <LucidePlus className="w-3 h-3 mr-1" />Add
+              </Button>
+            </div>
           </div>
         </div>
       </div>
