@@ -78,6 +78,7 @@ export interface BackendCV {
   versionNumber?: string | null;
   _parent?: string | null;
   generatedSummary?: string;
+  isEmailVerified?: boolean;
   _user: string;
   createdAt: string;
   updatedAt: string;
@@ -335,6 +336,17 @@ export async function deleteCV(
   return apiClient<{ error: boolean; message: string }>(`/cv/delete/${id}`, {
     method: "DELETE",
   });
+}
+
+export async function resendEmailVerification(
+  cvId: string
+): Promise<ApiResponse<{ signal: string; isEmailVerified: boolean; tokenExpiresAt?: string }>> {
+  return apiClient<ApiResponse<{ signal: string; isEmailVerified: boolean; tokenExpiresAt?: string }>>(
+    `/cv/verify-email/${cvId}`,
+    {
+      method: "POST",
+    }
+  );
 }
 
 // --- Writing Assistant ---

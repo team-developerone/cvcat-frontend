@@ -12,6 +12,8 @@ import { toast } from "@/hooks/use-toast";
 import CVPreview from "@/components/CVPreview";
 import pdfService from "@/services/pdf-service";
 import { useIsMobile } from "@/hooks/use-mobile";
+import EmailVerificationModal from "@/components/EmailVerificationModal";
+import EmailVerificationBanner from "@/components/EmailVerificationBanner";
 
 // Available section types
 export type SectionType =
@@ -39,9 +41,22 @@ export default function CVBuilder() {
   const [activeTab, setActiveTab] = useState<"edit" | "preview" | "chat">("edit");
   const [activeSection, setActiveSection] = useState<SectionType>("personal");
   const [isDownloading, setIsDownloading] = useState(false);
+  const [showEmailVerificationModal, setShowEmailVerificationModal] = useState(false);
+  const [pendingSaveAction, setPendingSaveAction] = useState<"save" | "saveAndExit" | null>(null);
 
   const handleDownloadPDF = useCallback(async () => {
     if (!mainCV || isDownloading) return;
+
+    // Check if email is verified
+    if (mainCV.isEmailVerified === false) {
+      toast({ 
+        title: 'Email Verification Required', 
+        description: 'Please verify your email before downloading your CV.',
+        variant: 'destructive'
+      });
+      return;
+    }
+
     try {
       setIsDownloading(true);
       toast({ title: 'Generating PDF...', description: 'Please wait while we prepare your CV.' });
@@ -105,6 +120,23 @@ export default function CVBuilder() {
 
   const handleSave = useCallback(async () => {
     if (!mainCV) return;
+
+    // Check if this is a new CV (not an existing one being edited)
+    const isExistingCV = mainCV.id && mainCV.id.length === 24 && /^[a-f0-9]+$/.test(mainCV.id);
+
+    // If it's a new CV and has an email, show verification modal first
+    if (!isExistingCV && mainCV.personalInfo?.email) {
+      setPendingSaveAction("save");
+      setShowEmailVerificationModal(true);
+      return;
+    }
+
+    // Otherwise, proceed with save
+    await performSave();
+  }, [mainCV]);
+
+  const performSave = useCallback(async () => {
+    if (!mainCV) return;
     try {
       await saveCV(mainCV);
       toast({ title: "CV saved successfully" });
@@ -117,7 +149,7 @@ export default function CVBuilder() {
     }
   }, [mainCV, saveCV]);
 
-  const handleSaveAndExit = useCallback(async () => {
+  const performSaveAndExit = useCallback(async () => {
     if (!mainCV) {
       navigate("/cv-management");
       return;
@@ -134,6 +166,104 @@ export default function CVBuilder() {
       });
     }
   }, [mainCV, saveCV, navigate]);
+
+  const handleEmailVerificationConfirm = useCallback(async (updatedEmail: string) => {
+    setShowEmailVerificationModal(false);
+    
+    // Update the email in mainCV if it was changed
+    if (mainCV && mainCV.personalInfo?.email !== updatedEmail) {
+      const updatedCV = {
+        ...mainCV,
+        personalInfo: {
+          ...mainCV.personalInfo,
+          email: updatedEmail,
+        },
+      };
+      setMainCV(updatedCV);
+      
+      // Save with the updated CV
+      if (pendingSaveAction === "save") {
+        try {
+          await saveCV(updatedCV);
+          toast({ title: "CV saved successfully" });
+        } catch (err: unknown) {
+          toast({
+            title: "Save failed",
+            description: err instanceof Error ? err.message : "Unknown error",
+            variant: "destructive",
+          });
+        }
+      } else if (pendingSaveAction === "saveAndExit") {
+        try {
+          await saveCV(updatedCV);
+          toast({ title: "CV saved successfully" });
+          navigate("/cv-management");
+        } catch (err: unknown) {
+          toast({
+            title: "Save failed",
+            description: err instanceof Error ? err.message : "Unknown error",
+            variant: "destructive",
+          });
+        }
+      }
+    } else {
+      // No email change, proceed with normal save
+      if (pendingSaveAction === "save") {
+        await performSave();
+      } else if (pendingSaveAction === "saveAndExit") {
+        await performSaveAndExit();
+      }
+    }
+    
+    setPendingSaveAction(null);
+  }, [mainCV, pendingSaveAction, performSave, performSaveAndExit, saveCV, setMainCV, navigate]);
+
+  const handleEmailVerificationCancel = useCallback(() => {
+    setShowEmailVerificationModal(false);
+    setPendingSaveAction(null);
+  }, []);
+
+  const handleBannerEmailUpdated = useCallback((newEmail: string) => {
+    if (mainCV) {
+      setMainCV({
+        ...mainCV,
+        personalInfo: {
+          ...mainCV.personalInfo,
+          email: newEmail,
+        },
+      });
+    }
+  }, [mainCV, setMainCV]);
+
+  const handleBannerVerificationSent = useCallback(async () => {
+    // Refresh the CV to get updated verification status
+    if (mainCV?.id) {
+      const updatedCV = await loadCVById(mainCV.id);
+      if (updatedCV) {
+        setMainCV(updatedCV);
+      }
+    }
+  }, [mainCV, loadCVById, setMainCV]);
+
+  const handleSaveAndExit = useCallback(async () => {
+    if (!mainCV) {
+      navigate("/cv-management");
+      return;
+    }
+
+    // Check if this is a new CV (not an existing one being edited)
+    const isExistingCV = mainCV.id && mainCV.id.length === 24 && /^[a-f0-9]+$/.test(mainCV.id);
+
+    // If it's a new CV and has an email, show verification modal first
+    if (!isExistingCV && mainCV.personalInfo?.email) {
+      setPendingSaveAction("saveAndExit");
+      setShowEmailVerificationModal(true);
+      return;
+    }
+
+    // Otherwise, proceed with save and exit
+    await performSaveAndExit();
+  }, [mainCV, navigate, performSaveAndExit]);
 
   // Listen for "Save & Exit" from Navbar
   useEffect(() => {
@@ -264,6 +394,16 @@ export default function CVBuilder() {
   
   return (
     <Layout>
+      {/* Email Verification Banner - shown when email is not verified */}
+      {mainCV && mainCV.isEmailVerified === false && mainCV.personalInfo?.email && (
+        <EmailVerificationBanner
+          cvId={mainCV.id}
+          currentEmail={mainCV.personalInfo.email}
+          onEmailUpdated={handleBannerEmailUpdated}
+          onVerificationSent={handleBannerVerificationSent}
+        />
+      )}
+
       <div className="bg-gray-50 min-h-screen">
         <div className="max-w-screen-2xl mx-auto">
           <div className="p-2 md:p-6">
@@ -747,12 +887,13 @@ export default function CVBuilder() {
                           <h3 className="text-xs font-medium uppercase tracking-wider text-gray-500 mb-3 ml-2">Actions</h3>
                           <div className="space-y-2">
                             <Button
-                              className="w-full bg-black text-white hover:bg-black/90 text-xs py-2 h-9"
+                              className="w-full bg-black text-white hover:bg-black/90 text-xs py-2 h-9 disabled:opacity-50 disabled:cursor-not-allowed"
                               onClick={handleDownloadPDF}
-                              disabled={isDownloading}
+                              disabled={isDownloading || mainCV?.isEmailVerified === false}
+                              title={mainCV?.isEmailVerified === false ? "Please verify your email to download" : ""}
                             >
                               <LucideDownload className="w-3.5 h-3.5 mr-2" />
-                              {isDownloading ? 'Generating...' : 'Download as PDF'}
+                              {isDownloading ? 'Generating...' : mainCV?.isEmailVerified === false ? 'Verify Email to Download' : 'Download as PDF'}
                             </Button>
                           </div>
                         </div>
@@ -764,6 +905,14 @@ export default function CVBuilder() {
           </div>
         </div>
       </div>
+
+      {/* Email Verification Modal */}
+      <EmailVerificationModal
+        isOpen={showEmailVerificationModal}
+        onClose={handleEmailVerificationCancel}
+        onConfirm={handleEmailVerificationConfirm}
+        email={mainCV?.personalInfo?.email || ""}
+      />
     </Layout>
   );
 }

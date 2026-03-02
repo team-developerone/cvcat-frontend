@@ -5,6 +5,7 @@ export interface CV {
   lastUpdated: Date;
   forJob?: string;
   isTailored: boolean;
+  isEmailVerified?: boolean;
   personalInfo: PersonalInfo;
   experience: WorkExperience[];
   education: Education[];
@@ -200,6 +201,7 @@ export function backendCVToFrontendCV(bcv: BackendCV): CV {
     lastUpdated: new Date(bcv.updatedAt),
     forJob: undefined,
     isTailored: bcv.cvType === "tailored",
+    isEmailVerified: bcv.isEmailVerified,
     personalInfo: {
       fullName: basics.name || "",
       title: basics.label || "",
