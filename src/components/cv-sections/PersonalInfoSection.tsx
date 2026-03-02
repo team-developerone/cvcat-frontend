@@ -13,10 +13,20 @@ export default function PersonalInfoSection() {
 
   const updatePersonalInfo = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setMainCV({
-      ...mainCV,
+    
+    const updates: any = {
       personalInfo: { ...mainCV.personalInfo, [name]: value },
       lastUpdated: new Date(),
+    };
+    
+    // Auto-update CV title when full name changes and title is still "Untitled CV"
+    if (name === 'fullName' && value && mainCV.title === 'Untitled CV') {
+      updates.title = `${value}'s CV`;
+    }
+    
+    setMainCV({
+      ...mainCV,
+      ...updates,
     });
   };
 

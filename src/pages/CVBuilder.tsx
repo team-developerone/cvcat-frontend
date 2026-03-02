@@ -224,26 +224,31 @@ export default function CVBuilder() {
   }, []);
 
   const handleBannerEmailUpdated = useCallback((newEmail: string) => {
-    if (mainCV) {
-      setMainCV({
-        ...mainCV,
+    setMainCV((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
         personalInfo: {
-          ...mainCV.personalInfo,
+          ...prev.personalInfo,
           email: newEmail,
         },
-      });
-    }
-  }, [mainCV, setMainCV]);
+      };
+    });
+  }, [setMainCV]);
 
   const handleBannerVerificationSent = useCallback(async () => {
     // Refresh the CV to get updated verification status
     if (mainCV?.id) {
-      const updatedCV = await loadCVById(mainCV.id);
-      if (updatedCV) {
-        setMainCV(updatedCV);
+      try {
+        const updatedCV = await loadCVById(mainCV.id);
+        if (updatedCV) {
+          setMainCV(updatedCV);
+        }
+      } catch (err) {
+        console.error("Failed to refresh CV:", err);
       }
     }
-  }, [mainCV, loadCVById, setMainCV]);
+  }, [mainCV?.id, loadCVById, setMainCV]);
 
   const handleSaveAndExit = useCallback(async () => {
     if (!mainCV) {
