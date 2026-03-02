@@ -63,34 +63,15 @@ export default function Navbar({ isAuthenticated = false }: NavbarProps) {
         // Public navbar
         <div className="flex items-center">
           <div className="hidden md:flex space-x-6 mr-6">
-            <div
-              onClick={() => scrollToSection('features')}
-              className="text-sm text-gray-700 hover:text-[#DAA520] transition-all cursor-pointer"
-            >
-              Features
-            </div>
-            <div
-              onClick={() => scrollToSection('pricing')}
-              className="text-sm text-gray-700 hover:text-[#DAA520] transition-all cursor-pointer"
-            >
-              Pricing
-            </div>
+           
+            
             <div
               onClick={() => goTo('/team')}
               className="text-sm text-gray-700 hover:text-[#DAA520] transition-all cursor-pointer"
             >
               Team
             </div>
-            <div
-              className="text-sm text-gray-700 hover:text-[#DAA520] transition-all cursor-pointer"
-            >
-              Resources
-            </div>
-            <div
-              className="text-sm text-gray-700 hover:text-[#DAA520] transition-all cursor-pointer"
-            >
-              FAQ
-            </div>
+           
           </div>
 
           <div className="flex items-center space-x-3">

@@ -436,7 +436,7 @@ export default function CVBuilder() {
                   className="rounded-full data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm h-8 md:h-10 text-xs md:text-sm"
                 >
                   <LucideZap className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1 md:mr-2" />
-                  Preview
+                  Preview & Download
                 </TabsTrigger>
                 {ENABLE_CV_ASSISTANT && (
                   <TabsTrigger
