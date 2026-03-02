@@ -8,6 +8,9 @@ export default function PersonalInfoSection() {
 
   if (!mainCV) return null;
 
+  // Check if this is an existing CV (has a valid MongoDB ObjectId)
+  const isExistingCV = Boolean(mainCV.id && mainCV.id.length === 24 && /^[a-f0-9]+$/.test(mainCV.id));
+
   const updatePersonalInfo = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setMainCV({
@@ -24,7 +27,17 @@ export default function PersonalInfoSection() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">Full Name</label>
-          <Input type="text" name="fullName" value={mainCV.personalInfo.fullName} onChange={updatePersonalInfo} className="w-full h-9 focus-visible:ring-[#DAA520]" />
+          <Input 
+            type="text" 
+            name="fullName" 
+            value={mainCV.personalInfo.fullName} 
+            onChange={updatePersonalInfo} 
+            disabled={isExistingCV}
+            className={`w-full h-9 focus-visible:ring-[#DAA520] ${isExistingCV ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+          />
+          {isExistingCV && (
+            <p className="text-xs text-gray-500 mt-1">Name cannot be edited for imported CVs</p>
+          )}
         </div>
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">Professional Title</label>
@@ -32,7 +45,17 @@ export default function PersonalInfoSection() {
         </div>
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">Email</label>
-          <Input type="email" name="email" value={mainCV.personalInfo.email} onChange={updatePersonalInfo} className="w-full h-9 focus-visible:ring-[#DAA520]" />
+          <Input 
+            type="email" 
+            name="email" 
+            value={mainCV.personalInfo.email} 
+            onChange={updatePersonalInfo} 
+            disabled={isExistingCV}
+            className={`w-full h-9 focus-visible:ring-[#DAA520] ${isExistingCV ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+          />
+          {isExistingCV && (
+            <p className="text-xs text-gray-500 mt-1">Email cannot be edited for imported CVs</p>
+          )}
         </div>
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">Phone</label>
