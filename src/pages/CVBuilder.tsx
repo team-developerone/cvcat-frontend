@@ -9,7 +9,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { LucideFileText, LucideDownload, LucideShare2, LucideZap, LucideMessageCircle, LucideSave } from "lucide-react";
 import { useLocation } from "wouter";
 import { toast } from "@/hooks/use-toast";
-import { renderCVToHTML } from "@/services/pdf-service";
+import CVPreview from "@/components/CVPreview";
 import pdfService from "@/services/pdf-service";
 
 // Available section types
@@ -382,14 +382,13 @@ export default function CVBuilder() {
                           </div>
                         </div>
                         
-                        <div className="bg-white border border-gray-200 rounded-md shadow-sm overflow-auto" style={{ minHeight: '400px' }}>
-                          {mainCV && (
-                            <div
-                              className="w-full"
-                              dangerouslySetInnerHTML={{ __html: renderCVToHTML(mainCV, activeTemplate as any) }}
-                            />
-                          )}
-                        </div>
+                        {mainCV && (
+                          <CVPreview 
+                            cv={mainCV} 
+                            template={activeTemplate as any}
+                            style={{ minHeight: '400px' }}
+                          />
+                        )}
                       </div>
                     </TabsContent>
                     

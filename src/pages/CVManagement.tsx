@@ -13,7 +13,7 @@ import { deleteCV } from "@/services/api";
 export default function CVManagement() {
   const { mainCV, tailoredCVs, refreshCVs, cvsLoading } = useCV();
   const [, navigate] = useLocation();
-  const [activeTab, setActiveTab] = useState<'all' | 'recent'>('all');
+  const [showTailoredSection, setShowTailoredSection] = useState(false);
   const [pdfModalOpen, setPdfModalOpen] = useState(false);
   const [selectedCV, setSelectedCV] = useState<CV | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -129,76 +129,17 @@ export default function CVManagement() {
 
         <div className="max-w-5xl mx-auto px-4 py-6 md:py-8">
           {/* Header */}
-          <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 md:mb-8">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 md:mb-12">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
             >
-              <h1 className="text-2xl font-bold tracking-tight text-black">My CVs</h1>
-              <p className="text-xs text-gray-700 mt-1">Manage your professional profiles</p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3, delay: 0.1 }}
-              className="flex gap-2 mt-4 md:mt-0"
-            >
-              <Button
-                onClick={() => navigate("/import-selection")}
-                className="bg-black text-white hover:bg-[#DAA520] rounded-md px-3 py-1.5 text-xs shadow-sm transition-all"
-              >
-                <svg className="w-3.5 h-3.5 mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                </svg>
-                New
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => navigate("/import-selection")}
-                className="border border-gray-200 hover:border-[#DAA520] hover:text-[#DAA520] rounded-md px-3 py-1.5 text-xs transition-all"
-              >
-                <svg className="w-3.5 h-3.5 mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                </svg>
-                Import
-              </Button>
+              <h1 className="text-3xl font-bold tracking-tight text-black">My CV</h1>
+              <p className="text-sm text-gray-600 mt-2">Your professional document</p>
             </motion.div>
           </div>
 
-          {/* Tabs */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3, delay: 0.1 }}
-            className="flex border-b border-gray-200 mb-6"
-          >
-            <button
-              className={`pb-2 px-3 text-xs font-semibold relative ${activeTab === 'all' ? 'text-black' : 'text-gray-500'}`}
-              onClick={() => setActiveTab('all')}
-            >
-              All
-              {activeTab === 'all' && (
-                <motion.div
-                  layoutId="activeTabIndicator"
-                  className="absolute bottom-0 left-0 right-0 h-1 bg-[#DAA520]"
-                />
-              )}
-            </button>
-            <button
-              className={`pb-2 px-3 text-xs font-semibold relative ${activeTab === 'recent' ? 'text-black' : 'text-gray-500'}`}
-              onClick={() => setActiveTab('recent')}
-            >
-              Recent
-              {activeTab === 'recent' && (
-                <motion.div
-                  layoutId="activeTabIndicator"
-                  className="absolute bottom-0 left-0 right-0 h-1 bg-[#DAA520]"
-                />
-              )}
-            </button>
-          </motion.div>
 
           {/* Content */}
           <motion.div
@@ -206,84 +147,146 @@ export default function CVManagement() {
             initial="hidden"
             animate="show"
           >
-            {/* Core CV Section */}
+            {/* Core CV Document View */}
             {mainCV && (
               <motion.section
                 variants={itemAnimation}
-                className="mb-8"
+                className="mb-12"
               >
-                <div className="flex items-center justify-between mb-3">
-                  <h2 className="text-sm font-bold text-black">Core CV</h2>
-                  <p className="text-xs text-gray-500">Base template</p>
-                </div>
-
-                <motion.div whileHover={{ y: -2 }} transition={{ type: "spring", stiffness: 400 }}>
-                  <Card className="bg-white rounded-md shadow-md border-2 border-gray-300 overflow-hidden">
-                    <CardContent className="p-4">
-                      <div className="flex items-start">
-                        <div className="hidden md:block w-20 h-28 bg-gray-50 rounded border border-gray-200 flex-shrink-0 flex items-center justify-center overflow-hidden mr-4">
-                          <svg className="text-gray-300 w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                          </svg>
+                <motion.div 
+                  whileHover={{ y: -4 }} 
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  className="cursor-pointer"
+                  onClick={() => navigate(`/cv-builder?id=${mainCV.id}`)}
+                >
+                  <Card className="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden hover:shadow-2xl transition-all duration-300">
+                    <CardContent className="p-0">
+                      <div className="flex flex-col lg:flex-row">
+                        {/* Document Preview */}
+                        <div className="lg:w-1/3 bg-gradient-to-br from-gray-50 to-gray-100 p-8 flex items-center justify-center border-r border-gray-200">
+                          <div className="relative">
+                            {/* Document Icon with Shadow */}
+                            <div className="w-32 h-40 bg-white rounded-lg shadow-lg border border-gray-300 relative overflow-hidden">
+                              {/* Document Header */}
+                              <div className="h-8 bg-[#DAA520]/10 border-b border-gray-200 flex items-center px-3">
+                                <div className="w-2 h-2 bg-[#DAA520] rounded-full mr-2"></div>
+                                <div className="w-16 h-1 bg-gray-300 rounded"></div>
+                              </div>
+                              
+                              {/* Document Content Lines */}
+                              <div className="p-3 space-y-2">
+                                <div className="w-full h-1.5 bg-gray-800 rounded"></div>
+                                <div className="w-3/4 h-1 bg-gray-400 rounded"></div>
+                                <div className="w-full h-1 bg-gray-400 rounded"></div>
+                                <div className="w-5/6 h-1 bg-gray-400 rounded"></div>
+                                
+                                <div className="pt-2">
+                                  <div className="w-1/2 h-1 bg-[#DAA520] rounded mb-1"></div>
+                                  <div className="w-full h-0.5 bg-gray-300 rounded"></div>
+                                  <div className="w-4/5 h-0.5 bg-gray-300 rounded"></div>
+                                  <div className="w-3/4 h-0.5 bg-gray-300 rounded"></div>
+                                </div>
+                                
+                                <div className="pt-2">
+                                  <div className="w-1/2 h-1 bg-[#DAA520] rounded mb-1"></div>
+                                  <div className="w-full h-0.5 bg-gray-300 rounded"></div>
+                                  <div className="w-2/3 h-0.5 bg-gray-300 rounded"></div>
+                                </div>
+                              </div>
+                              
+                              {/* Shine Effect */}
+                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full animate-pulse"></div>
+                            </div>
+                            
+                            {/* Status Badge */}
+                            <div className="absolute -top-2 -right-2 bg-[#DAA520] text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">
+                              ✓
+                            </div>
+                          </div>
                         </div>
 
-                        <div className="flex-1 min-w-0">
-                          <div className="flex justify-between items-start mb-1.5">
+                        {/* CV Details */}
+                        <div className="lg:w-2/3 p-8">
+                          <div className="flex justify-between items-start mb-6">
                             <div>
-                              <div className="flex items-center">
-                                <span className="text-[10px] bg-[#DAA520]/10 text-[#DAA520] font-medium px-1.5 py-0.5 rounded-full">Core</span>
-                                <h3 className="text-sm font-semibold ml-2 truncate text-gray-900">{mainCV.title}</h3>
+                              <div className="flex items-center mb-2">
+                                <h2 className="text-2xl font-bold text-gray-900">{mainCV.title}</h2>
+                                <span className="ml-3 text-xs bg-[#DAA520]/10 text-[#DAA520] font-semibold px-3 py-1 rounded-full">Core CV</span>
                               </div>
+                              <p className="text-gray-600 mb-1">{mainCV.personalInfo.fullName}</p>
+                              <p className="text-sm text-[#DAA520] font-medium">{mainCV.personalInfo.title}</p>
                             </div>
-
-                            <div className="flex">
-                              <button
-                                onClick={() => handleDelete(mainCV)}
-                                disabled={deletingId === mainCV.id}
-                                className="text-gray-400 hover:text-red-500 h-6 w-6 flex items-center justify-center"
-                                title="Delete"
-                              >
-                                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
-                              </button>
-                            </div>
+                            
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDelete(mainCV);
+                              }}
+                              disabled={deletingId === mainCV.id}
+                              className="text-gray-400 hover:text-red-500 p-2 rounded-lg hover:bg-red-50 transition-all"
+                              title="Delete CV"
+                            >
+                              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                            </button>
                           </div>
 
-                          <div className="flex flex-wrap gap-1 mb-2">
-                            <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600 font-medium rounded-full">{mainCV.personalInfo.title}</span>
-                          </div>
-
-                          <p className="text-xs text-gray-600 mb-2 line-clamp-1">
-                            {mainCV.personalInfo.summary || "Your comprehensive professional profile"}
+                          <p className="text-gray-600 mb-6 leading-relaxed">
+                            {mainCV.personalInfo.summary || "Your comprehensive professional profile showcasing your skills, experience, and achievements."}
                           </p>
 
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center text-[10px] text-gray-500">
-                              <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          {/* Quick Stats */}
+                          <div className="grid grid-cols-3 gap-4 mb-6">
+                            <div className="text-center p-3 bg-gray-50 rounded-lg">
+                              <div className="text-lg font-bold text-gray-900">{mainCV.experience?.length || 0}</div>
+                              <div className="text-xs text-gray-500">Experience</div>
+                            </div>
+                            <div className="text-center p-3 bg-gray-50 rounded-lg">
+                              <div className="text-lg font-bold text-gray-900">{mainCV.skills?.length || 0}</div>
+                              <div className="text-xs text-gray-500">Skills</div>
+                            </div>
+                            <div className="text-center p-3 bg-gray-50 rounded-lg">
+                              <div className="text-lg font-bold text-gray-900">{mainCV.education?.length || 0}</div>
+                              <div className="text-xs text-gray-500">Education</div>
+                            </div>
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="flex gap-3">
+                            <Link href={`/cv-builder?id=${mainCV.id}`} className="flex-1">
+                              <Button className="w-full bg-black hover:bg-[#DAA520] text-white font-medium py-3 rounded-lg transition-all shadow-md hover:shadow-lg">
+                                <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                </svg>
+                                Edit CV
+                              </Button>
+                            </Link>
+                            <Button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleOpenPDFModal(mainCV);
+                              }}
+                              variant="outline"
+                              className="px-6 py-3 border-2 border-[#DAA520] text-[#DAA520] hover:bg-[#DAA520] hover:text-white font-medium rounded-lg transition-all shadow-md hover:shadow-lg"
+                            >
+                              <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                              </svg>
+                              Download
+                            </Button>
+                          </div>
+
+                          {/* Last Updated */}
+                          <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
+                            <div className="flex items-center text-sm text-gray-500">
+                              <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
-                              {getTimeSince(mainCV.lastUpdated)}
+                              Last updated {getTimeSince(mainCV.lastUpdated)}
                             </div>
-
-                            <div className="flex gap-2">
-                              <Link href={`/cv-builder?id=${mainCV.id}`}>
-                                <a className="text-[10px] font-medium text-[#DAA520] hover:underline flex items-center">
-                                  <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                  </svg>
-                                  Edit
-                                </a>
-                              </Link>
-                              <button
-                                onClick={() => handleOpenPDFModal(mainCV)}
-                                className="text-[10px] font-medium text-gray-500 hover:text-[#DAA520] flex items-center"
-                              >
-                                <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                </svg>
-                                Download
-                              </button>
+                            <div className="text-xs text-gray-400">
+                              Click anywhere to edit
                             </div>
                           </div>
                         </div>
@@ -294,111 +297,113 @@ export default function CVManagement() {
               </motion.section>
             )}
 
-            {/* Tailored CVs Section */}
-            <motion.section variants={itemAnimation}>
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-bold text-black">Tailored CVs</h2>
-                <Link href="/tailor-cv">
-                  <Button
-                    variant="ghost"
-                    className="text-xs font-medium text-[#DAA520] hover:bg-[#DAA520]/5 rounded transition-all h-7 px-2"
-                  >
-                    <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Create Tailored
-                  </Button>
-                </Link>
-              </div>
+            {/* Hidden Tailored CVs Section - Keep code but hide UI */}
+            {showTailoredSection && (
+              <motion.section variants={itemAnimation}>
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-sm font-bold text-black">Tailored CVs</h2>
+                  <Link href="/tailor-cv">
+                    <Button
+                      variant="ghost"
+                      className="text-xs font-medium text-[#DAA520] hover:bg-[#DAA520]/5 rounded transition-all h-7 px-2"
+                    >
+                      <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                      </svg>
+                      Create Tailored
+                    </Button>
+                  </Link>
+                </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {tailoredCVs.map((cv) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {tailoredCVs.map((cv) => (
+                    <motion.div
+                      key={cv.id}
+                      variants={itemAnimation}
+                      whileHover={{ y: -2 }}
+                      transition={{ type: "spring", stiffness: 400 }}
+                    >
+                      <Card className="bg-white rounded-md shadow-md border-2 border-gray-300 overflow-hidden h-full">
+                        <CardContent className="p-4">
+                          <div className="flex justify-between items-start mb-1.5">
+                            <div>
+                              <div className="flex items-center">
+                                <span className="text-[10px] bg-blue-50 text-blue-600 font-medium px-1.5 py-0.5 rounded-full">Tailored</span>
+                                <h3 className="text-sm font-semibold ml-2 truncate text-gray-900">{cv.title}</h3>
+                              </div>
+                              {cv.forJob && <p className="text-[10px] text-gray-500 mt-0.5">For: {cv.forJob}</p>}
+                            </div>
+                            <button
+                              onClick={() => handleDelete(cv)}
+                              disabled={deletingId === cv.id}
+                              className="text-gray-400 hover:text-red-500 h-6 w-6 flex items-center justify-center"
+                              title="Delete"
+                            >
+                              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                            </button>
+                          </div>
+
+                          <p className="text-xs text-gray-600 mb-3 line-clamp-2">{cv.description}</p>
+
+                          <div className="flex justify-between items-center text-[10px]">
+                            <div className="flex items-center text-gray-500">
+                              <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                              {formatDate(cv.lastUpdated)}
+                            </div>
+
+                            <div className="flex gap-2">
+                              <Link href={`/cv-builder?id=${cv.id}`}>
+                                <a className="text-[10px] font-medium text-[#DAA520] hover:underline flex items-center">
+                                  <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                  </svg>
+                                  Edit
+                                </a>
+                              </Link>
+                              <button
+                                onClick={() => handleOpenPDFModal(cv)}
+                                className="text-[10px] font-medium text-gray-500 hover:text-[#DAA520] flex items-center"
+                              >
+                                <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                </svg>
+                                Download
+                              </button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+
+                  {/* Empty Tailored CV Card */}
                   <motion.div
-                    key={cv.id}
                     variants={itemAnimation}
                     whileHover={{ y: -2 }}
                     transition={{ type: "spring", stiffness: 400 }}
                   >
-                    <Card className="bg-white rounded-md shadow-md border-2 border-gray-300 overflow-hidden h-full">
-                      <CardContent className="p-4">
-                        <div className="flex justify-between items-start mb-1.5">
-                          <div>
-                            <div className="flex items-center">
-                              <span className="text-[10px] bg-blue-50 text-blue-600 font-medium px-1.5 py-0.5 rounded-full">Tailored</span>
-                              <h3 className="text-sm font-semibold ml-2 truncate text-gray-900">{cv.title}</h3>
-                            </div>
-                            {cv.forJob && <p className="text-[10px] text-gray-500 mt-0.5">For: {cv.forJob}</p>}
-                          </div>
-                          <button
-                            onClick={() => handleDelete(cv)}
-                            disabled={deletingId === cv.id}
-                            className="text-gray-400 hover:text-red-500 h-6 w-6 flex items-center justify-center"
-                            title="Delete"
-                          >
-                            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                          </button>
-                        </div>
-
-                        <p className="text-xs text-gray-600 mb-3 line-clamp-2">{cv.description}</p>
-
-                        <div className="flex justify-between items-center text-[10px]">
-                          <div className="flex items-center text-gray-500">
-                            <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            {formatDate(cv.lastUpdated)}
-                          </div>
-
-                          <div className="flex gap-2">
-                            <Link href={`/cv-builder?id=${cv.id}`}>
-                              <a className="text-[10px] font-medium text-[#DAA520] hover:underline flex items-center">
-                                <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                </svg>
-                                Edit
-                              </a>
-                            </Link>
-                            <button
-                              onClick={() => handleOpenPDFModal(cv)}
-                              className="text-[10px] font-medium text-gray-500 hover:text-[#DAA520] flex items-center"
-                            >
-                              <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                              </svg>
-                              Download
-                            </button>
-                          </div>
-                        </div>
-                      </CardContent>
+                    <Card className="border-2 border-dashed border-gray-300 rounded-md bg-white p-4 flex flex-col items-center justify-center text-center h-full">
+                      <div className="w-10 h-10 rounded-full bg-[#DAA520]/10 flex items-center justify-center mb-3">
+                        <svg className="w-5 h-5 text-[#DAA520]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                      </div>
+                      <h3 className="font-semibold text-sm mb-1 text-gray-900">Create Tailored CV</h3>
+                      <p className="text-xs text-gray-600 mb-3 max-w-[180px]">Customize for specific job applications</p>
+                      <Link href="/tailor-cv">
+                        <Button className="bg-black hover:bg-[#DAA520] text-white text-xs rounded px-3.5 py-1.5 shadow-sm transition-all font-medium">
+                          Create
+                        </Button>
+                      </Link>
                     </Card>
                   </motion.div>
-                ))}
-
-                {/* Empty Tailored CV Card */}
-                <motion.div
-                  variants={itemAnimation}
-                  whileHover={{ y: -2 }}
-                  transition={{ type: "spring", stiffness: 400 }}
-                >
-                  <Card className="border-2 border-dashed border-gray-300 rounded-md bg-white p-4 flex flex-col items-center justify-center text-center h-full">
-                    <div className="w-10 h-10 rounded-full bg-[#DAA520]/10 flex items-center justify-center mb-3">
-                      <svg className="w-5 h-5 text-[#DAA520]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                      </svg>
-                    </div>
-                    <h3 className="font-semibold text-sm mb-1 text-gray-900">Create Tailored CV</h3>
-                    <p className="text-xs text-gray-600 mb-3 max-w-[180px]">Customize for specific job applications</p>
-                    <Link href="/tailor-cv">
-                      <Button className="bg-black hover:bg-[#DAA520] text-white text-xs rounded px-3.5 py-1.5 shadow-sm transition-all font-medium">
-                        Create
-                      </Button>
-                    </Link>
-                  </Card>
-                </motion.div>
-              </div>
-            </motion.section>
+                </div>
+              </motion.section>
+            )}
           </motion.div>
         </div>
       </div>

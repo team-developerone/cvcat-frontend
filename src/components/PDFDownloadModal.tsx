@@ -12,6 +12,8 @@ import { CV } from '@/lib/types';
 import pdfService from '@/services/pdf-service';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import CVPreview from '@/components/CVPreview';
+import { LucideDownload } from 'lucide-react';
 
 interface PDFDownloadModalProps {
   isOpen: boolean;
@@ -111,82 +113,108 @@ export default function PDFDownloadModal({ isOpen, onClose, cv }: PDFDownloadMod
     }
   };
   
+  if (!cv) return null;
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden">
-        <DialogHeader className="p-6 pb-2">
+      <DialogContent className="max-w-7xl w-[95vw] h-[90vh] p-0 overflow-hidden">
+        <DialogHeader className="p-6 pb-4 border-b border-gray-200">
           <DialogTitle className="text-xl font-bold">Export CV as PDF</DialogTitle>
           <DialogDescription>
-            Choose a template style for your CV
+            Preview your CV and choose a template style
           </DialogDescription>
         </DialogHeader>
         
-        <div className="grid grid-cols-1 gap-4 p-6 pt-2">
-          {layoutOptions.map((layout) => (
-            <div 
-              key={layout.value}
-              className={cn(
-                "flex items-center border-2 rounded-md p-3 cursor-pointer transition-all",
-                selectedLayout === layout.value 
-                  ? "border-[#DAA520] bg-[#DAA520]/5" 
-                  : "border-gray-200 hover:border-gray-300"
-              )}
-              onClick={() => setSelectedLayout(layout.value)}
-            >
-              <div className={cn(
-                "w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center",
-                selectedLayout === layout.value 
-                  ? "border-[#DAA520]" 
-                  : "border-gray-300"
-              )}>
-                {selectedLayout === layout.value && (
-                  <div className="w-3 h-3 rounded-full bg-[#DAA520]" />
-                )}
+        <div className="flex h-[calc(90vh-140px)]">
+          {/* Left Panel: CV Preview */}
+          <div className="flex-1 p-6 pr-3 overflow-hidden">
+            <div className="h-full flex flex-col">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold">CV Preview</h3>
+                <div className="text-sm text-gray-500">
+                  Template: {layoutOptions.find(l => l.value === selectedLayout)?.label}
+                </div>
               </div>
-              <div className="flex-1">
-                <h3 className="text-sm font-medium">{layout.label}</h3>
-                <p className="text-xs text-gray-500">{layout.description}</p>
-              </div>
-              <div className="w-12 h-16 bg-gray-100 border border-gray-200 rounded flex items-center justify-center text-gray-400">
-                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+              <div className="flex-1 overflow-hidden">
+                <CVPreview 
+                  cv={cv} 
+                  template={selectedLayout} 
+                  className="h-full"
+                  style={{ minHeight: 'unset' }}
+                />
               </div>
             </div>
-          ))}
+          </div>
+          
+          {/* Right Panel: Template Selection */}
+          <div className="w-80 border-l border-gray-200 p-6 pl-3 overflow-y-auto">
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-4">Choose Template</h3>
+              <div className="space-y-3">
+                {layoutOptions.map((layout) => (
+                  <div 
+                    key={layout.value}
+                    className={cn(
+                      "flex items-start border-2 rounded-lg p-3 cursor-pointer transition-all",
+                      selectedLayout === layout.value 
+                        ? "border-[#DAA520] bg-[#DAA520]/5" 
+                        : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                    )}
+                    onClick={() => setSelectedLayout(layout.value)}
+                  >
+                    <div className={cn(
+                      "w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center flex-shrink-0 mt-0.5",
+                      selectedLayout === layout.value 
+                        ? "border-[#DAA520]" 
+                        : "border-gray-300"
+                    )}>
+                      {selectedLayout === layout.value && (
+                        <div className="w-3 h-3 rounded-full bg-[#DAA520]" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-medium text-gray-900 mb-1">{layout.label}</h4>
+                      <p className="text-xs text-gray-600 leading-relaxed">{layout.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Download Section */}
+            <div className="border-t border-gray-200 pt-6">
+              <Button 
+                onClick={handleDownload} 
+                disabled={isGenerating}
+                className="w-full bg-black text-white hover:bg-[#DAA520] py-3 text-sm font-medium"
+                size="lg"
+              >
+                {isGenerating ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Generating PDF...
+                  </>
+                ) : (
+                  <>
+                    <LucideDownload className="w-4 h-4 mr-2" />
+                    Download PDF
+                  </>
+                )}
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                onClick={onClose}
+                className="w-full mt-3 border-gray-300 hover:bg-gray-100"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
         </div>
-        
-        <DialogFooter className="p-4 bg-gray-50">
-          <Button 
-            variant="outline" 
-            onClick={onClose}
-            className="border-gray-300 hover:bg-gray-100"
-          >
-            Cancel
-          </Button>
-          <Button 
-            onClick={handleDownload} 
-            disabled={isGenerating || !cv}
-            className="bg-black text-white hover:bg-[#DAA520]"
-          >
-            {isGenerating ? (
-              <>
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Generating...
-              </>
-            ) : (
-              <>
-                <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-                Download PDF
-              </>
-            )}
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
