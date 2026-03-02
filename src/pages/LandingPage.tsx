@@ -9,12 +9,23 @@ import { useAuth } from "@/lib/auth-context";
 import { fetchLatestCV } from "@/services/api";
 import { toast } from "@/hooks/use-toast";
 import { mockCVData, mockCVVariants } from "@/data/mockCVData";
+import { useMetaTags } from "@/hooks/useMetaTags";
 
 export default function LandingPage() {
   const [, navigate] = useLocation();
   const { signInWithGoogle, isAuthenticated } = useAuth();
   const [showSamplesModal, setShowSamplesModal] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
+
+  // Set SEO meta tags for the landing page
+  useMetaTags({
+    title: "CVCat - AI-Powered CV Builder | Create Professional Resumes in Minutes",
+    description: "Create stunning, professional CVs and resumes with CVCat's AI-powered builder. Choose from multiple templates, optimize for ATS, and land your dream job faster.",
+    keywords: "CV builder, resume builder, AI CV, professional CV, ATS-friendly, CV templates, resume maker, job search, career tools",
+    ogImage: "https://cvcat.io/og-image.png",
+    ogUrl: "https://cvcat.io/",
+    canonicalUrl: "https://cvcat.io/"
+  });
 
   const handleGoogleSignIn = async () => {
     setIsSigningIn(true);
