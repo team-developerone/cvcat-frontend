@@ -12,7 +12,7 @@ import { mockCVData, mockCVVariants } from "@/data/mockCVData";
 
 export default function LandingPage() {
   const [, navigate] = useLocation();
-  const { signInWithGoogle } = useAuth();
+  const { signInWithGoogle, isAuthenticated } = useAuth();
   const [showSamplesModal, setShowSamplesModal] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
 
@@ -180,6 +180,14 @@ export default function LandingPage() {
                 >
                   See Sample CVs
                 </Button>
+                {isAuthenticated && (
+                  <Button
+                    className="bg-[#DAA520] hover:bg-[#DAA520]/90 text-white text-xs py-2 px-4"
+                    onClick={() => navigate("/cv-management")}
+                  >
+                    Go to Dashboard
+                  </Button>
+                )}
               </motion.div>
 
               <motion.div 
@@ -206,32 +214,63 @@ export default function LandingPage() {
                 </div>
               </motion.div>
 
-              <motion.div
-                className="mt-6 max-w-md mx-auto md:mx-0"
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.7 }}
-              >
-                <div className="bg-white border border-gray-200 shadow-md p-4">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-1">Sign in on the homepage</h3>
-                  <p className="text-xs text-gray-500 mb-3">Continue with Google to start editing your CV instantly.</p>
-                  <Button
-                    type="button"
-                    onClick={handleGoogleSignIn}
-                    disabled={isSigningIn}
-                    className="w-full flex items-center justify-center py-2.5 bg-black text-white rounded-lg hover:bg-[#DAA520] transition-all duration-300"
-                  >
-                    {isSigningIn ? (
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                    ) : (
-                      <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/>
+              {!isAuthenticated && (
+                <motion.div
+                  className="mt-6 max-w-md mx-auto md:mx-0"
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.7 }}
+                >
+                  <div className="bg-white border border-gray-200 shadow-md p-4">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-1">Get Started</h3>
+                    <p className="text-xs text-gray-500 mb-3">Continue with Google to start creating your professional CV.</p>
+                    <Button
+                      type="button"
+                      onClick={handleGoogleSignIn}
+                      disabled={isSigningIn}
+                      className="w-full flex items-center justify-center py-2.5 bg-black text-white rounded-lg hover:bg-[#DAA520] transition-all duration-300"
+                    >
+                      {isSigningIn ? (
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                      ) : (
+                        <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/>
+                        </svg>
+                      )}
+                      {isSigningIn ? "Signing in..." : "Continue with Google"}
+                    </Button>
+                  </div>
+                </motion.div>
+              )}
+              
+              {isAuthenticated && (
+                <motion.div
+                  className="mt-6 max-w-md mx-auto md:mx-0"
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.7 }}
+                >
+                  <div className="bg-gradient-to-r from-[#DAA520]/10 to-[#DAA520]/5 border border-[#DAA520]/30 shadow-md p-4 rounded-lg">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-1 flex items-center">
+                      <svg className="w-4 h-4 mr-2 text-[#DAA520]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13L9 17L19 7" />
                       </svg>
-                    )}
-                    {isSigningIn ? "Signing in..." : "Continue with Google"}
-                  </Button>
-                </div>
-              </motion.div>
+                      Welcome back!
+                    </h3>
+                    <p className="text-xs text-gray-600 mb-3">Ready to continue working on your professional CV?</p>
+                    <Button
+                      type="button"
+                      onClick={() => navigate("/cv-management")}
+                      className="w-full flex items-center justify-center py-2.5 bg-[#DAA520] text-white rounded-lg hover:bg-[#DAA520]/90 transition-all duration-300"
+                    >
+                      <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5L16 12L9 19" />
+                      </svg>
+                      Go to Dashboard
+                    </Button>
+                  </div>
+                </motion.div>
+              )}
             </div>
           </motion.div>
           
