@@ -296,10 +296,14 @@ export async function getCVDetails(
 }
 
 export async function importCV(
-  file: File
+  file: File,
+  cvEmail?: string
 ): Promise<ApiResponse<BackendCV>> {
   const formData = new FormData();
   formData.append("file", file);
+  if (cvEmail) {
+    formData.append("cvEmail", cvEmail);
+  }
   return apiClient<ApiResponse<BackendCV>>("/cv/import", {
     method: "POST",
     body: formData,

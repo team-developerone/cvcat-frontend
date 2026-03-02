@@ -9,13 +9,15 @@ interface ImportAnimationModalProps {
   onClose: () => void;
   importType: "pdf" | "word" | "linkedin" | null;
   file?: File | null;
+  cvEmail?: string;
 }
 
 export default function ImportAnimationModal({
   isOpen,
   onClose,
   importType,
-  file
+  file,
+  cvEmail
 }: ImportAnimationModalProps) {
   const [, navigate] = useLocation();
   const [currentStage, setCurrentStage] = useState<"uploading" | "scanning" | "analyzing" | "completed" | "error">("uploading");
@@ -46,7 +48,7 @@ export default function ImportAnimationModal({
       setProgress(prev => Math.min(prev + 2, 30));
     }, 50);
 
-    importCV(file)
+    importCV(file, cvEmail)
       .then((res) => {
         clearInterval(progressInterval);
         setProgress(100);
