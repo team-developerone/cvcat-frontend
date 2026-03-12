@@ -22,6 +22,7 @@ export default function PersonalInfoSection() {
   const [showEmailChangeDialog, setShowEmailChangeDialog] = useState(false);
   const [pendingEmail, setPendingEmail] = useState("");
   const [originalEmail, setOriginalEmail] = useState("");
+  const [emailInputValue, setEmailInputValue] = useState(mainCV?.personalInfo.email ?? "");
 
   if (!mainCV) return null;
 
@@ -29,16 +30,21 @@ export default function PersonalInfoSection() {
   const isExistingCV = Boolean(mainCV.id && mainCV.id.length === 24 && /^[a-f0-9]+$/.test(mainCV.id));
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newEmail = e.target.value;
-    
-    // If it's an existing CV and email is being changed
+    setEmailInputValue(e.target.value);
+  };
+
+  const handleEmailBlur = () => {
+    const newEmail = emailInputValue.trim();
     if (isExistingCV && mainCV.personalInfo.email && newEmail !== mainCV.personalInfo.email) {
       setPendingEmail(newEmail);
       setOriginalEmail(mainCV.personalInfo.email);
       setShowEmailChangeDialog(true);
     } else {
-      // For new CVs or if email hasn't really changed, update directly
-      updatePersonalInfo(e);
+      setMainCV({
+        ...mainCV,
+        personalInfo: { ...mainCV.personalInfo, email: newEmail },
+        lastUpdated: new Date(),
+      });
     }
   };
 
@@ -92,6 +98,7 @@ export default function PersonalInfoSection() {
 
   const cancelEmailChange = () => {
     setShowEmailChangeDialog(false);
+    setEmailInputValue(originalEmail);
     setPendingEmail("");
     setOriginalEmail("");
   };
@@ -144,8 +151,9 @@ export default function PersonalInfoSection() {
             <Input 
               type="email" 
               name="email" 
-              value={mainCV.personalInfo.email} 
-              onChange={handleEmailChange} 
+              value={emailInputValue} 
+              onChange={handleEmailChange}
+              onBlur={handleEmailBlur}
               className="w-full h-9 focus-visible:ring-[#DAA520]"
             />
             {isExistingCV && (
