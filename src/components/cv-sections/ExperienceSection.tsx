@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCV } from "@/lib/context";
 import { useFormState } from "@/lib/hooks";
+import { useAutoSave } from "@/hooks/use-auto-save";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import AITextInput from "@/components/ui/ai-text-input";
 import { WorkExperience } from "@/lib/types";
-import { LucidePlus, LucideTrash2, LucidePencil, LucideX, LucideCheck } from "lucide-react";
+import { LucidePlus, LucideTrash2, LucidePencil, LucideX, LucideCheck, LucideSave } from "lucide-react";
 import SortableList from "@/components/ui/sortable-list";
 
 export default function ExperienceSection() {
@@ -28,6 +29,44 @@ export default function ExperienceSection() {
   });
 
   if (!mainCV) return null;
+
+  // Auto-save function
+  const autoSaveChanges = () => {
+    if (!editingItemId) return; // Only auto-save when editing existing items
+    
+    setMainCV({
+      ...mainCV,
+      experience: mainCV.experience.map((item) =>
+        item.id === editingItemId
+          ? {
+              ...item,
+              company: formData.company,
+              position: formData.position,
+              startDate: formData.startDate,
+              endDate: formData.endDate,
+              description: formData.description,
+              location: formData.location || undefined,
+              url: formData.url || undefined,
+              highlights: highlights.length > 0 ? highlights : undefined,
+            }
+          : item
+      ),
+      lastUpdated: new Date(),
+    });
+  };
+
+  const { triggerAutoSave, isSaving, lastSaved } = useAutoSave({
+    delay: 1500,
+    onSave: autoSaveChanges,
+    enabled: !!editingItemId, // Only enable when editing
+  });
+
+  // Trigger auto-save when form data or highlights change
+  useEffect(() => {
+    if (editingItemId) {
+      triggerAutoSave();
+    }
+  }, [formData, highlights, editingItemId]);
 
   const toggleAddForm = () => {
     setShowAddForm(!showAddForm);
@@ -57,30 +96,14 @@ export default function ExperienceSection() {
 
   const save = () => {
     if (editingItemId) {
-      setMainCV({
-        ...mainCV,
-        experience: mainCV.experience.map((item) =>
-          item.id === editingItemId
-            ? {
-                ...item,
-                company: formData.company,
-                position: formData.position,
-                startDate: formData.startDate,
-                endDate: formData.endDate,
-                description: formData.description,
-                location: formData.location || undefined,
-                url: formData.url || undefined,
-                highlights: highlights.length > 0 ? highlights : undefined,
-              }
-            : item
-        ),
-        lastUpdated: new Date(),
-      });
+      // When editing, changes are already auto-saved, just close the form
+      autoSaveChanges(); // Final save to ensure everything is committed
       setEditingItemId(null);
       setShowAddForm(false);
       resetForm();
       setHighlights([]);
     } else {
+      // When adding new item, save it
       const newItem: WorkExperience = {
         id: Date.now().toString(),
         company: formData.company,
@@ -146,7 +169,24 @@ export default function ExperienceSection() {
   const renderForm = (isEdit: boolean) => (
     <div className="p-2.5 md:p-4 bg-gray-50 rounded-lg border border-gray-100">
       <div className="flex justify-between items-center mb-2 md:mb-3">
-        <h3 className="text-xs md:text-sm font-medium">{isEdit ? "Edit" : "Add"} Work Experience</h3>
+        <div className="flex items-center gap-2">
+          <h3 className="text-xs md:text-sm font-medium">{isEdit ? "Edit" : "Add"} Work Experience</h3>
+          {isEdit && (
+            <div className="flex items-center gap-1.5 text-xs">
+              {isSaving ? (
+                <>
+                  <div className="w-3 h-3 border-2 border-[#DAA520] border-t-transparent rounded-full animate-spin" />
+                  <span className="text-gray-500">Saving...</span>
+                </>
+              ) : lastSaved ? (
+                <>
+                  <LucideSave className="w-3 h-3 text-green-600" />
+                  <span className="text-green-600">Saved</span>
+                </>
+              ) : null}
+            </div>
+          )}
+        </div>
         <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600 hover:bg-gray-100/70 h-7 w-7 p-0" onClick={toggleAddForm}>
           <LucideX className="w-4 h-4" />
         </Button>

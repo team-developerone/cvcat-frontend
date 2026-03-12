@@ -3,312 +3,147 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { importCV } from "@/services/api";
+import { Sparkles, FileText, Brain, CheckCircle2, XCircle } from "lucide-react";
 
 interface ImportAnimationModalProps {
   isOpen: boolean;
   onClose: () => void;
   importType: "pdf" | "word" | "linkedin" | null;
   file?: File | null;
+  cvEmail?: string;
 }
+
+const cvTips = [
+  { icon: "✨", text: "Great choice! We're analyzing your profile..." },
+  { icon: "📄", text: "Extracting your experience and skills..." },
+  { icon: "🎯", text: "Pro tip: Keep your CV concise and focused" },
+  { icon: "💡", text: "Unpacking the details from your CV..." },
+  { icon: "🚀", text: "Almost there! Organizing your information..." },
+  { icon: "🎨", text: "Tip: Use action verbs to describe achievements" },
+  { icon: "⚡", text: "Processing your professional journey..." },
+  { icon: "🌟", text: "Tip: Quantify your achievements when possible" },
+  { icon: "🔍", text: "Analyzing structure and formatting..." },
+  { icon: "💼", text: "Your career story is taking shape..." },
+  { icon: "✅", text: "Tip: Keep contact information up to date" },
+  { icon: "🎓", text: "Finalizing education and certifications..." },
+];
 
 export default function ImportAnimationModal({
   isOpen,
   onClose,
   importType,
-  file
+  file,
+  cvEmail
 }: ImportAnimationModalProps) {
   const [, navigate] = useLocation();
-  const [currentStage, setCurrentStage] = useState<"uploading" | "scanning" | "analyzing" | "completed" | "error">("uploading");
   const [progress, setProgress] = useState(0);
+  const [currentTipIndex, setCurrentTipIndex] = useState(0);
+  const [status, setStatus] = useState<"processing" | "success" | "error">("processing");
   const [errorMessage, setErrorMessage] = useState("");
   const uploadStarted = useRef(false);
   const importedCVId = useRef<string | null>(null);
+  const apiCallCompleted = useRef(false);
 
   // Reset state when modal opens
   useEffect(() => {
     if (isOpen) {
-      setCurrentStage("uploading");
       setProgress(0);
+      setCurrentTipIndex(0);
+      setStatus("processing");
       setErrorMessage("");
       uploadStarted.current = false;
+      apiCallCompleted.current = false;
       importedCVId.current = null;
     }
   }, [isOpen]);
 
-  // Start real upload when file is provided
+  // Start API call in the background
   useEffect(() => {
     if (!isOpen || !file || uploadStarted.current) return;
     uploadStarted.current = true;
 
-    // Simulate uploading stage briefly then do the real API call
-    setCurrentStage("uploading");
-    let progressInterval = setInterval(() => {
-      setProgress(prev => Math.min(prev + 2, 30));
-    }, 50);
-
-    importCV(file)
+    importCV(file, cvEmail)
       .then((res) => {
-        clearInterval(progressInterval);
-        setProgress(100);
-        setCurrentStage("scanning");
         if (res.data?._id) {
           importedCVId.current = res.data._id;
         }
-
-        // Simulate scanning stage
-        let scanProgress = 0;
-        const scanInterval = setInterval(() => {
-          scanProgress += 5;
-          setProgress(scanProgress);
-          if (scanProgress >= 100) {
-            clearInterval(scanInterval);
-            setCurrentStage("analyzing");
-
-            // Simulate analyzing stage
-            let analyzeProgress = 0;
-            const analyzeInterval = setInterval(() => {
-              analyzeProgress += 5;
-              setProgress(analyzeProgress);
-              if (analyzeProgress >= 100) {
-                clearInterval(analyzeInterval);
-                setCurrentStage("completed");
-              }
-            }, 30);
-          }
-        }, 30);
+        apiCallCompleted.current = true;
       })
       .catch((err) => {
-        clearInterval(progressInterval);
-        setErrorMessage(err.message || "Import failed");
-        setCurrentStage("error");
+        setErrorMessage(err.message || "Import failed. Please try again.");
+        setStatus("error");
+        apiCallCompleted.current = true;
       });
-  }, [isOpen, file]);
+  }, [isOpen, file, cvEmail]);
 
-  // Simulated progress for LinkedIn (no file)
+  // 15-second fake progress bar with rotating tips
   useEffect(() => {
-    if (!isOpen || file || importType !== "linkedin") return;
+    if (!isOpen || status !== "processing") return;
 
-    let interval: NodeJS.Timeout;
+    const totalDuration = 15000; // 15 seconds
+    const progressInterval = 50; // Update every 50ms
+    const totalSteps = totalDuration / progressInterval;
+    const progressPerStep = 100 / totalSteps;
+    
+    // Change tip every 2 seconds
+    const tipChangeInterval = 2000;
+    
+    let currentProgress = 0;
+    let currentTip = 0;
 
-    if (currentStage === "uploading") {
-      interval = setInterval(() => {
-        setProgress(prev => {
-          const newProgress = prev + 1;
-          if (newProgress >= 100) {
-            clearInterval(interval);
-            setCurrentStage("scanning");
-            return 100;
+    const progressTimer = setInterval(() => {
+      currentProgress += progressPerStep;
+      
+      if (currentProgress >= 100) {
+        currentProgress = 100;
+        setProgress(100);
+        clearInterval(progressTimer);
+        clearInterval(tipTimer);
+        
+        // Wait for API call to complete before showing success
+        const checkApiInterval = setInterval(() => {
+          if (apiCallCompleted.current) {
+            clearInterval(checkApiInterval);
+            // Use functional update to check current status
+            setStatus(currentStatus => {
+              if (currentStatus === "processing") {
+                return "success";
+              }
+              return currentStatus;
+            });
           }
-          return newProgress;
-        });
-      }, 30);
-    } else if (currentStage === "scanning") {
-      setProgress(0);
-      interval = setInterval(() => {
-        setProgress(prev => {
-          const newProgress = prev + 1;
-          if (newProgress >= 100) {
-            clearInterval(interval);
-            setCurrentStage("analyzing");
-            return 100;
-          }
-          return newProgress;
-        });
-      }, 40);
-    } else if (currentStage === "analyzing") {
-      setProgress(0);
-      interval = setInterval(() => {
-        setProgress(prev => {
-          const newProgress = prev + 1;
-          if (newProgress >= 100) {
-            clearInterval(interval);
-            setCurrentStage("completed");
-            return 100;
-          }
-          return newProgress;
-        });
-      }, 50);
-    }
+        }, 100);
+        
+        return;
+      }
+      
+      setProgress(currentProgress);
+    }, progressInterval);
 
-    return () => clearInterval(interval);
-  }, [isOpen, currentStage, file, importType]);
+    const tipTimer = setInterval(() => {
+      currentTip = (currentTip + 1) % cvTips.length;
+      setCurrentTipIndex(currentTip);
+    }, tipChangeInterval);
 
-  // Proceed to CV Builder after animation completes
+    return () => {
+      clearInterval(progressTimer);
+      clearInterval(tipTimer);
+    };
+  }, [isOpen, status]);
+
+  // Navigate to CV builder after success
   useEffect(() => {
-    if (currentStage === "completed") {
+    if (status === "success") {
       const timer = setTimeout(() => {
         const cvId = importedCVId.current;
         navigate(cvId ? `/cv-builder?id=${cvId}` : '/cv-builder');
-      }, 2000);
+      }, 1500);
 
       return () => clearTimeout(timer);
     }
-  }, [currentStage, navigate]);
+  }, [status, navigate]);
 
-  const getStageTitle = () => {
-    switch (currentStage) {
-      case "uploading":
-        return "Uploading Your CV";
-      case "scanning":
-        return "Scanning Document";
-      case "analyzing":
-        return "Analyzing Content";
-      case "completed":
-        return "Import Completed!";
-      case "error":
-        return "Import Failed";
-      default:
-        return "";
-    }
-  };
-
-  const getStageDescription = () => {
-    switch (currentStage) {
-      case "uploading":
-        return `Uploading your ${importType === "pdf" ? "PDF" : importType === "word" ? "Word document" : "LinkedIn profile"}...`;
-      case "scanning":
-        return "Extracting text and formatting from your document...";
-      case "analyzing":
-        return "Our AI is analyzing your CV structure and content...";
-      case "completed":
-        return "Successfully imported! Redirecting to CV builder...";
-      case "error":
-        return errorMessage;
-      default:
-        return "";
-    }
-  };
-
-  const getIconAnimation = () => {
-    switch (currentStage) {
-      case "uploading":
-        return (
-          <motion.div
-            className="w-24 h-24 bg-[#DAA520]/10 rounded-full flex items-center justify-center mb-6"
-            animate={{
-              scale: [1, 1.05, 1],
-              opacity: [0.8, 1, 0.8]
-            }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          >
-            <motion.svg
-              className="w-10 h-10 text-[#DAA520]"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              animate={{ y: [0, -5, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-            >
-              <path d="M9 17V11L7 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M9 11L11 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C21.5093 4.43821 21.8356 5.80655 21.9449 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </motion.svg>
-          </motion.div>
-        );
-      case "scanning":
-        return (
-          <motion.div
-            className="w-24 h-24 bg-[#DAA520]/10 rounded-full flex items-center justify-center mb-6 relative overflow-hidden"
-            animate={{
-              boxShadow: ["0 0 0 0 rgba(218, 165, 32, 0)", "0 0 10px 3px rgba(218, 165, 32, 0.3)", "0 0 0 0 rgba(218, 165, 32, 0)"]
-            }}
-            transition={{ duration: 2, repeat: Infinity }}
-          >
-            <motion.div
-              className="absolute top-0 left-0 w-full h-2 bg-[#DAA520]/40"
-              animate={{ y: ["0%", "500%", "0%"] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-            <svg className="w-10 h-10 text-[#DAA520]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M7 18H5C3.89543 18 3 17.1046 3 16V7C3 5.89543 3.89543 5 5 5H19C20.1046 5 21 5.89543 21 7V16C21 17.1046 20.1046 18 19 18H17M12 15V20M12 15L9 18M12 15L15 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M7 5V3M17 5V3M8 9H16M8 13H13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </motion.div>
-        );
-      case "analyzing":
-        return (
-          <motion.div
-            className="w-24 h-24 bg-[#DAA520]/10 rounded-full flex items-center justify-center mb-6"
-            animate={{ rotate: [0, 5, 0, -5, 0] }}
-            transition={{ duration: 4, repeat: Infinity }}
-          >
-            <motion.div className="relative">
-              <motion.div
-                className="absolute w-12 h-12 border-t-2 border-r-2 border-[#DAA520] rounded-full"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-              />
-              <motion.div
-                className="absolute w-8 h-8 border-t-2 border-l-2 border-black rounded-full"
-                animate={{ rotate: -360 }}
-                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-              />
-              <svg className="w-10 h-10 text-[#DAA520] relative z-10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9 15.5H7.5C6.67157 15.5 6 16.1716 6 17V18.5C6 19.3284 6.67157 20 7.5 20H16.5C17.3284 20 18 19.3284 18 18.5V17C18 16.1716 17.3284 15.5 16.5 15.5H15M12 3V15M12 15L9 12M12 15L15 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </motion.div>
-          </motion.div>
-        );
-      case "completed":
-        return (
-          <motion.div
-            className="w-24 h-24 bg-[#DAA520]/10 rounded-full flex items-center justify-center mb-6"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{
-              scale: 1,
-              opacity: 1
-            }}
-            transition={{ duration: 0.5 }}
-          >
-            <motion.div
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <svg className="w-12 h-12 text-[#DAA520]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <motion.path
-                  d="M7 13L10 16L17 9"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                />
-                <motion.path
-                  d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 0.8 }}
-                />
-              </svg>
-            </motion.div>
-          </motion.div>
-        );
-      case "error":
-        return (
-          <motion.div
-            className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mb-6"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <svg className="w-12 h-12 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10" />
-              <line x1="15" y1="9" x2="9" y2="15" />
-              <line x1="9" y1="9" x2="15" y2="15" />
-            </svg>
-          </motion.div>
-        );
-      default:
-        return null;
-    }
-  };
+  const currentTip = cvTips[currentTipIndex];
 
   return (
     <AnimatePresence>
@@ -316,64 +151,190 @@ export default function ImportAnimationModal({
         <>
           {/* Overlay */}
           <motion.div
-            className="fixed inset-0 bg-black/60 z-50"
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={currentStage === "error" ? onClose : undefined}
-          />
-
+            onClick={status === "error" ? onClose : undefined}
+          >
           {/* Modal */}
           <motion.div
-            className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-xl p-8 w-[90%] max-w-md z-50"
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl p-10 w-[90%] max-w-lg border border-gray-100 relative"
+              initial={{ opacity: 0, scale: 0.8, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ type: "spring", damping: 25 }}
+              exit={{ opacity: 0, scale: 0.8, y: 30 }}
+              transition={{ type: "spring", damping: 20, stiffness: 300 }}
+              onClick={(e) => e.stopPropagation()}
           >
+            {status === "processing" && (
             <div className="flex flex-col items-center text-center">
-              {getIconAnimation()}
-
-              <h2 className="text-2xl font-bold mb-2">{getStageTitle()}</h2>
-              <p className="text-gray-600 mb-6">{getStageDescription()}</p>
-
-              {currentStage !== "error" && (
-                <div className="w-full bg-gray-100 rounded-full h-2 mb-4">
+                {/* Animated Icon */}
+                <motion.div
+                  className="relative w-32 h-32 mb-8"
+                  animate={{ scale: [1, 1.05, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  {/* Outer rotating circle */}
                   <motion.div
-                    className="h-full rounded-full bg-[#DAA520]"
+                    className="absolute inset-0 rounded-full border-4 border-[#DAA520]/20"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                  />
+                  
+                  {/* Inner rotating circle */}
+                  <motion.div
+                    className="absolute inset-4 rounded-full border-4 border-t-[#DAA520] border-r-transparent border-b-transparent border-l-transparent"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                  />
+                  
+                  {/* Center icon */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <motion.div
+                      animate={{ y: [0, -5, 0] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    >
+                      <FileText className="w-12 h-12 text-[#DAA520]" />
+                    </motion.div>
+                  </div>
+
+                  {/* Sparkles */}
+                  <motion.div
+                    className="absolute -top-2 -right-2"
+                    animate={{ 
+                      scale: [1, 1.2, 1],
+                      rotate: [0, 180, 360]
+                    }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    <Sparkles className="w-6 h-6 text-[#DAA520]" />
+                  </motion.div>
+
+                  <motion.div
+                    className="absolute -bottom-2 -left-2"
+                    animate={{ 
+                      scale: [1, 1.2, 1],
+                      rotate: [360, 180, 0]
+                    }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 1 }}
+                  >
+                    <Brain className="w-6 h-6 text-[#DAA520]" />
+                  </motion.div>
+                </motion.div>
+
+                {/* Title */}
+                <h2 className="text-3xl font-bold mb-3 text-gray-800">
+                  Analyzing Your CV
+                </h2>
+
+                {/* Rotating Tips */}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentTipIndex}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.5 }}
+                    className="min-h-[60px] flex items-center justify-center mb-6"
+                  >
+                    <p className="text-lg text-gray-600 flex items-center gap-2">
+                      <span className="text-2xl">{currentTip.icon}</span>
+                      <span>{currentTip.text}</span>
+                    </p>
+                  </motion.div>
+                </AnimatePresence>
+
+                {/* Progress Bar */}
+                <div className="w-full mb-4 px-2">
+                  <div className="flex justify-between text-sm text-gray-500 mb-2">
+                    <span>Processing...</span>
+                    <span>{Math.round(progress)}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
+                    <motion.div
+                      className="h-full rounded-full bg-gradient-to-r from-[#DAA520] to-[#FFD700] relative overflow-hidden"
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
-                    transition={{ type: "tween" }}
-                  />
+                      transition={{ duration: 0.1 }}
+                    >
+                      {/* Animated shine effect */}
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                        animate={{ x: ["-100%", "200%"] }}
+                        transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                      />
+                    </motion.div>
+                  </div>
+                </div>
+
+                {/* Timer hint */}
+                <p className="text-xs text-gray-400 text-center">This usually takes about 15 seconds</p>
                 </div>
               )}
 
-              {currentStage === "completed" ? (
+            {status === "success" && (
+              <motion.div
+                className="flex flex-col items-center text-center"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+              >
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
+                  className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-6"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", delay: 0.2 }}
                 >
-                  <p className="text-sm text-gray-500">Redirecting to CV builder...</p>
+                  <CheckCircle2 className="w-12 h-12 text-green-600" />
                 </motion.div>
-              ) : currentStage === "error" ? (
-                <Button
-                  variant="outline"
-                  className="text-sm"
-                  onClick={onClose}
+
+                <h2 className="text-3xl font-bold mb-3 text-gray-800">
+                  Success! 🎉
+                </h2>
+
+                <p className="text-lg text-gray-600 mb-4">
+                  Your CV has been imported successfully!
+                </p>
+
+                <p className="text-sm text-gray-500">
+                  Redirecting to CV builder...
+                </p>
+              </motion.div>
+            )}
+
+            {status === "error" && (
+              <motion.div
+                className="flex flex-col items-center text-center"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <motion.div
+                  className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mb-6"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", delay: 0.2 }}
                 >
-                  Close
-                </Button>
-              ) : (
+                  <XCircle className="w-12 h-12 text-red-600" />
+                </motion.div>
+
+                <h2 className="text-3xl font-bold mb-3 text-gray-800">
+                  Import Failed
+                </h2>
+
+                <p className="text-lg text-gray-600 mb-6">
+                  {errorMessage}
+                </p>
+
                 <Button
-                  variant="outline"
-                  className="text-sm"
                   onClick={onClose}
+                  className="bg-[#DAA520] hover:bg-[#B8860B] text-white px-6"
                 >
-                  Cancel
+                  Try Again
                 </Button>
+              </motion.div>
               )}
-            </div>
+          </motion.div>
           </motion.div>
         </>
       )}

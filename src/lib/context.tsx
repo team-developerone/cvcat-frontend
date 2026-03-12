@@ -111,8 +111,15 @@ export function CVProvider({ children }: { children: ReactNode }) {
     setSavingCV(true);
     try {
       const backendData = frontendCVToBackendData(cv);
+      
+      // Generate a better title if it's "Untitled CV" and we have a name
+      let title = cv.title;
+      if (title === "Untitled CV" && cv.personalInfo?.fullName) {
+        title = `${cv.personalInfo.fullName}'s CV`;
+      }
+      
       const payload = {
-        title: cv.title,
+        title: title,
         description: cv.description,
         data: backendData,
         isDraft: false,

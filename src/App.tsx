@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import LandingPage from "@/pages/LandingPage";
 import AuthPage from "@/pages/AuthPage";
+import VerifyEmail from "@/pages/VerifyEmail";
 import ImportSelection from "@/pages/ImportSelection";
 import CVBuilder from "@/pages/CVBuilder";
 import CVManagement from "@/pages/CVManagement";
@@ -26,6 +27,7 @@ function Router() {
       <Switch>
         <Route path="/" component={LandingPage} />
         <Route path="/auth" component={AuthPage} />
+        <Route path="/verify-email" component={VerifyEmail} />
         <Route path="/team" component={TeamPage} />
         <Route path="/logo" component={LogoPage} />
         <Route path="/privacy" component={PrivacyPolicy} />

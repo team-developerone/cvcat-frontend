@@ -1,5 +1,16 @@
+import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import Logo from "@/components/Logo";
 import { useAuth } from "@/lib/auth-context";
 
@@ -10,6 +21,7 @@ interface NavbarProps {
 export default function Navbar({ isAuthenticated = false }: NavbarProps) {
   const [location, navigate] = useLocation();
   const { user, logout } = useAuth();
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const goTo = (path: string) => {
     navigate(path);
@@ -22,7 +34,12 @@ export default function Navbar({ isAuthenticated = false }: NavbarProps) {
     }
   };
 
-  const handleLogout = async () => {
+  const handleLogoutClick = () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const handleLogoutConfirm = async () => {
+    setShowLogoutConfirm(false);
     await logout();
     navigate("/");
   };
@@ -46,34 +63,15 @@ export default function Navbar({ isAuthenticated = false }: NavbarProps) {
         // Public navbar
         <div className="flex items-center">
           <div className="hidden md:flex space-x-6 mr-6">
-            <div
-              onClick={() => scrollToSection('features')}
-              className="text-sm text-gray-700 hover:text-[#DAA520] transition-all cursor-pointer"
-            >
-              Features
-            </div>
-            <div
-              onClick={() => scrollToSection('pricing')}
-              className="text-sm text-gray-700 hover:text-[#DAA520] transition-all cursor-pointer"
-            >
-              Pricing
-            </div>
+           
+            
             <div
               onClick={() => goTo('/team')}
               className="text-sm text-gray-700 hover:text-[#DAA520] transition-all cursor-pointer"
             >
               Team
             </div>
-            <div
-              className="text-sm text-gray-700 hover:text-[#DAA520] transition-all cursor-pointer"
-            >
-              Resources
-            </div>
-            <div
-              className="text-sm text-gray-700 hover:text-[#DAA520] transition-all cursor-pointer"
-            >
-              FAQ
-            </div>
+           
           </div>
 
           <div className="flex items-center space-x-3">
@@ -95,12 +93,7 @@ export default function Navbar({ isAuthenticated = false }: NavbarProps) {
         // Authenticated navbar
         <div className="flex items-center space-x-4">
           {location === "/cv-management" ? (
-            <Button
-              onClick={() => goTo('/cv-builder')}
-              className="bg-black hover:bg-[#DAA520] text-white text-sm font-medium px-4 py-2 rounded"
-            >
-              Create New CV
-            </Button>
+            <></>
           ) : location === "/cv-builder" ? (
             <Button
               onClick={() => {
@@ -123,7 +116,7 @@ export default function Navbar({ isAuthenticated = false }: NavbarProps) {
           </div>
 
           <button
-            onClick={handleLogout}
+            onClick={handleLogoutClick}
             className="text-sm text-gray-500 hover:text-red-500 transition-all"
             title="Sign out"
           >
@@ -135,6 +128,27 @@ export default function Navbar({ isAuthenticated = false }: NavbarProps) {
           </button>
         </div>
       )}
+
+      {/* Logout Confirmation Dialog */}
+      <AlertDialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to log out? Any unsaved changes will be lost.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleLogoutConfirm}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              Log Out
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </nav>
   );
 }

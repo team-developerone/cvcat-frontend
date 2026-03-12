@@ -103,79 +103,103 @@ export default function LandingPage() {
             transition={{ duration: 0.5 }}
           >
             <div className="text-center md:text-left">
+              <motion.div
+                className="inline-flex items-center gap-2 bg-[#DAA520]/10 border border-[#DAA520]/30 px-3 py-1.5 rounded-full mb-4"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+              >
+                <span className="text-xs font-bold text-[#DAA520]">100% FREE FOREVER</span>
+                <span className="text-xs text-gray-600">• No credit card needed</span>
+              </motion.div>
+              
               <motion.h1 
-                className="text-3xl md:text-4xl font-bold mb-4"
+                className="text-4xl md:text-5xl font-bold mb-4 leading-tight"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                Your CV, <span className="text-[#DAA520]">Purr</span>fected
+                Stop Wrestling With<br />
+                <span className="text-[#DAA520]">Word Documents</span>
               </motion.h1>
               <motion.p 
-                className="text-sm mb-3 max-w-lg text-gray-700"
+                className="text-lg mb-6 max-w-lg text-gray-700 leading-relaxed"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
-                One focused toolkit: unlimited edits, 9 premium templates, AI-assisted edits, and ATS-friendly CV structure.
+                Your entire career in one place. Update once, export anytime. Let AI handle the polish while you focus on landing that job.
               </motion.p>
               
               <motion.div
-                className="mb-6 relative z-10"
+                className="mb-8 space-y-4 relative z-10"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
               >
+                {/* AI Powered */}
                 <motion.div
-                  className="text-xs font-medium bg-[#DAA520]/10 border border-[#DAA520]/20 inline-flex items-center px-3 py-1.5 text-left relative overflow-hidden"
+                  className="flex items-start gap-3 bg-white border border-gray-200 p-4 rounded-lg shadow-sm"
                   whileHover={{ 
-                    scale: 1.03, 
-                    backgroundColor: "rgba(218, 165, 32, 0.2)" 
+                    scale: 1.02, 
+                    borderColor: "rgba(218, 165, 32, 0.5)",
+                    shadow: "lg"
                   }}
                 >
-                  <motion.div 
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-[#DAA520]/10 to-transparent"
-                    animate={{ 
-                      x: [-100, 200],
-                    }}
-                    transition={{ 
-                      repeat: Infinity, 
-                      duration: 2,
-                      ease: "linear"
-                    }}
-                  />
-                  <svg className="w-3 h-3 mr-1.5 text-[#DAA520] flex-shrink-0 relative z-10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5 13L9 17L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  <span className="relative z-10"><span className="text-[#DAA520] font-bold mx-0.5">Unlimited edits</span> so you can refine until it is right.</span>
+                  <div className="w-10 h-10 bg-[#DAA520]/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg className="w-5 h-5 text-[#DAA520]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-900 mb-1">AI Does the Heavy Lifting</h3>
+                    <p className="text-xs text-gray-600 leading-relaxed">Smart suggestions to improve your content, optimize for ATS, and make every word count. No fluff, just results.</p>
+                  </div>
                 </motion.div>
-                
+
+                {/* Single Place Management */}
                 <motion.div
-                  className="text-xs font-medium bg-[#DAA520]/10 border border-[#DAA520]/20 inline-flex items-center px-3 py-1.5 text-left mt-1.5 relative overflow-hidden"
+                  className="flex items-start gap-3 bg-white border border-gray-200 p-4 rounded-lg shadow-sm"
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.6 }}
                   whileHover={{ 
-                    scale: 1.03, 
-                    backgroundColor: "rgba(218, 165, 32, 0.2)" 
+                    scale: 1.02, 
+                    borderColor: "rgba(218, 165, 32, 0.5)",
+                    shadow: "lg"
                   }}
                 >
-                  <motion.div 
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-[#DAA520]/10 to-transparent"
-                    animate={{ 
-                      x: [-100, 200],
-                    }}
-                    transition={{ 
-                      repeat: Infinity, 
-                      duration: 2,
-                      ease: "linear",
-                      delay: 0.5
-                    }}
-                  />
-                  <svg className="w-3 h-3 mr-1.5 text-[#DAA520] flex-shrink-0 relative z-10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 5C12 5 13 9 10 12C9 13 7 14 7.5 18C7.5 18 11 17 12 12C12 12 13 17 17 19C17 19 19 15 17 13C15 11 16 9 16 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                  </svg>
-                  <span className="relative z-10">AI-assisted edits with <span className="text-[#DAA520] font-bold mx-0.5">ATS-friendly</span> optimization built in.</span>
+                  <div className="w-10 h-10 bg-[#DAA520]/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg className="w-5 h-5 text-[#DAA520]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M19 11H5M19 11C20.1046 11 21 11.8954 21 13V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V13C3 11.8954 3.89543 11 5 11M19 11V9C19 7.89543 18.1046 7 17 7M5 11V9C5 7.89543 5.89543 7 7 7M7 7V5C7 3.89543 7.89543 3 9 3H15C16.1046 3 17 3.89543 17 5V7M7 7H17" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-900 mb-1">One Master CV. Infinite Possibilities.</h3>
+                    <p className="text-xs text-gray-600 leading-relaxed">Update your details once. Export to any format, any template. No more hunting through folders for "Final_CV_v3_FINAL.docx"</p>
+                  </div>
+                </motion.div>
+
+                {/* 100% Free */}
+                <motion.div
+                  className="flex items-start gap-3 bg-gradient-to-br from-[#DAA520]/5 to-[#DAA520]/10 border-2 border-[#DAA520]/30 p-4 rounded-lg"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.7 }}
+                  whileHover={{ 
+                    scale: 1.02,
+                    borderColor: "rgba(218, 165, 32, 0.6)"
+                  }}
+                >
+                  <div className="w-10 h-10 bg-[#DAA520] rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 13L9 17L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-900 mb-1">Actually Free</h3>
+                    <p className="text-xs text-gray-700 leading-relaxed"><strong>All features. Forever.</strong> No trial expiring in 7 days. No surprise charges. No "upgrade to export" nonsense.</p>
+                  </div>
                 </motion.div>
               </motion.div>
               
@@ -202,27 +226,30 @@ export default function LandingPage() {
               </motion.div>
 
               <motion.div 
-                className="grid grid-cols-2 gap-3 text-xs max-w-md mx-auto md:mx-0"
+                className="flex flex-wrap gap-2 text-xs max-w-md mx-auto md:mx-0"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
+                transition={{ duration: 0.5, delay: 0.8 }}
               >
-                <div className="bg-[#DAA520]/10 border border-[#DAA520]/25 px-3 py-2">
-                  <div className="text-xs font-semibold text-[#DAA520]">Unlimited edits</div>
-                  <div className="text-[11px] text-gray-600">Keep improving without limits</div>
-                </div>
-                <div className="bg-[#DAA520]/10 border border-[#DAA520]/25 px-3 py-2">
-                  <div className="text-xs font-semibold text-[#DAA520]">9 premium templates</div>
-                  <div className="text-[11px] text-gray-600">Choose a style that fits your role</div>
-                </div>
-                <div className="bg-[#DAA520]/10 border border-[#DAA520]/25 px-3 py-2">
-                  <div className="text-xs font-semibold text-[#DAA520]">AI-assisted edits</div>
-                  <div className="text-[11px] text-gray-600">Faster writing and refinement</div>
-                </div>
-                <div className="bg-[#DAA520]/10 border border-[#DAA520]/25 px-3 py-2">
-                  <div className="text-xs font-semibold text-[#DAA520]">ATS-friendly</div>
-                  <div className="text-[11px] text-gray-600">Optimized for recruiter systems</div>
-                </div>
+                {[
+                  "9 Templates",
+                  "Unlimited Edits",
+                  "ATS-Optimized",
+                  "Import from PDF/Word",
+                  "One-Click Export",
+                  "Cloud Saved"
+                ].map((feature, i) => (
+                  <motion.span
+                    key={feature}
+                    className="bg-gray-100 border border-gray-300 px-3 py-1.5 rounded-full text-gray-700 font-medium"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.8 + (i * 0.05) }}
+                    whileHover={{ scale: 1.05, backgroundColor: "#f9f9f9" }}
+                  >
+                    {feature}
+                  </motion.span>
+                ))}
               </motion.div>
 
               {!isAuthenticated && (
@@ -1522,12 +1549,12 @@ export default function LandingPage() {
                   </div>
                   <p className="text-sm text-gray-600 mt-1">Clean design with gold accents</p>
                 </div>
-                <div className="h-96 overflow-hidden">
-                  <div className="transform scale-[0.4] origin-top-left">
+                <div className="h-96 overflow-hidden bg-gray-50">
+                  <div className="w-full">
                     <CVPreview 
                       cv={mockCVData} 
                       template="modern"
-                      style={{ minHeight: '800px', width: '600px' }}
+                      style={{ width: '100%' }}
                     />
                   </div>
                 </div>
@@ -1552,12 +1579,12 @@ export default function LandingPage() {
                   </div>
                   <p className="text-sm text-gray-600 mt-1">Eye-catching design with purple accents</p>
                 </div>
-                <div className="h-96 overflow-hidden">
-                  <div className="transform scale-[0.4] origin-top-left">
+                <div className="h-96 overflow-hidden bg-gray-50">
+                  <div className="w-full">
                     <CVPreview 
                       cv={mockCVVariants.creative} 
                       template="creative"
-                      style={{ minHeight: '800px', width: '600px' }}
+                      style={{ width: '100%' }}
                     />
                   </div>
                 </div>
@@ -1582,12 +1609,12 @@ export default function LandingPage() {
                   </div>
                   <p className="text-sm text-gray-600 mt-1">Formal layout for senior positions</p>
                 </div>
-                <div className="h-96 overflow-hidden">
-                  <div className="transform scale-[0.4] origin-top-left">
+                <div className="h-96 overflow-hidden bg-gray-50">
+                  <div className="w-full">
                     <CVPreview 
                       cv={mockCVVariants.executive} 
                       template="executive"
-                      style={{ minHeight: '800px', width: '600px' }}
+                      style={{ width: '100%' }}
                     />
                   </div>
                 </div>
@@ -1618,17 +1645,19 @@ export default function LandingPage() {
                 transition={{ duration: 0.2 }}
               >
                 <div className="bg-white rounded-lg border border-gray-200 p-3 group-hover:border-[#DAA520]/40 group-hover:shadow-md transition-all duration-200">
-                  <div className="h-24 bg-gray-50 rounded mb-2 overflow-hidden">
-                    <div className="transform scale-[0.15] origin-top-left">
-                      <CVPreview 
-                        cv={mockCVVariants.minimalist} 
-                        template={template.template as any}
-                        style={{ minHeight: '600px', width: '400px' }}
-                      />
+                  <div className="h-52 bg-gray-50 rounded mb-2 overflow-hidden relative">
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="transform scale-[0.32] origin-center">
+                        <CVPreview 
+                          cv={mockCVVariants.minimalist} 
+                          template={template.template as any}
+                          style={{ minHeight: '800px', width: '600px' }}
+                        />
+                      </div>
                     </div>
                   </div>
                   <div className="text-center">
-                    <h4 className="font-medium text-xs text-gray-900 mb-1">{template.name}</h4>
+                    <h4 className="font-medium text-sm text-gray-900 mb-1">{template.name}</h4>
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${template.color}`}>
                       Available
                     </span>
@@ -1685,9 +1714,9 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* Focused Value Section */}
-      <section className="py-10 px-4 bg-gray-50 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none opacity-10">
+      {/* Why CVCat Section */}
+      <section className="py-16 px-4 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none opacity-5">
           <motion.div
             className="absolute top-10 right-10 w-28 h-28"
             animate={{ rotate: [0, 8, 0, -8, 0] }}
@@ -1703,38 +1732,116 @@ export default function LandingPage() {
           </motion.div>
         </div>
 
-        <div className="max-w-5xl mx-auto relative z-10">
-          <motion.h2
-            className="text-lg font-medium text-center mb-6"
-            initial={{ opacity: 0, y: 12 }}
+        <div className="max-w-6xl mx-auto relative z-10">
+          <motion.div
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            Everything you need, nothing extra
-          </motion.h2>
-          <div className="grid md:grid-cols-2 gap-4">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Built for People Who <span className="text-[#DAA520]">Actually Apply</span> to Jobs
+            </h2>
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              We get it. You don't need another tool that "helps" you spend 3 hours on formatting.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-6">
             {[
-              "Unlimited edits",
-              "Access to 9 premium templates",
-              "AI-assisted editing",
-              "ATS-friendly formatting",
-            ].map((item, index) => (
+              {
+                title: "The Old Way",
+                subtitle: "(and why it sucks)",
+                items: [
+                  "Dig through folders for latest CV",
+                  "Fight with Word formatting",
+                  "Manually tailor for each job",
+                  "Pay $15/month for a PDF export",
+                  "Lost v7_final_REAL.docx again"
+                ],
+                color: "border-red-200 bg-red-50/30"
+              },
+              {
+                title: "The CVCat Way",
+                subtitle: "(much better)",
+                items: [
+                  "One source of truth, always updated",
+                  "AI suggests improvements instantly",
+                  "Export any format, any template",
+                  "Actually free. Like, really free.",
+                  "Never lose your work again"
+                ],
+                color: "border-[#DAA520] bg-[#DAA520]/5 ring-2 ring-[#DAA520]/20"
+              },
+              {
+                title: "What You Get",
+                subtitle: "(the good stuff)",
+                items: [
+                  "Professional CV in minutes",
+                  "9 battle-tested templates",
+                  "ATS-friendly by default",
+                  "Import existing CV instantly",
+                  "Update once, use everywhere"
+                ],
+                color: "border-green-200 bg-green-50/30"
+              }
+            ].map((column, index) => (
               <motion.div
-                key={item}
-                className="bg-white border border-gray-200 p-4"
-                initial={{ opacity: 0, y: 20 }}
+                key={column.title}
+                className={`border-2 ${column.color} p-6 rounded-xl`}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.35, delay: index * 0.08 }}
-                whileHover={{ y: -4, borderColor: "rgba(218, 165, 32, 0.6)" }}
+                transition={{ duration: 0.5, delay: index * 0.15 }}
+                whileHover={{ y: -6, scale: 1.02 }}
               >
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#DAA520]" />
-                  <p className="text-sm text-gray-800">{item}</p>
+                <div className="mb-4">
+                  <h3 className="text-xl font-bold text-gray-900">{column.title}</h3>
+                  <p className="text-sm text-gray-600">{column.subtitle}</p>
                 </div>
+                <ul className="space-y-3">
+                  {column.items.map((item, i) => (
+                    <motion.li
+                      key={i}
+                      className="flex items-start gap-2 text-sm text-gray-700"
+                      initial={{ opacity: 0, x: -10 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.15 + i * 0.05 }}
+                    >
+                      {index === 0 ? (
+                        <span className="text-red-500 mt-0.5">✗</span>
+                      ) : (
+                        <span className={`${index === 1 ? 'text-[#DAA520]' : 'text-green-600'} mt-0.5`}>✓</span>
+                      )}
+                      <span>{item}</span>
+                    </motion.li>
+                  ))}
+                </ul>
               </motion.div>
             ))}
           </div>
+
+          <motion.div
+            className="text-center mt-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+          >
+            <p className="text-sm text-gray-600 mb-4">
+              Join thousands who've already ditched the Word document struggle
+            </p>
+            {!isAuthenticated && (
+              <Button
+                onClick={handleGoogleSignIn}
+                disabled={isSigningIn}
+                className="bg-[#DAA520] hover:bg-[#B8860B] text-white font-semibold py-3 px-8 text-base rounded-lg shadow-lg"
+              >
+                {isSigningIn ? "Starting..." : "Get Started Free →"}
+              </Button>
+            )}
+          </motion.div>
         </div>
       </section>
 

@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getAnalytics, isSupported, logEvent, type Analytics } from "firebase/analytics";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -8,8 +9,35 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
+
+let analytics: Analytics | null = null;
+
+export async function initAnalytics(): Promise<Analytics | null> {
+  if (analytics) return analytics;
+  if (typeof window === "undefined") return null;
+
+  try {
+    const supported = await isSupported();
+    if (!supported) return null;
+
+    analytics = getAnalytics(app);
+    return analytics;
+  } catch {
+    return null;
+  }
+}
+
+export function logAnalyticsEvent(eventName: string, params?: Record<string, unknown>) {
+  if (!analytics) return;
+  try {
+    logEvent(analytics, eventName, params);
+  } catch {
+    // ignore
+  }
+}
