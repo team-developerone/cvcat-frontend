@@ -119,93 +119,168 @@ export default function CVManagement() {
 
   return (
     <Layout>
-      <div className="flex-1 min-h-screen bg-white">
-        {/* Background patterns */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
-          <div className="absolute top-0 left-0 w-full h-full bg-gray-50/80"></div>
-          <div className="absolute -top-20 left-[20%] w-64 h-64 bg-[#DAA520]/5 rounded-full blur-3xl"></div>
-          <div className="absolute -bottom-32 right-[10%] w-64 h-64 bg-[#DAA520]/5 rounded-full blur-3xl"></div>
-        </div>
+      <div className="flex-1 min-h-screen bg-gray-50">
+        <div className="max-w-5xl mx-auto px-4 py-6 md:py-10">
 
-        <div className="max-w-5xl mx-auto px-4 py-6 md:py-8">
           {/* Header */}
-          <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 md:mb-12">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3 }}
-            >
-              <h1 className="text-3xl font-bold tracking-tight text-black">My CV</h1>
-              <p className="text-sm text-gray-600 mt-2">Your professional document</p>
-            </motion.div>
-          </div>
-
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="mb-6 md:mb-10"
+          >
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">My CV</h1>
+            <p className="text-sm text-gray-500 mt-1">Your professional document</p>
+          </motion.div>
 
           {/* Content */}
-          <motion.div
-            variants={containerAnimation}
-            initial="hidden"
-            animate="show"
-          >
-            {/* Core CV Document View */}
+          <motion.div variants={containerAnimation} initial="hidden" animate="show">
+            {/* Core CV Card */}
             {mainCV && (
-              <motion.section
-                variants={itemAnimation}
-                className="mb-12"
-              >
-                <motion.div 
-                  whileHover={{ y: -4 }} 
+              <motion.section variants={itemAnimation} className="mb-10">
+
+                {/* ── MOBILE card ── */}
+                <div className="md:hidden">
+                  <div
+                    className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden cursor-pointer active:scale-[0.99] transition-transform"
+                    onClick={() => navigate(`/cv-builder?id=${mainCV.id}`)}
+                  >
+                    {/* Top strip: thumbnail + title row */}
+                    <div className="flex items-start gap-4 p-4 pb-3">
+                      {/* Mini document thumbnail */}
+                      <div className="relative flex-shrink-0">
+                        <div className="w-14 h-[72px] bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                          <div className="h-4 bg-[#DAA520]/10 border-b border-gray-100 flex items-center px-1.5">
+                            <div className="w-1.5 h-1.5 bg-[#DAA520] rounded-full mr-1" />
+                            <div className="w-6 h-0.5 bg-gray-300 rounded" />
+                          </div>
+                          <div className="p-1.5 space-y-1">
+                            <div className="w-full h-1 bg-gray-700 rounded" />
+                            <div className="w-3/4 h-0.5 bg-gray-300 rounded" />
+                            <div className="w-full h-0.5 bg-gray-300 rounded" />
+                            <div className="w-1/2 h-0.5 bg-[#DAA520]/60 rounded" />
+                            <div className="w-full h-0.5 bg-gray-200 rounded" />
+                            <div className="w-4/5 h-0.5 bg-gray-200 rounded" />
+                          </div>
+                        </div>
+                        <div className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-[#DAA520] rounded-full flex items-center justify-center shadow">
+                          <svg className="w-2.5 h-2.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                      </div>
+
+                      {/* Title & meta */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <h2 className="text-base font-bold text-gray-900 leading-tight truncate">{mainCV.title}</h2>
+                            <p className="text-xs text-gray-500 mt-0.5 truncate">{mainCV.personalInfo.fullName}</p>
+                          </div>
+                          <div className="flex items-center gap-1 flex-shrink-0">
+                            <span className="text-[10px] font-semibold bg-[#DAA520]/10 text-[#DAA520] px-2 py-0.5 rounded-full whitespace-nowrap">Core CV</span>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); handleDelete(mainCV); }}
+                              disabled={deletingId === mainCV.id}
+                              className="text-gray-300 hover:text-red-400 p-1 rounded-lg transition-colors"
+                            >
+                              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Inline stats */}
+                        <div className="flex items-center gap-3 mt-2.5">
+                          {[
+                            { n: mainCV.experience?.length || 0, label: 'Experience' },
+                            { n: mainCV.skills?.length || 0, label: 'Skills' },
+                            { n: mainCV.education?.length || 0, label: 'Education' },
+                          ].map(({ n, label }) => (
+                            <div key={label} className="text-center bg-gray-50 rounded-xl px-3 py-1.5 flex-1">
+                              <div className="text-sm font-bold text-gray-900 leading-none">{n}</div>
+                              <div className="text-[10px] text-gray-400 mt-0.5 leading-none">{label}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Divider */}
+                    <div className="h-px bg-gray-100 mx-4" />
+
+                    {/* Actions row */}
+                    <div className="flex gap-2.5 p-4 pt-3">
+                      <Link href={`/cv-builder?id=${mainCV.id}`} className="flex-1" onClick={(e) => e.stopPropagation()}>
+                        <Button className="w-full h-10 bg-gray-900 hover:bg-[#DAA520] text-white text-sm font-medium rounded-xl transition-all">
+                          <svg className="w-3.5 h-3.5 mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                          </svg>
+                          Edit CV
+                        </Button>
+                      </Link>
+                      <Button
+                        onClick={(e) => { e.stopPropagation(); handleOpenPDFModal(mainCV); }}
+                        variant="outline"
+                        className="flex-1 h-10 border-[#DAA520] text-[#DAA520] hover:bg-[#DAA520] hover:text-white text-sm font-medium rounded-xl transition-all"
+                      >
+                        <svg className="w-3.5 h-3.5 mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Download
+                      </Button>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="flex items-center justify-between px-4 pb-3 -mt-1">
+                      <span className="text-[11px] text-gray-400">
+                        Last updated {getTimeSince(mainCV.lastUpdated)}
+                      </span>
+                      <span className="text-[11px] text-gray-300">Tap to edit</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* ── DESKTOP card (unchanged) ── */}
+                <motion.div
+                  className="hidden md:block cursor-pointer"
+                  whileHover={{ y: -4 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="cursor-pointer"
                   onClick={() => navigate(`/cv-builder?id=${mainCV.id}`)}
                 >
                   <Card className="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden hover:shadow-2xl transition-all duration-300">
                     <CardContent className="p-0">
                       <div className="flex flex-col lg:flex-row">
-                        {/* Document Preview */}
                         <div className="lg:w-1/3 bg-gradient-to-br from-gray-50 to-gray-100 p-8 flex items-center justify-center border-r border-gray-200">
                           <div className="relative">
-                            {/* Document Icon with Shadow */}
                             <div className="w-32 h-40 bg-white rounded-lg shadow-lg border border-gray-300 relative overflow-hidden">
-                              {/* Document Header */}
                               <div className="h-8 bg-[#DAA520]/10 border-b border-gray-200 flex items-center px-3">
-                                <div className="w-2 h-2 bg-[#DAA520] rounded-full mr-2"></div>
-                                <div className="w-16 h-1 bg-gray-300 rounded"></div>
+                                <div className="w-2 h-2 bg-[#DAA520] rounded-full mr-2" />
+                                <div className="w-16 h-1 bg-gray-300 rounded" />
                               </div>
-                              
-                              {/* Document Content Lines */}
                               <div className="p-3 space-y-2">
-                                <div className="w-full h-1.5 bg-gray-800 rounded"></div>
-                                <div className="w-3/4 h-1 bg-gray-400 rounded"></div>
-                                <div className="w-full h-1 bg-gray-400 rounded"></div>
-                                <div className="w-5/6 h-1 bg-gray-400 rounded"></div>
-                                
+                                <div className="w-full h-1.5 bg-gray-800 rounded" />
+                                <div className="w-3/4 h-1 bg-gray-400 rounded" />
+                                <div className="w-full h-1 bg-gray-400 rounded" />
+                                <div className="w-5/6 h-1 bg-gray-400 rounded" />
                                 <div className="pt-2">
-                                  <div className="w-1/2 h-1 bg-[#DAA520] rounded mb-1"></div>
-                                  <div className="w-full h-0.5 bg-gray-300 rounded"></div>
-                                  <div className="w-4/5 h-0.5 bg-gray-300 rounded"></div>
-                                  <div className="w-3/4 h-0.5 bg-gray-300 rounded"></div>
+                                  <div className="w-1/2 h-1 bg-[#DAA520] rounded mb-1" />
+                                  <div className="w-full h-0.5 bg-gray-300 rounded" />
+                                  <div className="w-4/5 h-0.5 bg-gray-300 rounded" />
+                                  <div className="w-3/4 h-0.5 bg-gray-300 rounded" />
                                 </div>
-                                
                                 <div className="pt-2">
-                                  <div className="w-1/2 h-1 bg-[#DAA520] rounded mb-1"></div>
-                                  <div className="w-full h-0.5 bg-gray-300 rounded"></div>
-                                  <div className="w-2/3 h-0.5 bg-gray-300 rounded"></div>
+                                  <div className="w-1/2 h-1 bg-[#DAA520] rounded mb-1" />
+                                  <div className="w-full h-0.5 bg-gray-300 rounded" />
+                                  <div className="w-2/3 h-0.5 bg-gray-300 rounded" />
                                 </div>
                               </div>
-                              
-                              {/* Shine Effect */}
-                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full animate-pulse"></div>
+                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full animate-pulse" />
                             </div>
-                            
-                            {/* Status Badge */}
-                            <div className="absolute -top-2 -right-2 bg-[#DAA520] text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">
-                              ✓
-                            </div>
+                            <div className="absolute -top-2 -right-2 bg-[#DAA520] text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">✓</div>
                           </div>
                         </div>
-
-                        {/* CV Details */}
                         <div className="lg:w-2/3 p-8">
                           <div className="flex justify-between items-start mb-6">
                             <div>
@@ -216,43 +291,31 @@ export default function CVManagement() {
                               <p className="text-gray-600 mb-1">{mainCV.personalInfo.fullName}</p>
                               <p className="text-sm text-[#DAA520] font-medium">{mainCV.personalInfo.title}</p>
                             </div>
-                            
                             <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDelete(mainCV);
-                              }}
+                              onClick={(e) => { e.stopPropagation(); handleDelete(mainCV); }}
                               disabled={deletingId === mainCV.id}
                               className="text-gray-400 hover:text-red-500 p-2 rounded-lg hover:bg-red-50 transition-all"
-                              title="Delete CV"
                             >
                               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                               </svg>
                             </button>
                           </div>
-
                           <p className="text-gray-600 mb-6 leading-relaxed">
                             {mainCV.personalInfo.summary || "Your comprehensive professional profile showcasing your skills, experience, and achievements."}
                           </p>
-
-                          {/* Quick Stats */}
                           <div className="grid grid-cols-3 gap-4 mb-6">
-                            <div className="text-center p-3 bg-gray-50 rounded-lg">
-                              <div className="text-lg font-bold text-gray-900">{mainCV.experience?.length || 0}</div>
-                              <div className="text-xs text-gray-500">Experience</div>
-                            </div>
-                            <div className="text-center p-3 bg-gray-50 rounded-lg">
-                              <div className="text-lg font-bold text-gray-900">{mainCV.skills?.length || 0}</div>
-                              <div className="text-xs text-gray-500">Skills</div>
-                            </div>
-                            <div className="text-center p-3 bg-gray-50 rounded-lg">
-                              <div className="text-lg font-bold text-gray-900">{mainCV.education?.length || 0}</div>
-                              <div className="text-xs text-gray-500">Education</div>
-                            </div>
+                            {[
+                              { n: mainCV.experience?.length || 0, label: 'Experience' },
+                              { n: mainCV.skills?.length || 0, label: 'Skills' },
+                              { n: mainCV.education?.length || 0, label: 'Education' },
+                            ].map(({ n, label }) => (
+                              <div key={label} className="text-center p-3 bg-gray-50 rounded-lg">
+                                <div className="text-lg font-bold text-gray-900">{n}</div>
+                                <div className="text-xs text-gray-500">{label}</div>
+                              </div>
+                            ))}
                           </div>
-
-                          {/* Action Buttons */}
                           <div className="flex gap-3">
                             <Link href={`/cv-builder?id=${mainCV.id}`} className="flex-1">
                               <Button className="w-full bg-black hover:bg-[#DAA520] text-white font-medium py-3 rounded-lg transition-all shadow-md hover:shadow-lg">
@@ -263,10 +326,7 @@ export default function CVManagement() {
                               </Button>
                             </Link>
                             <Button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleOpenPDFModal(mainCV);
-                              }}
+                              onClick={(e) => { e.stopPropagation(); handleOpenPDFModal(mainCV); }}
                               variant="outline"
                               className="px-6 py-3 border-2 border-[#DAA520] text-[#DAA520] hover:bg-[#DAA520] hover:text-white font-medium rounded-lg transition-all shadow-md hover:shadow-lg"
                             >
@@ -276,8 +336,6 @@ export default function CVManagement() {
                               Download
                             </Button>
                           </div>
-
-                          {/* Last Updated */}
                           <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
                             <div className="flex items-center text-sm text-gray-500">
                               <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -285,15 +343,14 @@ export default function CVManagement() {
                               </svg>
                               Last updated {getTimeSince(mainCV.lastUpdated)}
                             </div>
-                            <div className="text-xs text-gray-400">
-                              Click anywhere to edit
-                            </div>
+                            <div className="text-xs text-gray-400">Click anywhere to edit</div>
                           </div>
                         </div>
                       </div>
                     </CardContent>
                   </Card>
                 </motion.div>
+
               </motion.section>
             )}
 

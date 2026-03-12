@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { CV } from '@/lib/types';
 import { renderCVToHTML } from '@/services/pdf-service';
-import { useIsMobile } from '@/hooks/use-mobile';
 
-type CVLayoutStyle = 'modern' | 'classic' | 'minimalist' | 'creative' | 'executive' | 'technical' | 'professional' | 'simple-ats' | 'pure-ats' | 'traditional';
+type CVLayoutStyle =
+  | 'modern' | 'classic' | 'minimalist' | 'creative' | 'executive'
+  | 'technical' | 'professional' | 'simple-ats' | 'pure-ats' | 'traditional';
 
 interface CVPreviewProps {
   cv: CV;
@@ -14,38 +15,43 @@ interface CVPreviewProps {
 
 const CONTENT_WIDTH = 800;
 
-function ScaledCVPreview({ html }: { html: string }) {
-  const wrapperRef = useRef<HTMLDivElement>(null);
+/**
+ * Mobile: scales the 800px CV content to fit the container width.
+ * Uses a ref-callback + one-time resize to avoid ResizeObserver loops.
+ */
+function MobileScaledPreview({ html }: { html: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
 
-  const applyScale = useCallback(() => {
-    const wrapper = wrapperRef.current;
-    const inner = innerRef.current;
-    if (!wrapper || !inner) return;
-    const scale = wrapper.offsetWidth / CONTENT_WIDTH;
-    inner.style.transform = `scale(${scale})`;
-    inner.style.transformOrigin = 'top left';
-    inner.style.width = `${CONTENT_WIDTH}px`;
-    wrapper.style.height = `${inner.scrollHeight * scale}px`;
-  }, []);
-
   useEffect(() => {
-    applyScale();
-    const ro = new ResizeObserver(applyScale);
-    if (wrapperRef.current) ro.observe(wrapperRef.current);
-    return () => ro.disconnect();
-  }, [html, applyScale]);
+    const container = containerRef.current;
+    const inner = innerRef.current;
+    if (!container || !inner) return;
+
+    const apply = () => {
+      const scale = container.clientWidth / CONTENT_WIDTH;
+      inner.style.transform = `scale(${scale})`;
+      inner.style.transformOrigin = 'top left';
+      inner.style.width = `${CONTENT_WIDTH}px`;
+      container.style.height = `${inner.offsetHeight * scale}px`;
+    };
+
+    // Apply once after paint so offsetHeight is accurate
+    const raf = requestAnimationFrame(apply);
+    return () => cancelAnimationFrame(raf);
+  }, [html]);
 
   return (
-    <div ref={wrapperRef} className="relative w-full overflow-hidden">
+    <div ref={containerRef} className="w-full overflow-hidden">
       <div ref={innerRef} dangerouslySetInnerHTML={{ __html: html }} />
     </div>
   );
 }
 
 export default function CVPreview({ cv, template, className = "", style }: CVPreviewProps) {
-  const isMobile = useIsMobile();
   const html = renderCVToHTML(cv, template);
+  // Read window width once at render — no hooks, no subscriptions
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   return (
     <div
@@ -53,7 +59,7 @@ export default function CVPreview({ cv, template, className = "", style }: CVPre
       style={{ minHeight: '400px', ...style }}
     >
       {isMobile ? (
-        <ScaledCVPreview html={html} />
+        <MobileScaledPreview html={html} />
       ) : (
         <div className="overflow-auto h-full">
           <div style={{ minWidth: CONTENT_WIDTH }} dangerouslySetInnerHTML={{ __html: html }} />
