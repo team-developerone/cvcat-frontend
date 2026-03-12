@@ -24,26 +24,26 @@ export default function TeamPage() {
     {
       name: "Sayan Chakrabarti",
       nickname: "Riju",
-      role: "Co-founder & Backend Developer",
+      role: "Founder & Backend Developer",
       image: debojyotiImg, // Flipped as requested
       experience: "12+ years",
-      bio: "Veteran backend developer with extensive experience in building scalable systems and APIs. Expert in database design, system architecture, and performance optimization.",
+      bio: "Loves building stuff that scales. Been at it for over a decade—databases, APIs, cloud infra, you name it. If it runs in the backend, he's probably touched it.",
       skills: ["Node.js", "Python", "Database Design", "API Development", "System Architecture", "Cloud Infrastructure"],
       social: {
-        github: "https://github.com/sayan",
-        linkedin: "https://linkedin.com/in/sayan",
+        github: "https://github.com/sayanriju",
+        linkedin: "https://linkedin.com/in/sayanriju",
       }
     },
     {
       name: "Debojyoti Saha",
-      role: "Co-founder & Frontend Specialist",
+      role: "Founder & Full-Stack Developer",
       image: sayanImg, // Flipped as requested
       experience: "8+ years",
-      bio: "Passionate frontend developer with expertise in creating intuitive user interfaces and seamless experiences. Specializes in React, TypeScript, and modern web frameworks.",
+      bio: "Full-stack all-rounder who's worked with 30+ clients. Loves turning ideas into polished products—whether it's a slick UI or a solid API. React, TypeScript, Node—he dabbles in it all.",
       skills: ["React", "TypeScript", "UI/UX Design", "CSS/SASS", "Frontend Architecture", "Mobile Responsive Design"],
       social: {
         github: "https://github.com/debojyoti",
-        linkedin: "https://linkedin.com/in/debojyoti",
+        linkedin: "https://linkedin.com/in/debojyoti-dev",
       }
     }
   ];

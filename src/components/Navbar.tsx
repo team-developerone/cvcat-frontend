@@ -64,13 +64,7 @@ export default function Navbar({ isAuthenticated = false }: NavbarProps) {
         <div className="flex items-center">
           <div className="hidden md:flex space-x-6 mr-6">
            
-            
-            <div
-              onClick={() => goTo('/team')}
-              className="text-sm text-gray-700 hover:text-[#DAA520] transition-all cursor-pointer"
-            >
-              Team
-            </div>
+         
            
           </div>
 
@@ -92,6 +86,14 @@ export default function Navbar({ isAuthenticated = false }: NavbarProps) {
       ) : (
         // Authenticated navbar
         <div className="flex items-center space-x-4">
+          {location !== "/cv-management" && (
+            <Button
+              onClick={() => goTo("/cv-management")}
+              className="bg-[#DAA520] hover:bg-[#B8860B] text-white text-sm font-medium px-4 py-2 rounded"
+            >
+              Go to Dashboard
+            </Button>
+          )}
           {location === "/cv-management" ? (
             <></>
           ) : location === "/cv-builder" ? (

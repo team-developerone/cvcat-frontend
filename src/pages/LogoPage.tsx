@@ -10,7 +10,7 @@ export default function LogoPage() {
   const [_, navigate] = useLocation();
 
   return (
-    <Layout showFooter={true}>
+    <Layout>
       <div className="py-10 px-4 md:px-8 bg-white">
         <div className="max-w-5xl mx-auto">
           <h1 className="text-2xl font-bold mb-6">Logo Showcase</h1>

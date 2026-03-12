@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import Logo from "@/components/Logo";
+import Layout from "@/components/Layout";
 import { CheckCircle2, XCircle, Loader2, Mail } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -60,17 +60,11 @@ export default function VerifyEmail() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex flex-col">
-      {/* Header */}
-      <nav className="bg-white border-b border-gray-200 py-4 px-6">
-        <div className="max-w-7xl mx-auto">
-          <Logo size="md" />
-        </div>
-      </nav>
-
-      {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
+    <Layout>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex flex-col">
+        {/* Main Content */}
+        <div className="flex-1 flex items-center justify-center p-4">
+          <div className="w-full max-w-md">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

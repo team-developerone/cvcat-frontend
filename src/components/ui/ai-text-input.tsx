@@ -14,6 +14,8 @@ import {
   Plus,
   Palette,
 } from "lucide-react";
+import SparklesGradient from "./sparkles-gradient";
+import SparklesGradient from "./sparkles-gradient";
 
 const ACTIONS: {
   action: WritingAction;
@@ -146,34 +148,34 @@ export default function AITextInput({
 
   const hasText = value && value.trim().length > 0;
 
-  const inputClassName = `${className} ${hasText && !disabled ? "pr-8" : ""}`;
+  const inputClassName = `${className} ${!disabled ? "pr-8" : ""}`;
 
   return (
     <div className="relative">
       {variant === "textarea" ? (
         <Textarea
-          value={value}
-          onChange={onChange as React.ChangeEventHandler<HTMLTextAreaElement>}
-          onKeyDown={onKeyDown as React.KeyboardEventHandler<HTMLTextAreaElement>}
-          className={inputClassName}
-          name={name}
-          placeholder={placeholder}
-          disabled={disabled}
-        />
-      ) : (
-        <Input
-          value={value}
-          onChange={onChange as React.ChangeEventHandler<HTMLInputElement>}
-          onKeyDown={onKeyDown as React.KeyboardEventHandler<HTMLInputElement>}
-          className={inputClassName}
-          name={name}
-          type={type}
-          placeholder={placeholder}
-          disabled={disabled}
-        />
-      )}
+              value={value}
+              onChange={onChange as React.ChangeEventHandler<HTMLTextAreaElement>}
+              onKeyDown={onKeyDown as React.KeyboardEventHandler<HTMLTextAreaElement>}
+              className={inputClassName}
+              name={name}
+              placeholder={placeholder}
+              disabled={disabled}
+            />
+          ) : (
+            <Input
+              value={value}
+              onChange={onChange as React.ChangeEventHandler<HTMLInputElement>}
+              onKeyDown={onKeyDown as React.KeyboardEventHandler<HTMLInputElement>}
+              className={inputClassName}
+              name={name}
+              type={type}
+              placeholder={placeholder}
+              disabled={disabled}
+            />
+          )}
 
-      {hasText && !disabled && (
+      {!disabled && (
         <button
           ref={triggerRef}
           type="button"
@@ -184,14 +186,16 @@ export default function AITextInput({
               setShowToolbar(true);
             }
           }}
-          className={`absolute ${variant === "textarea" ? "top-2" : "top-1/2 -translate-y-1/2"} right-2 p-1 rounded-md transition-colors ${
+          className={`absolute ai-btn-glow ${variant === "textarea" ? "top-2" : "top-1/2 -translate-y-1/2"} right-2 p-1 rounded-md transition-colors ${
             showToolbar
               ? "text-[#DAA520] bg-[#DAA520]/10"
               : "text-gray-400 hover:text-[#DAA520] hover:bg-[#DAA520]/10"
           }`}
-          title="Improve with AI"
+          title={hasText ? "Improve with AI" : "Add text to improve with AI"}
         >
-          <Sparkles className="w-3.5 h-3.5" />
+          <span className="ai-icon-gradient inline-flex">
+            <Sparkles className="w-3.5 h-3.5" />
+          </span>
         </button>
       )}
 

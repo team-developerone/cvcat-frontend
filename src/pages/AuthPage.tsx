@@ -21,7 +21,7 @@ export default function AuthPage() {
   }
 
   return (
-    <Layout showFooter={false}>
+    <Layout>
       <div className="min-h-screen flex flex-col lg:flex-row overflow-hidden relative">
         {/* Background vectors - abstract shapes */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">

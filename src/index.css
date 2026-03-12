@@ -61,3 +61,23 @@
     display: none;
   }
 }
+
+/* AI button - glow + gradient icon animation */
+@keyframes ai-sparkle {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: drop-shadow(0 0 2px rgba(218, 165, 32, 0.4))
+      drop-shadow(0 0 6px rgba(218, 165, 32, 0.25));
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 4px rgba(218, 165, 32, 0.6))
+      drop-shadow(0 0 12px rgba(218, 165, 32, 0.35));
+  }
+}
+
+.ai-btn-glow {
+  animation: ai-sparkle 2.2s ease-in-out infinite;
+}

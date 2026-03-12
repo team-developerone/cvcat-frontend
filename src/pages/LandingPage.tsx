@@ -61,7 +61,7 @@ export default function LandingPage() {
   };
 
   return (
-    <Layout showFooter={true}>
+    <Layout>
       {/* Hero Section */}
       <section className="py-10 px-4 md:px-8 bg-white relative overflow-hidden">
         {/* Background Cat Paw Pattern */}
