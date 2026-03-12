@@ -19,6 +19,7 @@ export default function CVPreview({ cv, template, className = "", style }: CVPre
     >
       <div
         className="w-full"
+        style={{ minWidth: 800 }}
         dangerouslySetInnerHTML={{ __html: renderCVToHTML(cv, template) }}
       />
     </div>

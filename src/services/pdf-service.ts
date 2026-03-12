@@ -1,6 +1,5 @@
 import { CV } from '@/lib/types';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+import { API_BASE_URL, getStoredToken } from '@/services/api';
 
 type CVLayoutStyle = 'modern' | 'classic' | 'minimalist' | 'creative' | 'executive' | 'technical' | 'professional' | 'simple-ats' | 'pure-ats' | 'traditional';
 
@@ -153,8 +152,7 @@ function sectionBlock(content: string): string {
 }
 
 function modernHeading(title: string): string {
-  return `<h2 style="font-size: 15px; font-weight: 600; color: #333; margin: 0 0 8px; line-height: 1.25;">
-    <span style="display: inline-block; width: 24px; height: 2px; background: #DAA520; margin-right: 8px; vertical-align: middle; position: relative; top: -1px;"></span><span style="vertical-align: middle;">${title}</span></h2>`;
+  return `<h2 style="font-size: 15px; font-weight: 600; color: #333; margin: 0 0 8px; line-height: 1.25; padding-bottom: 4px; border-bottom: 2px solid #DAA520; display: inline-block;">${title}</h2>`;
 }
 
 /** Inline dot + text using a Unicode bullet character — guaranteed same-baseline alignment. */
@@ -169,14 +167,14 @@ function iconText(icon: string, text: string): string {
 
 function highlightsList(highlights: string[], fontSize = '12px', color = '#666'): string {
   if (highlights.length === 0) return '';
-  return `<ul style="list-style:none;padding-left:8px;margin:6px 0 0;">
-    ${highlights.map(h => `<li style="font-size:${fontSize};color:${color};margin-bottom:3px;line-height:1.5;"><span style="color:${color};margin-right:6px;">&#8226;</span>${h}</li>`).join('')}</ul>`;
+  return `<ul style="list-style:disc;list-style-position:outside;padding-left:20px;margin:6px 0 0;">
+    ${highlights.map(h => `<li style="font-size:${fontSize};color:${color};margin-bottom:3px;line-height:1.5;margin-left:0;padding-left:4px;">${h}</li>`).join('')}</ul>`;
 }
 
 /* ─── MODERN ─── */
 function renderModern(pi: PI, s: Sections): string {
   return `
-    <div style="padding: 40px; font-family: Inter, Helvetica, Arial, sans-serif; color: #000; max-width: 800px; margin: 0 auto;">
+    <div style="padding: 40px; font-family: Inter, Helvetica, Arial, sans-serif; color: #000; max-width: 800px; margin: 0 auto; box-sizing: border-box;">
       <div style="text-align: center; margin-bottom: 24px;">
         <div style="width: 96px; height: 2px; background: #DAA520; margin: 0 auto 12px;"></div>
         <h1 style="font-size: 24px; font-weight: bold; margin: 0 0 4px;">${pi.fullName}</h1>
@@ -191,9 +189,9 @@ function renderModern(pi: PI, s: Sections): string {
       ${s.experience.length > 0 ? `<div style="margin-bottom: 20px;">
         ${modernHeading('Experience')}
         ${s.experience.map(exp => `<div style="margin-bottom: 12px; font-size: 13px; break-inside: avoid;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-            <span style="font-weight: 500;">${exp.position}</span>
-            <span style="color: #888;">${exp.startDate} - ${exp.endDate}</span>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 4px;">
+            <span style="font-weight: 500; min-width: 0;">${exp.position}</span>
+            <span style="color: #888; white-space: nowrap; flex-shrink: 0;">${exp.startDate} - ${exp.endDate}</span>
           </div>
           <p style="color: #666; margin: 0 0 4px;">${exp.company}${exp.location ? ` · ${exp.location}` : ''}</p>
           <p style="color: #666; font-size: 12px; margin: 0;">${exp.description}</p>
@@ -204,9 +202,9 @@ function renderModern(pi: PI, s: Sections): string {
       ${s.education.length > 0 ? `<div style="margin-bottom: 20px;">
         ${modernHeading('Education')}
         ${s.education.map(edu => `<div style="margin-bottom: 12px; font-size: 13px; break-inside: avoid;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-            <span style="font-weight: 500;">${edu.degree}</span>
-            <span style="color: #888;">${edu.period}</span>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 4px;">
+            <span style="font-weight: 500; min-width: 0;">${edu.degree}</span>
+            <span style="color: #888; white-space: nowrap; flex-shrink: 0;">${edu.period}</span>
           </div>
           <p style="color: #666; margin: 0;">${edu.institution}</p>
           ${edu.description ? `<p style="color: #888; font-size: 12px; margin: 2px 0 0;">${edu.description}</p>` : ''}
@@ -214,16 +212,16 @@ function renderModern(pi: PI, s: Sections): string {
       </div>` : ''}
 
       ${s.skills.length > 0 ? sectionBlock(`${modernHeading('Skills')}
-        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
           ${s.skills.map(skill => `<span style="font-size: 12px; padding: 4px 8px; background: #f3f4f6; color: #555; border-radius: 4px;">${skill}</span>`).join('')}
         </div>`) : ''}
 
       ${s.projects.length > 0 ? `<div style="margin-bottom: 20px;">
         ${modernHeading('Projects')}
         ${s.projects.map(p => `<div style="margin-bottom: 12px; font-size: 13px; break-inside: avoid;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-            <span style="font-weight: 500;">${p.title}</span>
-            ${(p.startDate || p.endDate) ? `<span style="color: #888;">${p.startDate}${p.endDate ? ' - ' + p.endDate : ' - Present'}</span>` : ''}
+          <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 4px;">
+            <span style="font-weight: 500; min-width: 0;">${p.title}</span>
+            ${(p.startDate || p.endDate) ? `<span style="color: #888; white-space: nowrap; flex-shrink: 0;">${p.startDate}${p.endDate ? ' - ' + p.endDate : ' - Present'}</span>` : ''}
           </div>
           <p style="color: #666; font-size: 12px; margin: 0 0 4px;">${p.description}</p>
           ${highlightsList(p.highlights)}
@@ -234,8 +232,8 @@ function renderModern(pi: PI, s: Sections): string {
       ${s.certifications.length > 0 ? `<div style="margin-bottom: 20px;">
         ${modernHeading('Certifications')}
         ${s.certifications.map(c => `<div style="margin-bottom: 8px; font-size: 13px; break-inside: avoid;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-            <span style="font-weight: 500;">${c.name}</span><span style="color: #888;">${c.date}</span>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 2px;">
+            <span style="font-weight: 500; min-width: 0;">${c.name}</span><span style="color: #888; white-space: nowrap; flex-shrink: 0;">${c.date}</span>
           </div>
           <p style="color: #666; margin: 0;">${c.issuer}</p>
           ${c.description ? `<p style="color: #666; font-size: 12px; margin: 2px 0 0;">${c.description}</p>` : ''}
@@ -245,9 +243,9 @@ function renderModern(pi: PI, s: Sections): string {
       ${s.volunteer.length > 0 ? `<div style="margin-bottom: 20px;">
         ${modernHeading('Volunteer Experience')}
         ${s.volunteer.map(v => `<div style="margin-bottom: 12px; font-size: 13px; break-inside: avoid;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-            <span style="font-weight: 500;">${v.position}</span>
-            <span style="color: #888;">${v.startDate} - ${v.endDate}</span>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 4px;">
+            <span style="font-weight: 500; min-width: 0;">${v.position}</span>
+            <span style="color: #888; white-space: nowrap; flex-shrink: 0;">${v.startDate} - ${v.endDate}</span>
           </div>
           <p style="color: #666; margin: 0 0 4px;">${v.organization}</p>
           <p style="color: #666; font-size: 12px; margin: 0;">${v.summary}</p>
@@ -258,8 +256,8 @@ function renderModern(pi: PI, s: Sections): string {
       ${s.awards.length > 0 ? `<div style="margin-bottom: 20px;">
         ${modernHeading('Awards')}
         ${s.awards.map(a => `<div style="margin-bottom: 8px; font-size: 13px; break-inside: avoid;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-            <span style="font-weight: 500;">${a.title}</span><span style="color: #888;">${a.date}</span>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 2px;">
+            <span style="font-weight: 500; min-width: 0;">${a.title}</span><span style="color: #888; white-space: nowrap; flex-shrink: 0;">${a.date}</span>
           </div>
           <p style="color: #666; margin: 0;">${a.awarder}</p>
           ${a.summary ? `<p style="color: #666; font-size: 12px; margin: 2px 0 0;">${a.summary}</p>` : ''}
@@ -290,8 +288,8 @@ function renderModern(pi: PI, s: Sections): string {
       ${s.publications.length > 0 ? `<div style="margin-bottom: 20px;">
         ${modernHeading('Publications')}
         ${s.publications.map(p => `<div style="margin-bottom: 8px; font-size: 13px; break-inside: avoid;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-            <span style="font-weight: 500; font-style: italic;">${p.title}</span><span style="color: #888;">${p.date}</span>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 2px;">
+            <span style="font-weight: 500; font-style: italic; min-width: 0;">${p.title}</span><span style="color: #888; white-space: nowrap; flex-shrink: 0;">${p.date}</span>
           </div>
           <p style="color: #666; margin: 0;">${p.publisher}</p>
         </div>`).join('')}
@@ -300,9 +298,9 @@ function renderModern(pi: PI, s: Sections): string {
       ${s.customSections.map(sec => `<div style="margin-bottom: 20px;">
         ${modernHeading(sec.title)}
         ${sec.items.map(item => `<div style="margin-bottom: 8px; font-size: 13px; break-inside: avoid;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-            <span style="font-weight: 500;">${item.title}</span>
-            ${item.date ? `<span style="color: #888;">${item.date}</span>` : ''}
+          <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 2px;">
+            <span style="font-weight: 500; min-width: 0;">${item.title}</span>
+            ${item.date ? `<span style="color: #888; white-space: nowrap; flex-shrink: 0;">${item.date}</span>` : ''}
           </div>
           ${item.subtitle ? `<p style="color: #666; margin: 0;">${item.subtitle}</p>` : ''}
           ${item.description ? `<p style="color: #666; font-size: 12px; margin: 4px 0 0;">${item.description}</p>` : ''}
@@ -319,7 +317,7 @@ function renderClassic(pi: PI, s: Sections): string {
   </div>`;
 
   return `
-    <div style="font-family:Georgia,'Times New Roman',serif;color:#000;max-width:800px;margin:0 auto;padding:28px 40px;">
+    <div style="font-family:Georgia,'Times New Roman',serif;color:#000;max-width:800px;margin:0 auto;padding:28px 40px;box-sizing:border-box;">
       <!-- Header -->
       <div style="text-align:center;margin-bottom:12px;">
         <h1 style="font-size:20px;font-weight:700;margin:0;">${pi.fullName}, ${pi.title}</h1>
@@ -431,9 +429,9 @@ function renderClassic(pi: PI, s: Sections): string {
 function renderMinimalist(pi: PI, s: Sections): string {
   const heading = (t: string) => `<h3 style="font-size: 14px; font-weight: 500; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px; margin: 0 0 12px;">${t}</h3>`;
   return `
-    <div style="display: flex; font-family: Inter, Helvetica, Arial, sans-serif; color: #000; max-width: 800px; margin: 0 auto; min-height: 1120px;">
+    <div style="display: flex; font-family: Inter, Helvetica, Arial, sans-serif; color: #000; max-width: 800px; margin: 0 auto; min-height: 1120px; box-sizing: border-box;">
       <!-- Sidebar -->
-      <div style="width: 33%; background: #f9fafb; padding: 24px; display: flex; flex-direction: column;">
+      <div style="width: 33%; background: #f9fafb; padding: 24px; display: flex; flex-direction: column; box-sizing: border-box;">
         <h1 style="font-size: 20px; font-weight: bold; margin: 0 0 16px;">${pi.fullName}</h1>
         <p style="color: #666; font-size: 13px; margin: 0 0 8px;">${pi.title}</p>
         <div style="font-size: 13px; color: #666; margin-bottom: 24px;">
@@ -469,8 +467,8 @@ function renderMinimalist(pi: PI, s: Sections): string {
           ${heading('Experience')}
           ${s.experience.map(exp => `<div style="margin-bottom: 16px; font-size: 12px; break-inside: avoid;">
             <p style="font-weight: 500; margin: 0;">${exp.position}</p>
-            <div style="display: flex; justify-content: space-between; color: #888; margin-bottom: 4px;">
-              <span>${exp.company}</span><span>${exp.startDate} - ${exp.endDate}</span>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; color: #888; margin-bottom: 4px; gap: 12px;">
+              <span style="min-width: 0;">${exp.company}</span><span style="white-space: nowrap; flex-shrink: 0;">${exp.startDate} - ${exp.endDate}</span>
             </div>
             <p style="color: #666; margin: 0;">${exp.description}</p>
             ${highlightsList(exp.highlights, '11px', '#666')}
@@ -481,8 +479,8 @@ function renderMinimalist(pi: PI, s: Sections): string {
           ${heading('Education')}
           ${s.education.map(edu => `<div style="margin-bottom: 12px; font-size: 12px; break-inside: avoid;">
             <p style="font-weight: 500; margin: 0;">${edu.degree}</p>
-            <div style="display: flex; justify-content: space-between; color: #888;">
-              <span>${edu.institution}</span><span>${edu.period}</span>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; color: #888; gap: 12px;">
+              <span style="min-width: 0;">${edu.institution}</span><span style="white-space: nowrap; flex-shrink: 0;">${edu.period}</span>
             </div>
             ${edu.description ? `<p style="font-size: 11px; color: #888; margin: 2px 0 0;">${edu.description}</p>` : ''}
           </div>`).join('')}
@@ -491,9 +489,9 @@ function renderMinimalist(pi: PI, s: Sections): string {
         ${s.projects.length > 0 ? `<div style="margin-bottom: 24px;">
           ${heading('Projects')}
           ${s.projects.map(p => `<div style="margin-bottom: 12px; font-size: 12px; break-inside: avoid;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-              <span style="font-weight: 500;">${p.title}</span>
-              ${(p.startDate || p.endDate) ? `<span style="color: #888;">${p.startDate}${p.endDate ? ' - ' + p.endDate : ''}</span>` : ''}
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px; gap: 12px;">
+              <span style="font-weight: 500; min-width: 0;">${p.title}</span>
+              ${(p.startDate || p.endDate) ? `<span style="color: #888; white-space: nowrap; flex-shrink: 0;">${p.startDate}${p.endDate ? ' - ' + p.endDate : ''}</span>` : ''}
             </div>
             <p style="color: #666; margin: 0;">${p.description}</p>
             ${highlightsList(p.highlights, '11px', '#666')}
@@ -504,8 +502,8 @@ function renderMinimalist(pi: PI, s: Sections): string {
         ${s.certifications.length > 0 ? `<div style="margin-bottom: 24px;">
           ${heading('Certifications')}
           ${s.certifications.map(c => `<div style="margin-bottom: 8px; font-size: 12px; break-inside: avoid;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-              <span style="font-weight: 500;">${c.name}</span><span style="color: #888;">${c.date}</span>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px; gap: 12px;">
+              <span style="font-weight: 500; min-width: 0;">${c.name}</span><span style="color: #888; white-space: nowrap; flex-shrink: 0;">${c.date}</span>
             </div>
             <p style="color: #666; margin: 0;">${c.issuer}</p>
           </div>`).join('')}
@@ -515,8 +513,8 @@ function renderMinimalist(pi: PI, s: Sections): string {
           ${heading('Volunteer Experience')}
           ${s.volunteer.map(v => `<div style="margin-bottom: 12px; font-size: 12px; break-inside: avoid;">
             <p style="font-weight: 500; margin: 0;">${v.position}</p>
-            <div style="display: flex; justify-content: space-between; color: #888; margin-bottom: 4px;">
-              <span>${v.organization}</span><span>${v.startDate} - ${v.endDate}</span>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; color: #888; margin-bottom: 4px; gap: 12px;">
+              <span style="min-width: 0;">${v.organization}</span><span style="white-space: nowrap; flex-shrink: 0;">${v.startDate} - ${v.endDate}</span>
             </div>
             <p style="color: #666; margin: 0;">${v.summary}</p>
             ${highlightsList(v.highlights, '11px', '#666')}
@@ -526,8 +524,8 @@ function renderMinimalist(pi: PI, s: Sections): string {
         ${s.awards.length > 0 ? `<div style="margin-bottom: 24px;">
           ${heading('Awards')}
           ${s.awards.map(a => `<div style="margin-bottom: 8px; font-size: 12px; break-inside: avoid;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-              <span style="font-weight: 500;">${a.title}</span><span style="color: #888;">${a.date}</span>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px; gap: 12px;">
+              <span style="font-weight: 500; min-width: 0;">${a.title}</span><span style="color: #888; white-space: nowrap; flex-shrink: 0;">${a.date}</span>
             </div>
             <p style="color: #666; margin: 0;">${a.awarder}</p>
             ${a.summary ? `<p style="font-size: 11px; color: #888; margin: 2px 0 0;">${a.summary}</p>` : ''}
@@ -548,8 +546,8 @@ function renderMinimalist(pi: PI, s: Sections): string {
         ${s.publications.length > 0 ? `<div style="margin-bottom: 24px;">
           ${heading('Publications')}
           ${s.publications.map(p => `<div style="margin-bottom: 8px; font-size: 12px; break-inside: avoid;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-              <span style="font-weight: 500; font-style: italic;">${p.title}</span><span style="color: #888;">${p.date}</span>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px; gap: 12px;">
+              <span style="font-weight: 500; font-style: italic; min-width: 0;">${p.title}</span><span style="color: #888; white-space: nowrap; flex-shrink: 0;">${p.date}</span>
             </div>
             <p style="color: #666; margin: 0;">${p.publisher}</p>
           </div>`).join('')}
@@ -558,9 +556,9 @@ function renderMinimalist(pi: PI, s: Sections): string {
         ${s.customSections.map(sec => `<div style="margin-bottom: 24px;">
           ${heading(sec.title)}
           ${sec.items.map(item => `<div style="margin-bottom: 8px; font-size: 12px; break-inside: avoid;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-              <span style="font-weight: 500;">${item.title}</span>
-              ${item.date ? `<span style="color: #888;">${item.date}</span>` : ''}
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px; gap: 12px;">
+              <span style="font-weight: 500; min-width: 0;">${item.title}</span>
+              ${item.date ? `<span style="color: #888; white-space: nowrap; flex-shrink: 0;">${item.date}</span>` : ''}
             </div>
             ${item.subtitle ? `<p style="color: #666; margin: 0;">${item.subtitle}</p>` : ''}
             ${item.description ? `<p style="color: #666; font-size: 11px; margin: 4px 0 0;">${item.description}</p>` : ''}
@@ -577,7 +575,7 @@ function renderCreative(pi: PI, s: Sections): string {
     <div style="position: absolute; left: -5px; top: 6px; width: 8px; height: 8px; border-radius: 50%; background: #DAA520;"></div>${content}</div>`;
 
   return `
-    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #000; max-width: 800px; margin: 0 auto;">
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #000; max-width: 800px; margin: 0 auto; box-sizing: border-box;">
       <div style="background: rgba(218,165,32,0.15); padding: 24px 40px; display: flex; align-items: center;">
         <div>
           <h1 style="font-size: 24px; font-weight: bold; margin: 0;">${pi.fullName}</h1>
@@ -722,7 +720,7 @@ function renderCreative(pi: PI, s: Sections): string {
 function renderExecutive(pi: PI, s: Sections): string {
   const heading = (t: string) => `<h2 style="font-size: 16px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid rgba(218,165,32,0.3); padding-bottom: 4px; margin: 0 0 12px;">${t}</h2>`;
   return `
-    <div style="font-family: Georgia, 'Times New Roman', serif; color: #000; max-width: 800px; margin: 0 auto;">
+    <div style="font-family: Georgia, 'Times New Roman', serif; color: #000; max-width: 800px; margin: 0 auto; box-sizing: border-box;">
       <div style="padding: 32px 40px; border-bottom: 4px solid #DAA520; margin-bottom: 24px;">
         <h1 style="font-size: 28px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 4px;">${pi.fullName}</h1>
         <p style="font-size: 18px; color: #555; letter-spacing: 1px; margin: 0 0 12px;">${pi.title}</p>
@@ -737,9 +735,9 @@ function renderExecutive(pi: PI, s: Sections): string {
         ${s.experience.length > 0 ? `<div style="margin-bottom: 24px;">
           ${heading('Professional Experience')}
           ${s.experience.map(exp => `<div style="margin-bottom: 16px; break-inside: avoid;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-              <span style="font-weight: bold;">${exp.position}</span>
-              <span style="font-weight: 600; color: #DAA520;">${exp.startDate} - ${exp.endDate}</span>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 4px;">
+              <span style="font-weight: bold; min-width: 0;">${exp.position}</span>
+              <span style="font-weight: 600; color: #DAA520; white-space: nowrap; flex-shrink: 0;">${exp.startDate} - ${exp.endDate}</span>
             </div>
             <p style="font-size: 13px; font-weight: 600; margin: 0 0 4px;">${exp.company}</p>
             <p style="font-size: 13px; color: #555; margin: 0;">${exp.description}</p>
@@ -750,9 +748,9 @@ function renderExecutive(pi: PI, s: Sections): string {
         ${s.education.length > 0 ? `<div style="margin-bottom: 24px;">
           ${heading('Education')}
           ${s.education.map(edu => `<div style="margin-bottom: 12px; break-inside: avoid;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-              <span style="font-weight: bold;">${edu.degree}</span>
-              <span style="font-weight: 600; color: #DAA520;">${edu.period}</span>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 4px;">
+              <span style="font-weight: bold; min-width: 0;">${edu.degree}</span>
+              <span style="font-weight: 600; color: #DAA520; white-space: nowrap; flex-shrink: 0;">${edu.period}</span>
             </div>
             <p style="font-size: 13px; margin: 0;">${edu.institution}</p>
             ${edu.description ? `<p style="font-size: 13px; color: #555; margin: 4px 0 0;">${edu.description}</p>` : ''}
@@ -769,9 +767,9 @@ function renderExecutive(pi: PI, s: Sections): string {
         ${s.projects.length > 0 ? `<div style="margin-bottom: 24px;">
           ${heading('Key Projects')}
           ${s.projects.map(p => `<div style="margin-bottom: 16px; break-inside: avoid;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-              <span style="font-weight: bold;">${p.title}</span>
-              ${(p.startDate || p.endDate) ? `<span style="font-weight: 600; color: #DAA520;">${p.startDate}${p.endDate ? ' - ' + p.endDate : ''}</span>` : ''}
+            <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 4px;">
+              <span style="font-weight: bold; min-width: 0;">${p.title}</span>
+              ${(p.startDate || p.endDate) ? `<span style="font-weight: 600; color: #DAA520; white-space: nowrap; flex-shrink: 0;">${p.startDate}${p.endDate ? ' - ' + p.endDate : ''}</span>` : ''}
             </div>
             <p style="font-size: 13px; color: #555; margin: 0 0 4px;">${p.description}</p>
             ${highlightsList(p.highlights, '12px', '#555')}
@@ -782,9 +780,9 @@ function renderExecutive(pi: PI, s: Sections): string {
         ${s.certifications.length > 0 ? `<div style="margin-bottom: 24px;">
           ${heading('Certifications')}
           ${s.certifications.map(c => `<div style="margin-bottom: 12px; break-inside: avoid;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-              <span style="font-weight: bold;">${c.name}</span>
-              <span style="font-weight: 600; color: #DAA520;">${c.date}</span>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 4px;">
+              <span style="font-weight: bold; min-width: 0;">${c.name}</span>
+              <span style="font-weight: 600; color: #DAA520; white-space: nowrap; flex-shrink: 0;">${c.date}</span>
             </div>
             <p style="font-size: 13px; margin: 0;">${c.issuer}</p>
             ${c.description ? `<p style="font-size: 13px; color: #555; margin: 4px 0 0;">${c.description}</p>` : ''}
@@ -794,9 +792,9 @@ function renderExecutive(pi: PI, s: Sections): string {
         ${s.volunteer.length > 0 ? `<div style="margin-bottom: 24px;">
           ${heading('Community Involvement')}
           ${s.volunteer.map(v => `<div style="margin-bottom: 16px; break-inside: avoid;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-              <span style="font-weight: bold;">${v.position}</span>
-              <span style="font-weight: 600; color: #DAA520;">${v.startDate} - ${v.endDate}</span>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 4px;">
+              <span style="font-weight: bold; min-width: 0;">${v.position}</span>
+              <span style="font-weight: 600; color: #DAA520; white-space: nowrap; flex-shrink: 0;">${v.startDate} - ${v.endDate}</span>
             </div>
             <p style="font-size: 13px; font-weight: 600; margin: 0 0 4px;">${v.organization}</p>
             <p style="font-size: 13px; color: #555; margin: 0;">${v.summary}</p>
@@ -807,9 +805,9 @@ function renderExecutive(pi: PI, s: Sections): string {
         ${s.awards.length > 0 ? `<div style="margin-bottom: 24px;">
           ${heading('Honors & Awards')}
           ${s.awards.map(a => `<div style="margin-bottom: 12px; break-inside: avoid;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-              <span style="font-weight: bold;">${a.title}</span>
-              <span style="font-weight: 600; color: #DAA520;">${a.date}</span>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 4px;">
+              <span style="font-weight: bold; min-width: 0;">${a.title}</span>
+              <span style="font-weight: 600; color: #DAA520; white-space: nowrap; flex-shrink: 0;">${a.date}</span>
             </div>
             <p style="font-size: 13px; margin: 0;">${a.awarder}</p>
             ${a.summary ? `<p style="font-size: 13px; color: #555; margin: 4px 0 0;">${a.summary}</p>` : ''}
@@ -842,9 +840,9 @@ function renderExecutive(pi: PI, s: Sections): string {
         ${s.publications.length > 0 ? `<div style="margin-bottom: 24px;">
           ${heading('Publications')}
           ${s.publications.map(p => `<div style="margin-bottom: 12px; break-inside: avoid;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-              <span style="font-weight: bold; font-style: italic;">${p.title}</span>
-              <span style="font-weight: 600; color: #DAA520;">${p.date}</span>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 4px;">
+              <span style="font-weight: bold; font-style: italic; min-width: 0;">${p.title}</span>
+              <span style="font-weight: 600; color: #DAA520; white-space: nowrap; flex-shrink: 0;">${p.date}</span>
             </div>
             <p style="font-size: 13px; margin: 0;">${p.publisher}</p>
           </div>`).join('')}
@@ -853,9 +851,9 @@ function renderExecutive(pi: PI, s: Sections): string {
         ${s.customSections.map(sec => `<div style="margin-bottom: 24px;">
           ${heading(sec.title)}
           ${sec.items.map(item => `<div style="margin-bottom: 12px; break-inside: avoid;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-              <span style="font-weight: bold;">${item.title}</span>
-              ${item.date ? `<span style="font-weight: 600; color: #DAA520;">${item.date}</span>` : ''}
+            <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 4px;">
+              <span style="font-weight: bold; min-width: 0;">${item.title}</span>
+              ${item.date ? `<span style="font-weight: 600; color: #DAA520; white-space: nowrap; flex-shrink: 0;">${item.date}</span>` : ''}
             </div>
             ${item.subtitle ? `<p style="font-size: 13px; margin: 0;">${item.subtitle}</p>` : ''}
             ${item.description ? `<p style="font-size: 13px; color: #555; margin: 4px 0 0;">${item.description}</p>` : ''}
@@ -869,7 +867,7 @@ function renderExecutive(pi: PI, s: Sections): string {
 function renderTechnical(pi: PI, s: Sections): string {
   const heading = (t: string) => `<h2 style="font-family: 'Fira Code', 'Courier New', monospace; font-size: 14px; font-weight: 600; color: #333; margin: 0 0 10px; padding: 6px 10px; background: #f3f4f6; border-left: 3px solid #DAA520;">${t}</h2>`;
   return `
-    <div style="font-family: Inter, Helvetica, Arial, sans-serif; color: #000; max-width: 800px; margin: 0 auto; padding: 36px 40px;">
+    <div style="font-family: Inter, Helvetica, Arial, sans-serif; color: #000; max-width: 800px; margin: 0 auto; padding: 36px 40px; box-sizing: border-box;">
       <div style="margin-bottom: 20px; border-bottom: 2px solid #DAA520; padding-bottom: 16px;">
         <h1 style="font-size: 22px; font-weight: bold; margin: 0 0 4px; font-family: 'Fira Code', 'Courier New', monospace;">${pi.fullName}</h1>
         <p style="font-size: 14px; color: #555; margin: 0 0 8px;">${pi.title}</p>
@@ -1129,7 +1127,7 @@ function renderProfessional(pi: PI, s: Sections): string {
   `;
 
   return `
-    <div style="font-family:Arial,Helvetica,sans-serif;color:#000;max-width:800px;margin:0 auto;">
+    <div style="font-family:Arial,Helvetica,sans-serif;color:#000;max-width:800px;margin:0 auto;box-sizing:border-box;">
       <!-- Header -->
       <div style="padding:28px 32px 20px;border-bottom:3px solid ${accent};">
         <h1 style="font-size:26px;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin:0;">${pi.fullName}</h1>
@@ -1150,7 +1148,7 @@ function renderSimpleAts(pi: PI, s: Sections): string {
   const heading = (t: string) => `<h2 style="font-size:22px;font-weight:400;color:${accent};margin:20px 0 8px;padding-bottom:6px;border-bottom:1px solid #ddd;">${t}</h2>`;
 
   return `
-    <div style="font-family:Arial,Helvetica,sans-serif;color:#000;max-width:800px;margin:0 auto;padding:32px 40px;">
+    <div style="font-family:Arial,Helvetica,sans-serif;color:#000;max-width:800px;margin:0 auto;padding:32px 40px;box-sizing:border-box;">
       <!-- Header -->
       <div style="margin-bottom:8px;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;">
@@ -1277,7 +1275,7 @@ function renderPureAts(pi: PI, s: Sections): string {
   const heading = (t: string) => `<h2 style="font-size:14px;font-weight:400;color:#333;margin:16px 0 4px;padding-bottom:3px;border-bottom:1px solid #999;">${t}</h2>`;
 
   return `
-    <div style="font-family:'Times New Roman',Georgia,serif;color:#000;max-width:800px;margin:0 auto;padding:24px 32px;">
+    <div style="font-family:'Times New Roman',Georgia,serif;color:#000;max-width:800px;margin:0 auto;padding:24px 32px;box-sizing:border-box;">
       <!-- Header -->
       <div style="margin-bottom:4px;">
         <h1 style="font-size:22px;font-weight:700;margin:0;">${pi.fullName}</h1>
@@ -1384,7 +1382,7 @@ function renderTraditional(pi: PI, s: Sections): string {
   const lineSep = '<div style="border-bottom:1px solid #ccc;margin:8px 0;"></div>';
 
   return `
-    <div style="font-family:Georgia,'Times New Roman',serif;color:#000;max-width:800px;margin:0 auto;padding:28px 40px;">
+    <div style="font-family:Georgia,'Times New Roman',serif;color:#000;max-width:800px;margin:0 auto;padding:28px 40px;box-sizing:border-box;">
       <!-- Header -->
       <div style="text-align:center;margin-bottom:8px;">
         <h1 style="font-size:26px;font-weight:700;text-transform:uppercase;letter-spacing:4px;margin:0;">${pi.fullName}</h1>
@@ -1577,113 +1575,36 @@ export class PDFService {
 
   async generatePDF(cv: CV, layout: CVLayoutStyle = 'modern'): Promise<Blob> {
     const html = renderCVToHTML(cv, layout);
+    const token = getStoredToken();
 
-    const container = document.createElement('div');
-    container.style.position = 'absolute';
-    container.style.left = '-9999px';
-    container.style.top = '0';
-    container.style.width = '794px';
-    container.style.background = 'white';
-    container.innerHTML = html;
-    document.body.appendChild(container);
+    const response = await fetch(`${API_BASE_URL}/cv/export/pdf`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({
+        html,
+        template: layout,
+        cvId: cv.id || undefined,
+        fileName: `${cv.personalInfo.fullName || cv.title || 'CV'}_${layout}`,
+      }),
+    });
 
-    try {
-      const canvasScale = 2;
+    if (!response.ok) {
+      let message = 'Failed to generate PDF.';
 
-      // Step 1: Collect DOM break points BEFORE rendering to canvas
-      const breakPoints = this.collectBreakPoints(container, canvasScale);
-
-      const canvas = await html2canvas(container, {
-        scale: canvasScale,
-        useCORS: true,
-        backgroundColor: '#ffffff',
-        width: 794,
-        windowWidth: 794,
-      });
-
-      const fullCtx = canvas.getContext('2d')!;
-      const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4', compress: true });
-      const pdfWidth = 210;
-      const pdfHeight = 297;
-      const footerMargin = 10;
-      const usableHeightMm = pdfHeight - footerMargin;
-
-      const canvasToMm = pdfWidth / canvas.width;
-      const pageHeightPx = Math.floor(usableHeightMm / canvasToMm);
-
-      // Step 2: Build pages using DOM break points refined by pixel scanning
-      const pages: Array<{ start: number; end: number }> = [];
-      let start = 0;
-
-      while (start < canvas.height) {
-        const idealEnd = start + pageHeightPx;
-
-        if (idealEnd >= canvas.height) {
-          pages.push({ start, end: canvas.height });
-          break;
-        }
-
-        // Find the best DOM break point: largest one ≤ idealEnd
-        let bestBreak = 0;
-        for (let i = breakPoints.length - 1; i >= 0; i--) {
-          const bp = breakPoints[i];
-          if (bp > start + 40 && bp <= idealEnd) {
-            bestBreak = bp;
-            break;
-          }
-        }
-
-        let end: number;
-        if (bestBreak > start + pageHeightPx * 0.4) {
-          // Refine the DOM break point with pixel scanning (±30px window)
-          end = this.refineBreakWithPixels(fullCtx, canvas.width, canvas.height, bestBreak, 30);
-        } else {
-          end = Math.min(idealEnd, canvas.height);
-        }
-
-        // Safety: always advance
-        if (end <= start) {
-          pages.push({ start, end: Math.min(start + pageHeightPx, canvas.height) });
-          start = start + pageHeightPx;
-        } else {
-          pages.push({ start, end });
-          start = end;
-        }
+      try {
+        const errorBody = await response.json();
+        message = errorBody.reason || errorBody.message || message;
+      } catch {
+        // Ignore non-JSON error bodies.
       }
 
-      // Render each page
-      const totalPages = pages.length;
-      for (let index = 0; index < totalPages; index++) {
-        if (index > 0) pdf.addPage();
-
-        const page = pages[index];
-        const segH = Math.max(1, page.end - page.start);
-
-        const pageCanvas = document.createElement('canvas');
-        pageCanvas.width = canvas.width;
-        pageCanvas.height = Math.ceil(segH);
-
-        const ctx = pageCanvas.getContext('2d');
-        if (!ctx) continue;
-
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
-        ctx.drawImage(canvas, 0, page.start, canvas.width, segH, 0, 0, canvas.width, segH);
-
-        const segHeightMm = segH * canvasToMm;
-        const topMargin = index > 0 ? 8 : 0; // 8mm top margin on continuation pages
-        pdf.addImage(pageCanvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, topMargin, pdfWidth, segHeightMm);
-
-        // Page number footer
-        pdf.setFontSize(8);
-        pdf.setTextColor(180, 180, 180);
-        pdf.text(`Page ${index + 1} of ${totalPages}`, pdfWidth / 2, pdfHeight - 3, { align: 'center' });
-      }
-
-      return pdf.output('blob');
-    } finally {
-      document.body.removeChild(container);
+      throw new Error(message);
     }
+
+    return response.blob();
   }
 
   async downloadPDF(cv: CV, layout: CVLayoutStyle = 'modern'): Promise<void> {
