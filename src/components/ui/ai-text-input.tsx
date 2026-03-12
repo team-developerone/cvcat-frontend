@@ -15,7 +15,6 @@ import {
   Palette,
 } from "lucide-react";
 import SparklesGradient from "./sparkles-gradient";
-import SparklesGradient from "./sparkles-gradient";
 
 const ACTIONS: {
   action: WritingAction;

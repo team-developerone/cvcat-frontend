@@ -86,7 +86,7 @@ export default function Navbar({ isAuthenticated = false }: NavbarProps) {
       ) : (
         // Authenticated navbar
         <div className="flex items-center space-x-4">
-          {location !== "/cv-management" && (
+          {location === "/" && (
             <Button
               onClick={() => goTo("/cv-management")}
               className="bg-[#DAA520] hover:bg-[#B8860B] text-white text-sm font-medium px-4 py-2 rounded"
