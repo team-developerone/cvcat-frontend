@@ -60,6 +60,46 @@ export default function LandingPage() {
     }
   };
 
+  const featuredTemplates = [
+    {
+      id: "modern",
+      name: "Modern",
+      subtitle: "Clean and balanced with subtle gold accents",
+      label: "Most Used",
+      badgeClass: "bg-[#DAA520]/15 text-[#9a7412] border border-[#DAA520]/30",
+      cv: mockCVData,
+    },
+    {
+      id: "creative",
+      name: "Creative",
+      subtitle: "Expressive and bold for design-forward roles",
+      label: "Bold Style",
+      badgeClass: "bg-violet-100 text-violet-700 border border-violet-200",
+      cv: mockCVVariants.creative,
+    },
+    {
+      id: "executive",
+      name: "Executive",
+      subtitle: "Structured and formal for senior leadership roles",
+      label: "Professional",
+      badgeClass: "bg-slate-100 text-slate-700 border border-slate-200",
+      cv: mockCVVariants.executive,
+    },
+  ] as const;
+
+  const allTemplates = [
+    { id: "minimalist", name: "Minimalist", cv: mockCVVariants.minimalist },
+    { id: "classic", name: "Classic", cv: mockCVVariants.minimalist },
+    { id: "technical", name: "Technical", cv: mockCVVariants.minimalist },
+    { id: "professional", name: "Professional", cv: mockCVVariants.minimalist },
+    { id: "simple-ats", name: "Simple ATS", cv: mockCVVariants.minimalist },
+    { id: "pure-ats", name: "Pure ATS", cv: mockCVVariants.minimalist },
+  ] as const;
+
+  const [activeTemplate, setActiveTemplate] = useState<string>("modern");
+  const activeTemplateData =
+    featuredTemplates.find((template) => template.id === activeTemplate) ?? featuredTemplates[0];
+
   return (
     <Layout>
       {/* Hero Section */}
@@ -1490,189 +1530,153 @@ export default function LandingPage() {
       </section>
       
       {/* Sample CV Templates Section */}
-      <section className="py-16 px-4 md:px-8 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
-        {/* Background decoration */}
-        <div className="absolute inset-0 opacity-[0.02] pointer-events-none">
-          <div className="absolute top-20 left-10">
-            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 9C9.10457 9 10 8.10457 10 7C10 5.89543 9.10457 5 8 5C6.89543 5 6 5.89543 6 7C6 8.10457 6.89543 9 8 9Z" fill="black"/>
-              <path d="M16 9C17.1046 9 18 8.10457 18 7C18 5.89543 17.1046 5 16 5C14.8954 5 14 5.89543 14 7C14 8.10457 14.8954 9 16 9Z" fill="black"/>
-              <path d="M12 12C13.1046 12 14 11.1046 14 10C14 8.89543 13.1046 8 12 8C10.8954 8 10 8.89543 10 10C10 11.1046 10.8954 12 12 12Z" fill="black"/>
-              <path d="M5 15C6.10457 15 7 14.1046 7 13C7 11.8954 6.10457 11 5 11C3.89543 11 3 11.8954 3 13C3 14.1046 3.89543 15 5 15Z" fill="black"/>
-              <path d="M19 15C20.1046 15 21 14.1046 21 13C21 11.8954 20.1046 11 19 11C17.8954 11 17 11.8954 17 13C17 14.1046 17.8954 15 19 15Z" fill="black"/>
-            </svg>
-          </div>
-          <div className="absolute bottom-20 right-20">
-            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 9C9.10457 9 10 8.10457 10 7C10 5.89543 9.10457 5 8 5C6.89543 5 6 5.89543 6 7C6 8.10457 6.89543 9 8 9Z" fill="black"/>
-              <path d="M16 9C17.1046 9 18 8.10457 18 7C18 5.89543 17.1046 5 16 5C14.8954 5 14 5.89543 14 7C14 8.10457 14.8954 9 16 9Z" fill="black"/>
-              <path d="M12 12C13.1046 12 14 11.1046 14 10C14 8.89543 13.1046 8 12 8C10.8954 8 10 8.89543 10 10C10 11.1046 10.8954 12 12 12Z" fill="black"/>
-              <path d="M5 15C6.10457 15 7 14.1046 7 13C7 11.8954 6.10457 11 5 11C3.89543 11 3 11.8954 3 13C3 14.1046 3.89543 15 5 15Z" fill="black"/>
-              <path d="M19 15C20.1046 15 21 14.1046 21 13C21 11.8954 20.1046 11 19 11C17.8954 11 17 11.8954 17 13C17 14.1046 17.8954 15 19 15Z" fill="black"/>
-            </svg>
-          </div>
+      <section className="py-16 px-4 md:px-8 bg-gradient-to-b from-white via-[#faf8f2] to-gray-50 relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-24 -left-20 h-64 w-64 rounded-full bg-[#DAA520]/10 blur-3xl" />
+          <div className="absolute -bottom-20 -right-16 h-72 w-72 rounded-full bg-[#DAA520]/10 blur-3xl" />
         </div>
 
         <div className="max-w-7xl mx-auto relative z-10">
           <motion.div
-            className="text-center mb-12"
+            className="text-center mb-10 md:mb-12"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <span className="inline-flex items-center rounded-full border border-[#DAA520]/25 bg-white/80 px-3 py-1 text-xs font-semibold text-[#9a7412] shadow-sm backdrop-blur-sm">
+              Template Studio
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold mt-4 mb-3">
               Choose from <span className="text-[#DAA520]">9 Premium</span> Templates
             </h2>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              Each template is carefully designed to be ATS-friendly while maintaining professional aesthetics. 
-              See your CV rendered in real-time with our exact template system.
+            <p className="text-gray-600 text-base md:text-lg max-w-2xl mx-auto">
+              A cleaner, modern preview experience with responsive cards that mirror exactly what users get in export.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-            {/* Modern Template */}
-            <motion.div
-              className="group"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-            >
-              <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200 group-hover:shadow-xl group-hover:border-[#DAA520]/30 transition-all duration-300">
-                <div className="p-4 border-b border-gray-100">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-900">Modern Template</h3>
-                    <span className="text-xs bg-[#DAA520]/10 text-[#DAA520] px-2 py-1 rounded-full font-medium">
-                      Popular
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 mt-1">Clean design with gold accents</p>
-                </div>
-                <div className="h-96 overflow-hidden bg-gray-50">
-                  <div className="w-full">
-                    <CVPreview 
-                      cv={mockCVData} 
-                      template="modern"
-                      style={{ width: '100%' }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Creative Template */}
-            <motion.div
-              className="group"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200 group-hover:shadow-xl group-hover:border-[#DAA520]/30 transition-all duration-300">
-                <div className="p-4 border-b border-gray-100">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-900">Creative Template</h3>
-                    <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full font-medium">
-                      Bold
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 mt-1">Eye-catching design with purple accents</p>
-                </div>
-                <div className="h-96 overflow-hidden bg-gray-50">
-                  <div className="w-full">
-                    <CVPreview 
-                      cv={mockCVVariants.creative} 
-                      template="creative"
-                      style={{ width: '100%' }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Executive Template */}
-            <motion.div
-              className="group"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-            >
-              <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200 group-hover:shadow-xl group-hover:border-[#DAA520]/30 transition-all duration-300">
-                <div className="p-4 border-b border-gray-100">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-900">Executive Template</h3>
-                    <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full font-medium">
-                      Professional
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 mt-1">Formal layout for senior positions</p>
-                </div>
-                <div className="h-96 overflow-hidden bg-gray-50">
-                  <div className="w-full">
-                    <CVPreview 
-                      cv={mockCVVariants.executive} 
-                      template="executive"
-                      style={{ width: '100%' }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Additional Templates Grid */}
           <motion.div
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4"
-            initial={{ opacity: 0, y: 20 }}
+            className="rounded-3xl border border-gray-200/80 bg-white/85 backdrop-blur-sm p-4 md:p-6 shadow-[0_24px_80px_-40px_rgba(15,23,42,0.35)]"
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
           >
-            {[
-              { name: 'Minimalist', template: 'minimalist', color: 'bg-blue-100 text-blue-700' },
-              { name: 'Classic', template: 'classic', color: 'bg-green-100 text-green-700' },
-              { name: 'Technical', template: 'technical', color: 'bg-indigo-100 text-indigo-700' },
-              { name: 'Professional', template: 'professional', color: 'bg-gray-100 text-gray-700' },
-              { name: 'Simple ATS', template: 'simple-ats', color: 'bg-cyan-100 text-cyan-700' },
-              { name: 'Pure ATS', template: 'pure-ats', color: 'bg-emerald-100 text-emerald-700' }
-            ].map((template, index) => (
-              <motion.div
-                key={template.name}
-                className="group cursor-pointer"
-                whileHover={{ y: -4, scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-              >
-                <div className="bg-white rounded-lg border border-gray-200 p-3 group-hover:border-[#DAA520]/40 group-hover:shadow-md transition-all duration-200">
-                  <div className="h-52 bg-gray-50 rounded mb-2 overflow-hidden relative">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6">
+              <div className="lg:col-span-8">
+                <div className="rounded-2xl border border-gray-200 bg-gradient-to-b from-white to-gray-50 overflow-hidden">
+                  <div className="px-4 py-3 border-b border-gray-200 bg-white/90 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-green-400" />
+                      <span className="ml-2 text-xs font-medium text-gray-500">Live Template Preview</span>
+                    </div>
+                    <span className="text-xs text-gray-500">ATS-ready</span>
+                  </div>
+
+                  <div className="relative h-[420px] md:h-[540px] bg-gray-100 overflow-hidden">
+                    <motion.div
+                      key={activeTemplateData.id}
+                      initial={{ opacity: 0, scale: 0.98 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.25 }}
+                      className="absolute inset-0"
+                    >
+                      <CVPreview
+                        cv={activeTemplateData.cv}
+                        template={activeTemplateData.id as any}
+                        style={{ width: "100%" }}
+                      />
+                    </motion.div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="lg:col-span-4 space-y-3">
+                {featuredTemplates.map((template, index) => {
+                  const isActive = activeTemplate === template.id;
+                  return (
+                    <motion.button
+                      key={template.id}
+                      type="button"
+                      className={`w-full rounded-2xl border p-4 text-left transition-all duration-200 ${
+                        isActive
+                          ? "border-[#DAA520]/40 bg-[#fffaf0] shadow-md"
+                          : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm"
+                      }`}
+                      onClick={() => setActiveTemplate(template.id)}
+                      initial={{ opacity: 0, x: 20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.45, delay: 0.1 + index * 0.08 }}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <h3 className="font-semibold text-gray-900">{template.name} Template</h3>
+                          <p className="text-xs text-gray-600 mt-1 leading-relaxed">{template.subtitle}</p>
+                        </div>
+                        <span className={`text-[11px] px-2 py-1 rounded-full font-semibold whitespace-nowrap ${template.badgeClass}`}>
+                          {template.label}
+                        </span>
+                      </div>
+                      <div className="mt-3 flex items-center gap-2">
+                        <span
+                          className={`h-2 w-2 rounded-full ${
+                            isActive ? "bg-[#DAA520]" : "bg-gray-300"
+                          }`}
+                        />
+                        <span className="text-xs text-gray-500">
+                          {isActive ? "Currently previewing" : "Click to preview"}
+                        </span>
+                      </div>
+                    </motion.button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <motion.div
+              className="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3"
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.25 }}
+            >
+              {allTemplates.map((template) => (
+                <button
+                  key={template.id}
+                  type="button"
+                  onClick={() => setActiveTemplate(template.id)}
+                  className={`rounded-xl border p-3 text-left transition-all duration-200 ${
+                    activeTemplate === template.id
+                      ? "border-[#DAA520]/45 bg-[#fffaf0]"
+                      : "border-gray-200 bg-white hover:border-gray-300"
+                  }`}
+                >
+                  <div className="h-20 rounded-md overflow-hidden bg-gray-100 border border-gray-200 relative">
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="transform scale-[0.32] origin-center">
-                        <CVPreview 
-                          cv={mockCVVariants.minimalist} 
-                          template={template.template as any}
-                          style={{ minHeight: '800px', width: '600px' }}
+                      <div className="origin-center scale-[0.18]">
+                        <CVPreview
+                          cv={template.cv}
+                          template={template.id as any}
+                          style={{ minHeight: "800px", width: "600px" }}
                         />
                       </div>
                     </div>
                   </div>
-                  <div className="text-center">
-                    <h4 className="font-medium text-sm text-gray-900 mb-1">{template.name}</h4>
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${template.color}`}>
-                      Available
-                    </span>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+                  <p className="mt-2 text-xs font-semibold text-gray-800">{template.name}</p>
+                </button>
+              ))}
+            </motion.div>
           </motion.div>
 
           <motion.div
-            className="text-center mt-12"
+            className="text-center mt-10"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.5 }}
+            transition={{ duration: 0.6, delay: 0.35 }}
           >
             <Button
               className="btn-primary text-sm py-3 px-6"
@@ -1681,7 +1685,7 @@ export default function LandingPage() {
               View All Templates
             </Button>
             <p className="text-sm text-gray-500 mt-2">
-              See full-size previews and choose the perfect template for your industry
+              Explore full-size previews and pick the layout that matches your role.
             </p>
           </motion.div>
         </div>
