@@ -18,13 +18,28 @@ const ALLOWED_PATH_PREFIXES = [
   "data.custom[",
 ];
 
+// Root-level array paths allowed for append operations (e.g., "data.work" to append a new entry)
+const ALLOWED_ROOT_ARRAY_PATHS = [
+  "data.work",
+  "data.projects",
+  "data.skills",
+  "data.volunteer",
+  "data.education",
+  "data.certificates",
+  "data.publications",
+  "data.awards",
+  "data.interests",
+  "data.custom",
+];
+
 const PATH_SEGMENT_RE = /^[a-zA-Z_][a-zA-Z0-9_]*(\[\d{1,4}\])?$/;
 const MAX_PATH_DEPTH = 8;
 const BANNED_SEGMENTS = ["__proto__", "constructor", "prototype"];
 
 function isAllowedPath(path: string): boolean {
   if (!path || path.length > 200) return false;
-  if (!ALLOWED_PATH_PREFIXES.some((prefix) => path.startsWith(prefix))) return false;
+  if (!ALLOWED_PATH_PREFIXES.some((prefix) => path.startsWith(prefix))
+    && !ALLOWED_ROOT_ARRAY_PATHS.includes(path)) return false;
 
   const parts = path.split(".");
   if (parts.length > MAX_PATH_DEPTH) return false;
