@@ -50,16 +50,19 @@ export type SectionType =
 export default function CVBuilder() {
   const { mainCV, setMainCV, saveCV, savingCV, loadCVById } = useCV();
   const [, navigate] = useLocation();
-  const ENABLE_CV_ASSISTANT = true;
   const isMobile = useIsMobile();
   const [activeTemplate, setActiveTemplate] = useState("modern");
   const [activeColor, setActiveColor] = useState("golden");
-  const [activeTab, setActiveTab] = useState<"edit" | "preview" | "chat">("edit");
+  const [activeTab, setActiveTab] = useState<"edit" | "preview">("edit");
   const [activeSection, setActiveSection] = useState<SectionType>("personal");
   const [isDownloading, setIsDownloading] = useState(false);
   const [showEmailVerificationModal, setShowEmailVerificationModal] = useState(false);
   const [pendingSaveAction, setPendingSaveAction] = useState<"save" | "saveAndExit" | null>(null);
   const [isMobileTemplateDrawerOpen, setIsMobileTemplateDrawerOpen] = useState(false);
+  // Sub-view states for embedded assistant
+  const [editMobileView, setEditMobileView] = useState<"form" | "assistant">("form");
+  const [previewSidebarView, setPreviewSidebarView] = useState<"templates" | "assistant">("templates");
+  const [previewMobileView, setPreviewMobileView] = useState<"preview" | "assistant">("preview");
 
   const handleDownloadPDF = useCallback(async () => {
     if (!mainCV || isDownloading) return;
@@ -122,11 +125,11 @@ export default function CVBuilder() {
     }
   }, [loadCVById]);
 
+  // Reset sub-views when switching top-level tabs
   useEffect(() => {
-    if (!ENABLE_CV_ASSISTANT && activeTab === "chat") {
-      setActiveTab("edit");
-    }
-  }, [ENABLE_CV_ASSISTANT, activeTab]);
+    setEditMobileView("form");
+    setPreviewMobileView("preview");
+  }, [activeTab]);
 
   useEffect(() => {
     if (!isMobile || activeTab !== "preview") {
@@ -442,9 +445,7 @@ export default function CVBuilder() {
               defaultValue="edit" 
               value={activeTab} 
               onValueChange={(value) => {
-                const next = value as "edit" | "preview" | "chat";
-                if (!ENABLE_CV_ASSISTANT && next === "chat") return;
-                setActiveTab(next);
+                setActiveTab(value as "edit" | "preview");
               }}
               className="w-full mb-2 md:mb-6"
             >
@@ -452,7 +453,7 @@ export default function CVBuilder() {
                 {isMobile ? (
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <TabsList className={`grid flex-1 ${ENABLE_CV_ASSISTANT ? "grid-cols-3" : "grid-cols-2"} h-12 rounded-2xl border border-gray-200 bg-white p-1 shadow-sm`}>
+                      <TabsList className="grid flex-1 grid-cols-2 h-12 rounded-2xl border border-gray-200 bg-white p-1 shadow-sm">
                         <TabsTrigger
                           value="edit"
                           className="rounded-xl data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:shadow-none h-10 text-xs font-medium"
@@ -467,15 +468,6 @@ export default function CVBuilder() {
                           <LucideZap className="mr-1.5 h-4 w-4" />
                           Preview
                         </TabsTrigger>
-                        {ENABLE_CV_ASSISTANT && (
-                          <TabsTrigger
-                            value="chat"
-                            className="rounded-xl data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:shadow-none h-10 text-xs font-medium"
-                          >
-                            <LucideMessageCircle className="mr-1.5 h-4 w-4" />
-                            Assistant
-                          </TabsTrigger>
-                        )}
                       </TabsList>
                       <Button
                         onClick={handleSave}
@@ -513,7 +505,7 @@ export default function CVBuilder() {
                   </div>
                 ) : (
                   <>
-                    <TabsList className={`grid flex-1 ${ENABLE_CV_ASSISTANT ? "grid-cols-3" : "grid-cols-2"} rounded-full h-9 md:h-12 p-0.5 md:p-1 bg-gray-100`}>
+                    <TabsList className="grid flex-1 grid-cols-2 rounded-full h-9 md:h-12 p-0.5 md:p-1 bg-gray-100">
                       <TabsTrigger
                         value="edit"
                         className="rounded-full data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm h-8 md:h-10 text-xs md:text-sm"
@@ -528,15 +520,6 @@ export default function CVBuilder() {
                         <LucideZap className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1 md:mr-2" />
                         Preview & Download
                       </TabsTrigger>
-                      {ENABLE_CV_ASSISTANT && (
-                        <TabsTrigger
-                          value="chat"
-                          className="rounded-full data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm h-8 md:h-10 text-xs md:text-sm"
-                        >
-                          <LucideMessageCircle className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1 md:mr-2" />
-                          CV Assistant
-                        </TabsTrigger>
-                      )}
                     </TabsList>
                     <Button
                       onClick={handleSave}
@@ -559,41 +542,71 @@ export default function CVBuilder() {
                   {/* Left Panel: Section Navigation */}
                   {/* Mobile: Horizontal scrollable pills */}
                   {isMobile && activeTab === "edit" && (
-                    <div className="mb-3 rounded-2xl border border-gray-200 bg-white p-3 shadow-sm">
-                      <div className="mb-3 flex items-center justify-between gap-3">
-                        <div className="min-w-0">
-                          <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-gray-400">
-                            Jump to section
-                          </p>
-                          <p className="truncate text-sm font-semibold text-gray-900">
-                            {activeSectionMeta?.name}
-                          </p>
-                        </div>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          onClick={() => setActiveTab("preview")}
-                          className="h-8 rounded-full px-3 text-xs text-gray-600"
+                    <>
+                      {/* Mobile Edit: Form / Assistant switcher */}
+                      <div className="mb-3 flex gap-2">
+                        <button
+                          className={`flex-1 rounded-xl border px-3 py-2.5 text-xs font-medium transition-colors ${
+                            editMobileView === "form"
+                              ? "border-gray-900 bg-gray-900 text-white"
+                              : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                          }`}
+                          onClick={() => setEditMobileView("form")}
                         >
-                          Preview
-                        </Button>
+                          <LucideFileText className="mr-1.5 inline-block h-3.5 w-3.5" />
+                          Form
+                        </button>
+                        <button
+                          className={`flex-1 rounded-xl border px-3 py-2.5 text-xs font-medium transition-colors ${
+                            editMobileView === "assistant"
+                              ? "border-gray-900 bg-gray-900 text-white"
+                              : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                          }`}
+                          onClick={() => setEditMobileView("assistant")}
+                        >
+                          <LucideMessageCircle className="mr-1.5 inline-block h-3.5 w-3.5" />
+                          Assistant
+                        </button>
                       </div>
-                      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide" style={{ WebkitOverflowScrolling: 'touch' }}>
-                        {sections.map((section) => (
-                          <button
-                            key={section.id}
-                            className={`flex-shrink-0 whitespace-nowrap rounded-full border px-3 py-2 text-xs font-medium transition-colors ${
-                              activeSection === section.id
-                                ? 'border-gray-900 bg-gray-900 text-white'
-                                : 'border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100'
-                            }`}
-                            onClick={() => setActiveSection(section.id as SectionType)}
-                          >
-                            {section.name}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
+
+                      {editMobileView === "form" && (
+                        <div className="mb-3 rounded-2xl border border-gray-200 bg-white p-3 shadow-sm">
+                          <div className="mb-3 flex items-center justify-between gap-3">
+                            <div className="min-w-0">
+                              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-gray-400">
+                                Jump to section
+                              </p>
+                              <p className="truncate text-sm font-semibold text-gray-900">
+                                {activeSectionMeta?.name}
+                              </p>
+                            </div>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              onClick={() => setActiveTab("preview")}
+                              className="h-8 rounded-full px-3 text-xs text-gray-600"
+                            >
+                              Preview
+                            </Button>
+                          </div>
+                          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide" style={{ WebkitOverflowScrolling: 'touch' }}>
+                            {sections.map((section) => (
+                              <button
+                                key={section.id}
+                                className={`flex-shrink-0 whitespace-nowrap rounded-full border px-3 py-2 text-xs font-medium transition-colors ${
+                                  activeSection === section.id
+                                    ? 'border-gray-900 bg-gray-900 text-white'
+                                    : 'border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100'
+                                }`}
+                                onClick={() => setActiveSection(section.id as SectionType)}
+                              >
+                                {section.name}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </>
                   )}
                   {/* Desktop: Vertical sidebar (always mounted, hidden when not in edit mode) */}
                   {!isMobile && (
@@ -641,12 +654,51 @@ export default function CVBuilder() {
                     className="flex-1"
                   >
                     <TabsContent value="edit" className="mt-0" forceMount style={{ display: activeTab === 'edit' ? undefined : 'none' }}>
-                      <CVBuilderForm activeSection={activeSection} />
+                      {/* Mobile: show form or assistant based on switcher */}
+                      {isMobile && editMobileView === "assistant" && activeTab === "edit" ? (
+                        <div className="bg-white rounded-xl shadow-sm border border-gray-100 h-[70vh]">
+                          <CVAssistantPanel activeSection={activeSection} />
+                        </div>
+                      ) : (
+                        <CVBuilderForm activeSection={activeSection} />
+                      )}
                     </TabsContent>
                     
                     <TabsContent value="preview" className="mt-0">
                       {isMobile ? (
                         <>
+                          {/* Mobile Preview: Preview / Assistant switcher */}
+                          <div className="mb-3 flex gap-2">
+                            <button
+                              className={`flex-1 rounded-xl border px-3 py-2.5 text-xs font-medium transition-colors ${
+                                previewMobileView === "preview"
+                                  ? "border-gray-900 bg-gray-900 text-white"
+                                  : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                              }`}
+                              onClick={() => setPreviewMobileView("preview")}
+                            >
+                              <LucideZap className="mr-1.5 inline-block h-3.5 w-3.5" />
+                              Preview
+                            </button>
+                            <button
+                              className={`flex-1 rounded-xl border px-3 py-2.5 text-xs font-medium transition-colors ${
+                                previewMobileView === "assistant"
+                                  ? "border-gray-900 bg-gray-900 text-white"
+                                  : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                              }`}
+                              onClick={() => setPreviewMobileView("assistant")}
+                            >
+                              <LucideMessageCircle className="mr-1.5 inline-block h-3.5 w-3.5" />
+                              Assistant
+                            </button>
+                          </div>
+
+                          {previewMobileView === "assistant" ? (
+                            <div className="bg-white rounded-xl shadow-sm border border-gray-100 h-[70vh]">
+                              <CVAssistantPanel activeSection={activeSection} />
+                            </div>
+                          ) : (
+                          <>
                           <div className="space-y-3 pb-24">
                             <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
                               <div className="flex items-start justify-between gap-3">
@@ -748,6 +800,7 @@ export default function CVBuilder() {
                             </DrawerContent>
                           </Drawer>
 
+                          {previewMobileView === "preview" && (
                           <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white/95 px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-3 shadow-lg backdrop-blur">
                             <div className="mx-auto flex max-w-md gap-2">
                               <Button
@@ -775,6 +828,9 @@ export default function CVBuilder() {
                               </Button>
                             </div>
                           </div>
+                          )}
+                          </>
+                          )}
                         </>
                       ) : (
                         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
@@ -805,31 +861,59 @@ export default function CVBuilder() {
                       )}
                     </TabsContent>
                     
-                    {ENABLE_CV_ASSISTANT && (
-                      <TabsContent value="chat" className="mt-0">
-                        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 h-[80vh]">
-                          <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-xl font-bold">CV Assistant</h2>
-                            <p className="text-sm text-gray-500">
-                              Get suggestions you can confirm or reject
-                            </p>
-                          </div>
-                          <div className="h-[calc(80vh-120px)]">
+                  </motion.div>
+
+                  {/* Right Panel: Assistant sidebar (Edit mode, desktop only) */}
+                  {!isMobile && activeTab === "edit" && (
+                    <motion.div
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className="lg:w-80 flex-shrink-0 mt-2 lg:mt-0"
+                    >
+                      <div className="bg-white rounded-xl shadow-sm border border-gray-100 h-[calc(100vh-180px)] sticky top-6">
+                        <CVAssistantPanel activeSection={activeSection} />
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* Right Panel: Templates + Assistant (Preview mode, desktop only) */}
+                  {!isMobile && activeTab === "preview" && (
+                    <motion.div
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className="lg:w-80 flex-shrink-0 mt-2 lg:mt-0"
+                    >
+                      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                        {/* Switcher: Templates / Assistant */}
+                        <div className="flex gap-1 mb-4 p-1 bg-gray-100 rounded-lg">
+                          <button
+                            className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                              previewSidebarView === "templates"
+                                ? "bg-white text-gray-900 shadow-sm"
+                                : "text-gray-500 hover:text-gray-700"
+                            }`}
+                            onClick={() => setPreviewSidebarView("templates")}
+                          >
+                            Templates
+                          </button>
+                          <button
+                            className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                              previewSidebarView === "assistant"
+                                ? "bg-white text-gray-900 shadow-sm"
+                                : "text-gray-500 hover:text-gray-700"
+                            }`}
+                            onClick={() => setPreviewSidebarView("assistant")}
+                          >
+                            Assistant
+                          </button>
+                        </div>
+
+                        {previewSidebarView === "assistant" ? (
+                          <div className="h-[calc(100vh-280px)]">
                             <CVAssistantPanel activeSection={activeSection} />
                           </div>
-                        </div>
-                      </TabsContent>
-                    )}
-                  </motion.div>
-                  
-                  {/* Right Panel: Design Options (always mounted, hidden when not in preview mode) */}
-                  {!isMobile && (
-                    <motion.div 
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: activeTab === "preview" ? 1 : 0, x: activeTab === "preview" ? 0 : 20 }}
-                      className={`lg:w-80 flex-shrink-0 mt-2 lg:mt-0 ${activeTab !== "preview" ? 'hidden' : ''}`}
-                    >
-                      <div className={`bg-white rounded-xl shadow-sm border border-gray-100 ${isMobile ? 'p-3' : 'p-4'}`}>
+                        ) : (
+                        <>
                         <div className="mb-3 md:mb-5">
                           <h3 className="text-xs font-medium uppercase tracking-wider text-gray-500 mb-2 md:mb-3 ml-2">Template</h3>
                           <div className={`grid gap-1.5 md:gap-2 ${isMobile ? 'grid-cols-4' : 'grid-cols-3'}`}>
@@ -1126,6 +1210,8 @@ export default function CVBuilder() {
                             </Button>
                           </div>
                         </div>
+                        </>
+                        )}
                       </div>
                     </motion.div>
                   )}
