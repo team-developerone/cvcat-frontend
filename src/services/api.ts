@@ -377,3 +377,57 @@ export async function writingAssistant(
     body: JSON.stringify(payload),
   });
 }
+
+// --- CV AI Assistant ---
+
+export type CVAssistantIntent =
+  | "rewrite_summary"
+  | "rewrite_bullet"
+  | "generate_bullets_from_note"
+  | "tailor_section_to_job"
+  | "suggest_improvements";
+
+export interface CVAssistantTarget {
+  path: string;
+  section?: string;
+  selectedText?: string;
+}
+
+export interface CVAssistantRequest {
+  cvId: string;
+  message: string;
+  intent?: CVAssistantIntent;
+  target?: CVAssistantTarget;
+  jobDescription?: string;
+}
+
+export interface CVAssistantSuggestion {
+  id: string;
+  type: "replace" | "append" | "improvement_hint";
+  path: string;
+  oldValue?: string | null;
+  newValue?: string | string[];
+  message?: string;
+  severity?: "high" | "medium" | "low";
+  suggestedAction?: CVAssistantIntent | null;
+}
+
+export interface CVAssistantResponse {
+  error: boolean;
+  data: {
+    reply: string;
+    intent: string;
+    suggestions: CVAssistantSuggestion[];
+  };
+  quotaRemaining: number | null;
+  quotaResetAt: string | null;
+}
+
+export async function cvAssistant(
+  payload: CVAssistantRequest
+): Promise<CVAssistantResponse> {
+  return apiClient<CVAssistantResponse>("/cv/assistant", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}

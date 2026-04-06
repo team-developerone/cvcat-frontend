@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Layout from "@/components/Layout";
 import CVBuilderForm from "@/components/CVBuilderForm";
-import ChatBot from "@/components/ChatBot";
+import CVAssistantPanel from "@/components/CVAssistantPanel";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -50,7 +50,7 @@ export type SectionType =
 export default function CVBuilder() {
   const { mainCV, setMainCV, saveCV, savingCV, loadCVById } = useCV();
   const [, navigate] = useLocation();
-  const ENABLE_CV_ASSISTANT = false;
+  const ENABLE_CV_ASSISTANT = true;
   const isMobile = useIsMobile();
   const [activeTemplate, setActiveTemplate] = useState("modern");
   const [activeColor, setActiveColor] = useState("golden");
@@ -815,7 +815,7 @@ export default function CVBuilder() {
                             </p>
                           </div>
                           <div className="h-[calc(80vh-120px)]">
-                            <ChatBot isEmbedded={true} />
+                            <CVAssistantPanel />
                           </div>
                         </div>
                       </TabsContent>
