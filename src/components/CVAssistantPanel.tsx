@@ -11,29 +11,24 @@ import {
   LucideFileText,
 } from "lucide-react";
 import { useCV } from "@/lib/context";
-import { cvAssistant } from "@/services/api";
+import { cvAssistant, getAssistantMessages } from "@/services/api";
 import type {
   CVAssistantIntent,
   CVAssistantSuggestion,
   CVAssistantInsight,
   CVAssistantResponse,
-  CVAssistantHistoryMessage,
 } from "@/services/api";
 import CVAssistantSuggestionCard from "./CVAssistantSuggestionCard";
 import { applySuggestion } from "@/lib/cvAssistant/applySuggestion";
+import { mapBackendMessages } from "@/lib/cvAssistant/mapAssistantMessages";
+import type { AssistantMessage } from "@/lib/cvAssistant/mapAssistantMessages";
 import { toast } from "@/hooks/use-toast";
 
-interface AssistantMessage {
-  id: string;
-  role: "user" | "assistant";
-  text: string;
-  suggestions?: CVAssistantSuggestion[];
-  insights?: CVAssistantInsight[];
-  confirmedIds?: Set<string>;
-  rejectedIds?: Set<string>;
-}
-
-const MAX_HISTORY_MESSAGES = 10;
+const WELCOME_MESSAGE: AssistantMessage = {
+  id: "welcome",
+  role: "assistant",
+  text: "Hi! I'm your CV assistant. I can read, improve, update, transform, and evaluate your CV. Try asking me things like \"what skills do I have?\", \"improve my summary\", \"add Docker to my skills\", or \"is my CV good for a staff engineer role?\"",
+};
 
 const QUICK_ACTIONS: { label: string; intent?: CVAssistantIntent; message: string }[] = [
   { label: "What's in my CV?", intent: "read_section", message: "Give me an overview of my CV" },
@@ -43,6 +38,8 @@ const QUICK_ACTIONS: { label: string; intent?: CVAssistantIntent; message: strin
   { label: "Suggest improvements", intent: "suggest_improvements", message: "What should I improve in my CV?" },
   { label: "Evaluate for a role", intent: "evaluate_for_role", message: "Is my CV good for a senior backend engineer role?" },
 ];
+
+const MESSAGES_PER_PAGE = 20;
 
 /**
  * Derive a sensible target from the active section and intent so the
@@ -170,43 +167,13 @@ function buildTargetFromContext(
   };
 }
 
-/**
- * Build rolling history from messages for the backend.
- * Only sends last N messages, excludes welcome message and errors.
- */
-function buildChatHistory(messages: AssistantMessage[]): CVAssistantHistoryMessage[] {
-  return messages
-    .filter((m) => m.id !== "welcome" && !m.id.startsWith("error_"))
-    .slice(-MAX_HISTORY_MESSAGES)
-    .map((m) => ({ role: m.role, text: m.text }));
-}
-
-/**
- * Determine whether this intent needs chat history sent to the backend.
- * Deterministic intents don't benefit from history.
- */
-function intentNeedsHistory(intent?: CVAssistantIntent): boolean {
-  if (!intent) return true; // free-text might need context
-  const deterministicIntents: CVAssistantIntent[] = [
-    "read_section",
-    "update_field",
-  ];
-  return !deterministicIntents.includes(intent);
-}
-
 interface CVAssistantPanelProps {
   activeSection?: string;
 }
 
 export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProps) {
   const { mainCV, setMainCV, saveCV } = useCV();
-  const [messages, setMessages] = useState<AssistantMessage[]>([
-    {
-      id: "welcome",
-      role: "assistant",
-      text: "Hi! I'm your CV assistant. I can read, improve, update, transform, and evaluate your CV. Try asking me things like \"what skills do I have?\", \"improve my summary\", \"add Docker to my skills\", or \"is my CV good for a staff engineer role?\"",
-    },
-  ]);
+  const [messages, setMessages] = useState<AssistantMessage[]>([WELCOME_MESSAGE]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [quotaRemaining, setQuotaRemaining] = useState<number | null>(null);
@@ -214,6 +181,13 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
   const [showJDInput, setShowJDInput] = useState(false);
   const [jobDescription, setJobDescription] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesTopRef = useRef<HTMLDivElement>(null);
+
+  // Pagination state for loading older messages
+  const [hasOlderMessages, setHasOlderMessages] = useState(false);
+  const [nextOlderPage, setNextOlderPage] = useState(2);
+  const [loadingOlder, setLoadingOlder] = useState(false);
+  const [historyLoaded, setHistoryLoaded] = useState(false);
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -222,6 +196,65 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
   useEffect(() => {
     scrollToBottom();
   }, [messages, scrollToBottom]);
+
+  // Load recent history from backend on mount
+  useEffect(() => {
+    if (!mainCV?.id || historyLoaded) return;
+
+    let cancelled = false;
+
+    async function loadHistory() {
+      try {
+        const res = await getAssistantMessages(mainCV!.id, 1, MESSAGES_PER_PAGE);
+        if (cancelled) return;
+
+        if (res.data && res.data.length > 0) {
+          const mapped = mapBackendMessages(res.data);
+          // Prepend welcome message, then DB messages
+          setMessages([WELCOME_MESSAGE, ...mapped]);
+          setHasOlderMessages(res.pagination.hasNextPage);
+          setNextOlderPage(2);
+        }
+        // If no history, keep just the welcome message
+      } catch {
+        // Silently fail — first time or no history yet
+      } finally {
+        if (!cancelled) setHistoryLoaded(true);
+      }
+    }
+
+    loadHistory();
+    return () => { cancelled = true; };
+  }, [mainCV?.id, historyLoaded]);
+
+  const loadOlderMessages = useCallback(async () => {
+    if (!mainCV?.id || loadingOlder || !hasOlderMessages) return;
+
+    setLoadingOlder(true);
+    try {
+      const res = await getAssistantMessages(mainCV.id, nextOlderPage, MESSAGES_PER_PAGE);
+      if (res.data && res.data.length > 0) {
+        const mapped = mapBackendMessages(res.data);
+        // Prepend older messages after the welcome message
+        setMessages((prev) => {
+          const welcome = prev[0]?.id === "welcome" ? [prev[0]] : [];
+          const rest = prev[0]?.id === "welcome" ? prev.slice(1) : prev;
+          return [...welcome, ...mapped, ...rest];
+        });
+        setHasOlderMessages(res.pagination.hasNextPage);
+        setNextOlderPage((p) => p + 1);
+      } else {
+        setHasOlderMessages(false);
+      }
+    } catch {
+      toast({
+        title: "Could not load older messages",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingOlder(false);
+    }
+  }, [mainCV?.id, loadingOlder, hasOlderMessages, nextOlderPage]);
 
   const isQuotaExhausted = quotaRemaining !== null && quotaRemaining <= 0;
 
@@ -241,18 +274,12 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
       try {
         const target = buildTargetFromContext(mainCV, activeSection, intent);
 
-        // Build rolling history only for AI intents
-        const history = intentNeedsHistory(intent)
-          ? buildChatHistory([...messages, userMsg])
-          : undefined;
-
         const payload: Parameters<typeof cvAssistant>[0] = {
           cvId: mainCV.id,
           message: text.trim(),
           intent,
           target,
           jobDescription: jobDescription || undefined,
-          history,
         };
 
         const response: CVAssistantResponse = await cvAssistant(payload);
@@ -297,7 +324,7 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
         setLoading(false);
       }
     },
-    [mainCV, loading, jobDescription, activeSection, messages]
+    [mainCV, loading, jobDescription, activeSection]
   );
 
   const handleConfirm = useCallback(
@@ -369,6 +396,28 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-3 space-y-3">
+        <div ref={messagesTopRef} />
+
+        {/* Load older messages button */}
+        {hasOlderMessages && (
+          <div className="flex justify-center">
+            <button
+              className="text-xs px-3 py-1.5 rounded-full border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 hover:border-gray-300 transition-colors disabled:opacity-50"
+              onClick={loadOlderMessages}
+              disabled={loadingOlder}
+            >
+              {loadingOlder ? (
+                <span className="flex items-center gap-1.5">
+                  <LucideLoader2 className="w-3 h-3 animate-spin" />
+                  Loading...
+                </span>
+              ) : (
+                "Load older messages"
+              )}
+            </button>
+          </div>
+        )}
+
         {messages.map((msg) => (
           <div key={msg.id}>
             {/* Message bubble */}

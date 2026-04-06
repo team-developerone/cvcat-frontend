@@ -398,18 +398,12 @@ export interface CVAssistantTarget {
   selectedText?: string;
 }
 
-export interface CVAssistantHistoryMessage {
-  role: "user" | "assistant";
-  text: string;
-}
-
 export interface CVAssistantRequest {
   cvId: string;
   message: string;
   intent?: CVAssistantIntent;
   target?: CVAssistantTarget;
   jobDescription?: string;
-  history?: CVAssistantHistoryMessage[];
 }
 
 export interface CVAssistantSuggestion {
@@ -447,4 +441,61 @@ export async function cvAssistant(
     method: "POST",
     body: JSON.stringify(payload),
   });
+}
+
+// --- CV Assistant History ---
+
+export interface AssistantConversationResponse {
+  error: boolean;
+  data: {
+    conversationId: string;
+    messageCount: number;
+    lastMessageAt: string;
+  } | null;
+}
+
+export interface AssistantMessageRecord {
+  _id: string;
+  role: "user" | "assistant";
+  text: string;
+  intent?: string | null;
+  mode?: string | null;
+  suggestions?: CVAssistantSuggestion[];
+  insights?: CVAssistantInsight[];
+  metadata?: {
+    deterministic?: boolean;
+    quotaConsumed?: boolean;
+  };
+  createdAt: string;
+}
+
+export interface AssistantMessagesResponse {
+  error: boolean;
+  data: AssistantMessageRecord[];
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalCount: number;
+    limit: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  };
+}
+
+export async function getAssistantConversation(
+  cvId: string
+): Promise<AssistantConversationResponse> {
+  return apiClient<AssistantConversationResponse>(
+    `/cv/${cvId}/assistant/conversation`
+  );
+}
+
+export async function getAssistantMessages(
+  cvId: string,
+  page = 1,
+  limit = 20
+): Promise<AssistantMessagesResponse> {
+  return apiClient<AssistantMessagesResponse>(
+    `/cv/${cvId}/assistant/messages?page=${page}&limit=${limit}`
+  );
 }
