@@ -14,12 +14,9 @@ import TeamPage from "@/pages/TeamPage";
 import LogoPage from "@/pages/LogoPage";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import TermsOfService from "@/pages/TermsOfService";
-import ChatBot from "@/components/ChatBot";
 import { CVProvider } from "@/lib/context";
 import { AuthProvider } from "@/lib/auth-context";
 import ProtectedRoute from "@/components/ProtectedRoute";
-
-const ENABLE_FLOATING_CV_ASSISTANT = false;
 
 function Router() {
   return (
@@ -63,8 +60,6 @@ function Router() {
         <Route component={NotFound} />
       </Switch>
 
-      {/* Chat bot is now visible on all routes */}
-      {ENABLE_FLOATING_CV_ASSISTANT && <ChatBot />}
     </>
   );
 }

@@ -112,13 +112,6 @@ export interface Feature {
   description: string;
 }
 
-export interface ChatMessage {
-  id: string;
-  text: string;
-  isBot: boolean;
-  timestamp: Date;
-}
-
 export interface Project {
   id: string;
   title: string;

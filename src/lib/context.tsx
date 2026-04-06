@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
-import { CV, ChatMessage, backendCVToFrontendCV, frontendCVToBackendData } from "./types";
+import { CV, backendCVToFrontendCV, frontendCVToBackendData } from "./types";
 import { fetchLatestCV, getCVDetails, updateCV as apiUpdateCV, createCV as apiCreateCV } from "@/services/api";
 
 interface CVContextType {
@@ -9,8 +9,6 @@ interface CVContextType {
   setTailoredCVs: React.Dispatch<React.SetStateAction<CV[]>>;
   currentCV: CV | null;
   setCurrentCV: React.Dispatch<React.SetStateAction<CV | null>>;
-  messages: ChatMessage[];
-  addMessage: (message: string, isBot: boolean) => void;
   refreshCVs: () => Promise<void>;
   loadCVById: (id: string) => Promise<CV | null>;
   saveCV: (cv: CV) => Promise<CV>;
@@ -26,24 +24,6 @@ export function CVProvider({ children }: { children: ReactNode }) {
   const [currentCV, setCurrentCV] = useState<CV | null>(null);
   const [cvsLoading, setCvsLoading] = useState(true);
   const [savingCV, setSavingCV] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: "initial",
-      text: "Meow! I'm your CV Assistant. How can I help you today with your resume?",
-      isBot: true,
-      timestamp: new Date()
-    }
-  ]);
-
-  const addMessage = (text: string, isBot: boolean) => {
-    const newMessage: ChatMessage = {
-      id: Date.now().toString(),
-      text,
-      isBot,
-      timestamp: new Date()
-    };
-    setMessages(prev => [...prev, newMessage]);
-  };
 
   const refreshCVs = useCallback(async () => {
     setCvsLoading(true);
@@ -170,8 +150,6 @@ export function CVProvider({ children }: { children: ReactNode }) {
         setTailoredCVs,
         currentCV,
         setCurrentCV,
-        messages,
-        addMessage,
         refreshCVs,
         loadCVById,
         saveCV,
