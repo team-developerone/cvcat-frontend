@@ -406,6 +406,8 @@ export interface CVAssistantRequest {
   jobDescription?: string;
 }
 
+export type SuggestionStatus = "pending" | "confirmed" | "dismissed";
+
 export interface CVAssistantSuggestion {
   id: string;
   type: "replace" | "append" | "improvement_hint";
@@ -415,6 +417,7 @@ export interface CVAssistantSuggestion {
   message?: string;
   severity?: "high" | "medium" | "low";
   suggestedAction?: CVAssistantIntent | null;
+  status?: SuggestionStatus;
 }
 
 export interface CVAssistantInsight {
@@ -497,5 +500,20 @@ export async function getAssistantMessages(
 ): Promise<AssistantMessagesResponse> {
   return apiClient<AssistantMessagesResponse>(
     `/cv/${cvId}/assistant/messages?page=${page}&limit=${limit}`
+  );
+}
+
+export async function updateSuggestionStatus(
+  cvId: string,
+  messageId: string,
+  suggestionId: string,
+  status: "confirmed" | "dismissed"
+): Promise<{ error: boolean; data: { status: string } }> {
+  return apiClient(
+    `/cv/${cvId}/assistant/messages/${messageId}/suggestions/${suggestionId}/status`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({ status }),
+    }
   );
 }

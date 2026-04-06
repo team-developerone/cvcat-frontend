@@ -11,7 +11,7 @@ import {
   LucideFileText,
 } from "lucide-react";
 import { useCV } from "@/lib/context";
-import { cvAssistant, getAssistantMessages } from "@/services/api";
+import { cvAssistant, getAssistantMessages, updateSuggestionStatus } from "@/services/api";
 import type {
   CVAssistantIntent,
   CVAssistantSuggestion,
@@ -352,6 +352,11 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
         })
       );
 
+      // Persist status to backend (fire-and-forget)
+      updateSuggestionStatus(mainCV.id, msgId, suggestion.id, "confirmed").catch(
+        () => {} // UI already updated optimistically
+      );
+
       toast({
         title: "Suggestion applied",
         description: "Change applied to your draft. Save to persist.",
@@ -360,16 +365,26 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
     [mainCV, setMainCV]
   );
 
-  const handleReject = useCallback((msgId: string, suggestion: CVAssistantSuggestion) => {
-    setMessages((prev) =>
-      prev.map((m) => {
-        if (m.id !== msgId) return m;
-        const newRejected = new Set(m.rejectedIds);
-        newRejected.add(suggestion.id);
-        return { ...m, rejectedIds: newRejected };
-      })
-    );
-  }, []);
+  const handleReject = useCallback(
+    (msgId: string, suggestion: CVAssistantSuggestion) => {
+      if (!mainCV) return;
+
+      setMessages((prev) =>
+        prev.map((m) => {
+          if (m.id !== msgId) return m;
+          const newRejected = new Set(m.rejectedIds);
+          newRejected.add(suggestion.id);
+          return { ...m, rejectedIds: newRejected };
+        })
+      );
+
+      // Persist status to backend (fire-and-forget)
+      updateSuggestionStatus(mainCV.id, msgId, suggestion.id, "dismissed").catch(
+        () => {} // UI already updated optimistically
+      );
+    },
+    [mainCV]
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
