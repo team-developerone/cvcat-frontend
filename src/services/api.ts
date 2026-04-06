@@ -434,6 +434,7 @@ export interface CVAssistantResponse {
     insights?: CVAssistantInsight[];
   };
   quotaRemaining: number | null;
+  quotaMax: number | null;
   quotaResetAt: string | null;
 }
 

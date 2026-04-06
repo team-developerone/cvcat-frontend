@@ -177,6 +177,7 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [quotaRemaining, setQuotaRemaining] = useState<number | null>(null);
+  const [quotaMax, setQuotaMax] = useState<number | null>(null);
   const [quotaResetAt, setQuotaResetAt] = useState<string | null>(null);
   const [showJDInput, setShowJDInput] = useState(false);
   const [jobDescription, setJobDescription] = useState("");
@@ -285,6 +286,7 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
         const response: CVAssistantResponse = await cvAssistant(payload);
 
         setQuotaRemaining(response.quotaRemaining);
+        setQuotaMax(response.quotaMax);
         setQuotaResetAt(response.quotaResetAt);
 
         const assistantMsg: AssistantMessage = {
@@ -395,17 +397,11 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
 
   return (
     <div className="flex flex-col h-full">
-      {/* Quota indicator */}
-      <div className="flex items-center justify-between px-3 py-2 bg-gray-50 border-b border-gray-100 rounded-t-xl">
+      {/* Header */}
+      <div className="flex items-center px-3 py-2 bg-gray-50 border-b border-gray-100 rounded-t-xl">
         <div className="flex items-center gap-2">
           <LucideZap className="w-3.5 h-3.5 text-amber-500" />
-          <span className="text-xs text-gray-500">
-            {quotaRemaining !== null
-              ? isQuotaExhausted
-                ? `Limit reached${quotaResetAt ? `. Resets ${new Date(quotaResetAt).toLocaleDateString()}` : ""}`
-                : `${quotaRemaining} AI assist${quotaRemaining !== 1 ? "s" : ""} left this week`
-              : "AI CV Assistant"}
-          </span>
+          <span className="text-xs text-gray-500">AI CV Assistant</span>
         </div>
       </div>
 
@@ -592,6 +588,36 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
             )}
           </Button>
         </div>
+
+        {/* Usage progress bar */}
+        {quotaRemaining !== null && quotaMax !== null && quotaMax > 0 && (
+          <div className="mt-2">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[10px] text-gray-400">
+                {isQuotaExhausted
+                  ? `Limit reached${quotaResetAt ? ` \u00b7 Resets ${new Date(quotaResetAt).toLocaleDateString()}` : ""}`
+                  : `${quotaRemaining}/${quotaMax} AI assists left`}
+              </span>
+              {!isQuotaExhausted && quotaResetAt && (
+                <span className="text-[10px] text-gray-300">
+                  Resets {new Date(quotaResetAt).toLocaleDateString()}
+                </span>
+              )}
+            </div>
+            <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all duration-300 ${
+                  isQuotaExhausted
+                    ? "bg-red-400"
+                    : quotaRemaining <= Math.ceil(quotaMax * 0.2)
+                      ? "bg-amber-400"
+                      : "bg-emerald-400"
+                }`}
+                style={{ width: `${Math.round((quotaRemaining / quotaMax) * 100)}%` }}
+              />
+            </div>
+          </div>
+        )}
       </form>
     </div>
   );
