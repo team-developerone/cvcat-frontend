@@ -27,6 +27,67 @@ function truncate(text: string, max: number): string {
   return text.slice(0, max) + "...";
 }
 
+/**
+ * Render a structured object (e.g. a work experience entry) as a compact readable string.
+ */
+function formatStructuredValue(value: Record<string, unknown>): string {
+  const lines: string[] = [];
+  const { position, name, startDate, endDate, summary, highlights, ...rest } = value;
+
+  // Work experience header line
+  if (position || name) {
+    const parts = [position, name].filter(Boolean);
+    lines.push(parts.join(" at "));
+  }
+
+  if (startDate || endDate) {
+    lines.push(`${startDate ?? "?"} – ${endDate ?? "Present"}`);
+  }
+
+  if (typeof summary === "string" && summary) {
+    lines.push(summary);
+  }
+
+  if (Array.isArray(highlights) && highlights.length > 0) {
+    for (const h of highlights) {
+      if (typeof h === "string") lines.push(`• ${h}`);
+    }
+  }
+
+  // Any other string fields not yet shown
+  for (const [key, val] of Object.entries(rest)) {
+    if (typeof val === "string" && val) {
+      lines.push(`${key}: ${val}`);
+    }
+  }
+
+  return lines.join("\n");
+}
+
+/**
+ * Convert a suggestion's newValue to a display string, handling structured objects.
+ */
+function newValueToText(newValue: CVAssistantSuggestion["newValue"]): string {
+  if (typeof newValue === "string") return newValue;
+
+  if (Array.isArray(newValue)) {
+    // Array of strings
+    if (newValue.length > 0 && typeof newValue[0] === "string") {
+      return (newValue as string[]).join("\n• ");
+    }
+    // Array of objects (e.g. one or more work entries)
+    return (newValue as Record<string, unknown>[])
+      .map(formatStructuredValue)
+      .join("\n---\n");
+  }
+
+  if (typeof newValue === "object" && newValue != null) {
+    return formatStructuredValue(newValue as Record<string, unknown>);
+  }
+
+  return "";
+}
+
 export default function CVAssistantSuggestionCard({
   suggestion,
   onConfirm,
@@ -60,12 +121,7 @@ export default function CVAssistantSuggestionCard({
   // Replace or append suggestion
   const oldText =
     typeof suggestion.oldValue === "string" ? suggestion.oldValue : "";
-  const newText =
-    typeof suggestion.newValue === "string"
-      ? suggestion.newValue
-      : Array.isArray(suggestion.newValue)
-        ? suggestion.newValue.join("\n• ")
-        : "";
+  const newText = newValueToText(suggestion.newValue);
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
@@ -89,9 +145,9 @@ export default function CVAssistantSuggestionCard({
         <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-0.5">
           {suggestion.type === "append" ? "New" : "Suggested"}
         </p>
-        <p className="text-sm text-gray-800 bg-green-50 rounded px-2 py-1">
-          {suggestion.type === "append" && "• "}
-          {truncate(newText, 300)}
+        <p className="text-sm text-gray-800 bg-green-50 rounded px-2 py-1 whitespace-pre-line">
+          {suggestion.type === "append" && typeof suggestion.newValue === "string" && "• "}
+          {truncate(newText, 400)}
         </p>
       </div>
 

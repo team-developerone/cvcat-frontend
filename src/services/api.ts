@@ -413,7 +413,8 @@ export interface CVAssistantSuggestion {
   type: "replace" | "append" | "improvement_hint";
   path: string;
   oldValue?: string | null;
-  newValue?: string | string[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  newValue?: string | string[] | Record<string, unknown> | Record<string, unknown>[];
   message?: string;
   severity?: "high" | "medium" | "low";
   suggestedAction?: CVAssistantIntent | null;
