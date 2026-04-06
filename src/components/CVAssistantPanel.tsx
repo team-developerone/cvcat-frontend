@@ -31,10 +31,10 @@ interface AssistantMessage {
 }
 
 const QUICK_ACTIONS: { label: string; intent: CVAssistantIntent; message: string }[] = [
+  { label: "What's in my CV?", intent: "read_section", message: "Give me an overview of my CV" },
+  { label: "Read my experience", intent: "read_section", message: "What experience is listed in my CV?" },
   { label: "Improve summary", intent: "rewrite_summary", message: "Improve my professional summary to be more impactful" },
   { label: "Suggest improvements", intent: "suggest_improvements", message: "What should I improve in my CV?" },
-  { label: "Generate bullets from note", intent: "generate_bullets_from_note", message: "Generate bullet points from my notes" },
-  { label: "Make ATS-friendly", intent: "rewrite_summary", message: "Make my summary more ATS-friendly with relevant keywords" },
 ];
 
 /**
@@ -156,7 +156,7 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
     {
       id: "welcome",
       role: "assistant",
-      text: "I can suggest changes to your CV \u2014 you review each one and confirm or reject it. Try improving your summary, rewriting bullets, or tailoring a section to a job description.",
+      text: "I can read your CV and suggest changes. Ask me things like \"what's in my experience?\" or \"what skills do I have?\" — or ask me to improve your summary, rewrite bullets, or tailor a section to a job description.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -223,10 +223,18 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
           setQuotaRemaining(0);
         }
 
+        // Friendlier fallback for intent-unknown errors
+        let displayMessage = errorMessage;
+        if (errorMessage.includes("not sure what")) {
+          displayMessage = errorMessage;
+        } else if (errorMessage.includes("intent")) {
+          displayMessage = "I'm not sure what you'd like me to do. Try asking about a section of your CV, or ask me to improve your summary or bullets.";
+        }
+
         const errorMsg: AssistantMessage = {
           id: `error_${Date.now()}`,
           role: "assistant",
-          text: `Sorry, I couldn't process that. ${errorMessage}`,
+          text: displayMessage,
         };
         setMessages((prev) => [...prev, errorMsg]);
       } finally {
@@ -424,7 +432,7 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
             placeholder={
               isQuotaExhausted
                 ? "Weekly limit reached"
-                : "Describe a change \u2014 I\u2019ll suggest edits for you to review..."
+                : "Ask about your CV or describe a change..."
             }
             value={input}
             onChange={(e) => setInput(e.target.value)}

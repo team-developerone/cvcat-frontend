@@ -385,7 +385,8 @@ export type CVAssistantIntent =
   | "rewrite_bullet"
   | "generate_bullets_from_note"
   | "tailor_section_to_job"
-  | "suggest_improvements";
+  | "suggest_improvements"
+  | "read_section";
 
 export interface CVAssistantTarget {
   path: string;
