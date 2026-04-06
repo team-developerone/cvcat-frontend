@@ -386,12 +386,21 @@ export type CVAssistantIntent =
   | "generate_bullets_from_note"
   | "tailor_section_to_job"
   | "suggest_improvements"
-  | "read_section";
+  | "read_section"
+  | "update_field"
+  | "transform_content"
+  | "evaluate_for_role"
+  | "evaluate_against_jd";
 
 export interface CVAssistantTarget {
   path: string;
   section?: string;
   selectedText?: string;
+}
+
+export interface CVAssistantHistoryMessage {
+  role: "user" | "assistant";
+  text: string;
 }
 
 export interface CVAssistantRequest {
@@ -400,6 +409,7 @@ export interface CVAssistantRequest {
   intent?: CVAssistantIntent;
   target?: CVAssistantTarget;
   jobDescription?: string;
+  history?: CVAssistantHistoryMessage[];
 }
 
 export interface CVAssistantSuggestion {
@@ -413,12 +423,18 @@ export interface CVAssistantSuggestion {
   suggestedAction?: CVAssistantIntent | null;
 }
 
+export interface CVAssistantInsight {
+  type: string;
+  text: string;
+}
+
 export interface CVAssistantResponse {
   error: boolean;
   data: {
     reply: string;
     intent: string;
     suggestions: CVAssistantSuggestion[];
+    insights?: CVAssistantInsight[];
   };
   quotaRemaining: number | null;
   quotaResetAt: string | null;

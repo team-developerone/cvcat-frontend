@@ -15,7 +15,9 @@ import { cvAssistant } from "@/services/api";
 import type {
   CVAssistantIntent,
   CVAssistantSuggestion,
+  CVAssistantInsight,
   CVAssistantResponse,
+  CVAssistantHistoryMessage,
 } from "@/services/api";
 import CVAssistantSuggestionCard from "./CVAssistantSuggestionCard";
 import { applySuggestion } from "@/lib/cvAssistant/applySuggestion";
@@ -26,15 +28,20 @@ interface AssistantMessage {
   role: "user" | "assistant";
   text: string;
   suggestions?: CVAssistantSuggestion[];
+  insights?: CVAssistantInsight[];
   confirmedIds?: Set<string>;
   rejectedIds?: Set<string>;
 }
 
-const QUICK_ACTIONS: { label: string; intent: CVAssistantIntent; message: string }[] = [
+const MAX_HISTORY_MESSAGES = 10;
+
+const QUICK_ACTIONS: { label: string; intent?: CVAssistantIntent; message: string }[] = [
   { label: "What's in my CV?", intent: "read_section", message: "Give me an overview of my CV" },
   { label: "Read my experience", intent: "read_section", message: "What experience is listed in my CV?" },
+  { label: "What skills do I have?", intent: "read_section", message: "What skills do I have?" },
   { label: "Improve summary", intent: "rewrite_summary", message: "Improve my professional summary to be more impactful" },
   { label: "Suggest improvements", intent: "suggest_improvements", message: "What should I improve in my CV?" },
+  { label: "Evaluate for a role", intent: "evaluate_for_role", message: "Is my CV good for a senior backend engineer role?" },
 ];
 
 /**
@@ -48,7 +55,7 @@ function buildTargetFromContext(
 ): { path: string; section: string; selectedText: string } {
   const section = activeSection || "personal";
 
-  // Bullet-oriented intents → target work/project highlights
+  // Bullet-oriented intents -> target work/project highlights
   if (intent === "rewrite_bullet" || intent === "generate_bullets_from_note") {
     if (section === "experience" && cv.experience?.length > 0) {
       const entry = cv.experience[0];
@@ -74,13 +81,31 @@ function buildTargetFromContext(
         selectedText: entry.highlights?.[0] || "",
       };
     }
-    // Fallback: first work entry regardless of section
+    // Fallback: first work entry
     if (cv.experience?.length) {
       const entry = cv.experience[0];
       return {
         path: "data.work[0].highlights[0]",
         section: "work",
         selectedText: entry.highlights?.[0] || entry.description || "",
+      };
+    }
+  }
+
+  // Transform intents -> target whole section
+  if (intent === "transform_content") {
+    if (section === "experience" && cv.experience?.length) {
+      return {
+        path: "data.work[0]",
+        section: "work",
+        selectedText: cv.experience[0].description || "",
+      };
+    }
+    if (section === "projects" && cv.projects?.length) {
+      return {
+        path: "data.projects[0]",
+        section: "projects",
+        selectedText: cv.projects[0].description || "",
       };
     }
   }
@@ -135,7 +160,6 @@ function buildTargetFromContext(
         };
       }
       break;
-    // personal / default → summary
   }
 
   // Default: summary
@@ -144,6 +168,30 @@ function buildTargetFromContext(
     section: "basics",
     selectedText: cv.personalInfo?.summary || "",
   };
+}
+
+/**
+ * Build rolling history from messages for the backend.
+ * Only sends last N messages, excludes welcome message and errors.
+ */
+function buildChatHistory(messages: AssistantMessage[]): CVAssistantHistoryMessage[] {
+  return messages
+    .filter((m) => m.id !== "welcome" && !m.id.startsWith("error_"))
+    .slice(-MAX_HISTORY_MESSAGES)
+    .map((m) => ({ role: m.role, text: m.text }));
+}
+
+/**
+ * Determine whether this intent needs chat history sent to the backend.
+ * Deterministic intents don't benefit from history.
+ */
+function intentNeedsHistory(intent?: CVAssistantIntent): boolean {
+  if (!intent) return true; // free-text might need context
+  const deterministicIntents: CVAssistantIntent[] = [
+    "read_section",
+    "update_field",
+  ];
+  return !deterministicIntents.includes(intent);
 }
 
 interface CVAssistantPanelProps {
@@ -156,7 +204,7 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
     {
       id: "welcome",
       role: "assistant",
-      text: "I can read your CV and suggest changes. Ask me things like \"what's in my experience?\" or \"what skills do I have?\" — or ask me to improve your summary, rewrite bullets, or tailor a section to a job description.",
+      text: "Hi! I'm your CV assistant. I can read, improve, update, transform, and evaluate your CV. Try asking me things like \"what skills do I have?\", \"improve my summary\", \"add Docker to my skills\", or \"is my CV good for a staff engineer role?\"",
     },
   ]);
   const [input, setInput] = useState("");
@@ -192,12 +240,19 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
 
       try {
         const target = buildTargetFromContext(mainCV, activeSection, intent);
+
+        // Build rolling history only for AI intents
+        const history = intentNeedsHistory(intent)
+          ? buildChatHistory([...messages, userMsg])
+          : undefined;
+
         const payload: Parameters<typeof cvAssistant>[0] = {
           cvId: mainCV.id,
           message: text.trim(),
           intent,
           target,
           jobDescription: jobDescription || undefined,
+          history,
         };
 
         const response: CVAssistantResponse = await cvAssistant(payload);
@@ -210,6 +265,7 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
           role: "assistant",
           text: response.data.reply,
           suggestions: response.data.suggestions,
+          insights: response.data.insights,
           confirmedIds: new Set(),
           rejectedIds: new Set(),
         };
@@ -218,17 +274,17 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
         const errorMessage =
           err instanceof Error ? err.message : "Something went wrong";
 
-        // Parse quota info from error if available
         if (errorMessage.includes("quota exceeded")) {
           setQuotaRemaining(0);
         }
 
-        // Friendlier fallback for intent-unknown errors
         let displayMessage = errorMessage;
         if (errorMessage.includes("not sure what")) {
           displayMessage = errorMessage;
         } else if (errorMessage.includes("intent")) {
-          displayMessage = "I'm not sure what you'd like me to do. Try asking about a section of your CV, or ask me to improve your summary or bullets.";
+          displayMessage = "I'm not sure what you'd like me to do. Try asking about a section of your CV, improving content, adding a skill, or evaluating your CV for a role.";
+        } else if (errorMessage.includes("job description") || errorMessage.includes("jd_required")) {
+          displayMessage = "This request needs a job description. Paste one in the job description field below and try again.";
         }
 
         const errorMsg: AssistantMessage = {
@@ -241,7 +297,7 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
         setLoading(false);
       }
     },
-    [mainCV, loading, jobDescription, activeSection]
+    [mainCV, loading, jobDescription, activeSection, messages]
   );
 
   const handleConfirm = useCallback(
@@ -260,7 +316,6 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
 
       setMainCV(result);
 
-      // Mark as confirmed
       setMessages((prev) =>
         prev.map((m) => {
           if (m.id !== msgId) return m;
@@ -321,7 +376,7 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
               className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-[85%] rounded-xl px-3 py-2 text-sm ${
+                className={`max-w-[85%] rounded-xl px-3 py-2 text-sm whitespace-pre-line ${
                   msg.role === "user"
                     ? "bg-black text-white"
                     : "bg-gray-100 text-gray-800"
@@ -330,6 +385,27 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
                 {msg.text}
               </div>
             </div>
+
+            {/* Insights (for evaluation responses) */}
+            {msg.insights && msg.insights.length > 0 && (
+              <div className="mt-2 ml-1 space-y-1">
+                {msg.insights.map((insight, idx) => (
+                  <div
+                    key={`insight_${idx}`}
+                    className={`rounded-lg px-3 py-1.5 text-xs ${
+                      insight.type === "strength" || insight.type === "match"
+                        ? "bg-green-50 text-green-700 border border-green-200"
+                        : insight.type === "gap"
+                          ? "bg-amber-50 text-amber-700 border border-amber-200"
+                          : "bg-blue-50 text-blue-700 border border-blue-200"
+                    }`}
+                  >
+                    <span className="font-medium capitalize">{insight.type}:</span>{" "}
+                    {insight.text}
+                  </div>
+                ))}
+              </div>
+            )}
 
             {/* Suggestion cards */}
             {msg.suggestions && msg.suggestions.length > 0 && (
@@ -391,7 +467,7 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
           <div className="flex flex-wrap gap-1.5">
             {QUICK_ACTIONS.map((action) => (
               <button
-                key={action.intent + action.label}
+                key={action.message}
                 className="text-xs px-2.5 py-1.5 rounded-full border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-colors disabled:opacity-50"
                 onClick={() => sendMessage(action.message, action.intent)}
                 disabled={loading || isQuotaExhausted}
@@ -416,7 +492,7 @@ export default function CVAssistantPanel({ activeSection }: CVAssistantPanelProp
         {showJDInput && (
           <Textarea
             className="mt-1 text-xs h-20 resize-none"
-            placeholder="Paste the target job description here for tailoring..."
+            placeholder="Paste the target job description here for tailoring or evaluation..."
             value={jobDescription}
             onChange={(e) => setJobDescription(e.target.value)}
             maxLength={3000}
