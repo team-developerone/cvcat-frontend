@@ -104,7 +104,7 @@ export default function CVAssistantSuggestionCard({
           disabled={disabled}
         >
           <LucideCheck className="w-3 h-3 mr-1" />
-          Confirm
+          Apply
         </Button>
         <Button
           size="sm"
@@ -114,7 +114,7 @@ export default function CVAssistantSuggestionCard({
           disabled={disabled}
         >
           <LucideX className="w-3 h-3 mr-1" />
-          Reject
+          Dismiss
         </Button>
       </div>
     </div>

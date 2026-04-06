@@ -811,11 +811,11 @@ export default function CVBuilder() {
                           <div className="flex justify-between items-center mb-4">
                             <h2 className="text-xl font-bold">CV Assistant</h2>
                             <p className="text-sm text-gray-500">
-                              Ask for advice or tips about your CV
+                              Get suggestions you can confirm or reject
                             </p>
                           </div>
                           <div className="h-[calc(80vh-120px)]">
-                            <CVAssistantPanel />
+                            <CVAssistantPanel activeSection={activeSection} />
                           </div>
                         </div>
                       </TabsContent>

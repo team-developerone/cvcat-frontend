@@ -18,8 +18,24 @@ const ALLOWED_PATH_PREFIXES = [
   "data.custom[",
 ];
 
+const PATH_SEGMENT_RE = /^[a-zA-Z_][a-zA-Z0-9_]*(\[\d{1,4}\])?$/;
+const MAX_PATH_DEPTH = 8;
+const BANNED_SEGMENTS = ["__proto__", "constructor", "prototype"];
+
 function isAllowedPath(path: string): boolean {
-  return ALLOWED_PATH_PREFIXES.some((prefix) => path.startsWith(prefix));
+  if (!path || path.length > 200) return false;
+  if (!ALLOWED_PATH_PREFIXES.some((prefix) => path.startsWith(prefix))) return false;
+
+  const parts = path.split(".");
+  if (parts.length > MAX_PATH_DEPTH) return false;
+
+  for (const part of parts) {
+    if (!PATH_SEGMENT_RE.test(part)) return false;
+    const ident = part.replace(/\[\d+\]$/, "");
+    if (BANNED_SEGMENTS.includes(ident)) return false;
+  }
+
+  return true;
 }
 
 /**
